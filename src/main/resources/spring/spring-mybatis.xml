@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xmlns:context="http://www.springframework.org/schema/context" 
+	 xmlns:jdbc="http://www.springframework.org/schema/jdbc"  
+	 xmlns:jee="http://www.springframework.org/schema/jee" 
+	 xmlns:tx="http://www.springframework.org/schema/tx"
+     xmlns:util="http://www.springframework.org/schema/util" 
+     xmlns:task="http://www.springframework.org/schema/task" 
+     xmlns:aop="http://www.springframework.org/schema/aop"
+     xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.0.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.0.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd"
+	default-lazy-init="true">
+	
+	<!-- 配置base数据源 -->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+        init-method="init" destroy-method="close">
+        <!-- 基本属性 url、user、password -->
+        <property name="name" value="${base.jdbc.name}" />
+        <property name="url" value="${base.jdbc.url}" />
+        <property name="username" value="${base.jdbc.username}" />
+        <property name="password" value="${base.jdbc.password}" />
+
+        <!-- 配置初始化大小、最小、最大 -->
+        <property name="initialSize" value="0" />
+        <property name="minIdle" value="0" />
+        <property name="maxActive" value="100" />
+
+        <!-- 配置获取连接等待超时的时间 -->
+        <property name="maxWait" value="60000" />
+
+        <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+        <property name="timeBetweenEvictionRunsMillis" value="60000" />
+
+        <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+        <property name="minEvictableIdleTimeMillis" value="300000" />
+
+        <property name="validationQuery" value="select 1 from dual" />
+        <property name="testWhileIdle" value="true" />
+        <property name="testOnBorrow" value="false" />
+        <property name="testOnReturn" value="false" />
+
+        <!-- 打开PSCache，并且指定每个连接上PSCache的大小 -->
+        <property name="poolPreparedStatements" value="true" />
+        <property name="maxPoolPreparedStatementPerConnectionSize" value="20" />
+        
+        <!-- 对于长时间不使用的连接强制关闭 -->
+		<property name="removeAbandoned" value="true" />
+
+        <!-- 配置监控统计拦截的filters -->
+        <property name="filters" value="stat" />
+    </bean>
+	
+	<!-- 将数据源映射到sqlSessionFactory中 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="typeAliasesPackage" value="com.garlane.relation"/>
+        <property name="mapperLocations" value="classpath*:com/garlane/relation/**/*.xml"/>
+		<property name="configLocation" value="classpath:mybatis/mybatis-config.xml"></property>
+		 
+    </bean>
+    
+    <!-- 扫描dao -->
+    <bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+        <property name="basePackage" value="com.garlane.relation.*.dao"/>
+    </bean>
+
+	<!-- SqlSession模板类实例 -->
+	<bean id="sessionTemplate" class="org.mybatis.spring.SqlSessionTemplate" destroy-method="close">
+		<constructor-arg index="0" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!--======= 事务配置 Begin ================= -->
+	<!-- 事务管理器（由Spring管理MyBatis的事务） -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<!-- 关联数据源 -->
+		<qualifier value="dataSource"/>
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	<!-- 配置 Annotation 驱动，扫描@Transactional注解的类定义事务  -->
+	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
+	<!-- 启用切面技术 -->  
+    <aop:aspectj-autoproxy/>
+    <!-- 配置切入点 --> 
+    <aop:config proxy-target-class="true">  
+        <aop:advisor pointcut="execution(* com.garlane.relation..service.impl.*.*(..))" advice-ref="txAdvice" /> 
+    </aop:config>  
+	<!-- 配置增强   -->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">  
+        <tx:attributes>  
+            <tx:method name="load*" propagation="REQUIRED" read-only="true" />  
+            <tx:method name="get*" propagation="REQUIRED" read-only="true" />  
+            <tx:method name="find*" propagation="REQUIRED" read-only="true" />  
+            <!-- 获取主键单独事务 -->
+            <tx:method name="takeSeq" propagation="REQUIRES_NEW" /> 
+            <tx:method name="*" propagation="REQUIRED" />
+        </tx:attributes>  
+    </tx:advice>
+	<!--======= 事务配置 End =================== -->
+	
+	<!-- 配置dbwizard数据源-->
+	<bean id="dbDataSource" class="com.alibaba.druid.pool.DruidDataSource"
+        init-method="init" destroy-method="close">
+        <!-- 基本属性 url、user、password -->
+        <property name="name" value="${dbwizard.jdbc.name}" />
+        <property name="url" value="${dbwizard.jdbc.url}" />
+        <property name="username" value="${dbwizard.jdbc.username}" />
+        <property name="password" value="${dbwizard.jdbc.password}" />
+
+        <!-- 配置初始化大小、最小、最大 -->
+        <property name="initialSize" value="0" />
+        <property name="minIdle" value="0" />
+        <property name="maxActive" value="20" />
+        
+        <!-- 配置获取连接等待超时的时间 -->
+        <property name="maxWait" value="60000" />
+
+        <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+        <property name="timeBetweenEvictionRunsMillis" value="60000" />
+
+        <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+        <property name="minEvictableIdleTimeMillis" value="300000" />
+
+        <property name="validationQuery" value="select 1 from dual" />
+        <property name="testWhileIdle" value="true" />
+        <property name="testOnBorrow" value="false" />
+        <property name="testOnReturn" value="false" />
+
+        <!-- 打开PSCache，并且指定每个连接上PSCache的大小 -->
+        <!-- <property name="poolPreparedStatements" value="true" />
+        <property name="maxPoolPreparedStatementPerConnectionSize" value="20" /> -->
+
+        <!-- 配置监控统计拦截的filters -->
+        <property name="filters" value="stat" />
+    </bean>
+
+    <!-- 数据库类型配置,XML映射文件中使用方式：1、可以使用databaseId="mysql",2、直接使用全局属性<if test="_databaseId='mysql'"></if>-->
+    <bean id="vendorProperties"
+          class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="properties">
+            <props>
+                <!-- 以下数据库类型 -->
+                <prop key="Oracle">oracle</prop>
+                <prop key="MySQL">mysql</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="databaseIdProvider" class="org.apache.ibatis.mapping.VendorDatabaseIdProvider">
+        <property name="properties" ref="vendorProperties" />
+    </bean>
+
+		<!-- 将数据源映射到sqlSessionFactory中 -->
+	<bean id="dbSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dbDataSource"/>
+        <property name="databaseIdProvider" ref="databaseIdProvider" />
+        <property name="typeAliasesPackage" value="com.garlane.relation"/>
+        <property name="mapperLocations" value="classpath*:com/minstone/webconfig/**/*.xml"/>
+		<property name="configLocation" value="classpath:mybatis/mybatis-config.xml"></property>
+    </bean>
+    
+    <!-- 扫描dao -->
+    <bean id="dbMapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="dbSqlSessionFactory" />
+        <property name="basePackage" value="com.garlane.relation.**.dao"/>
+    </bean>
+
+	<!-- SqlSession模板类实例 -->
+	<bean id="dbSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate" destroy-method="close">
+		<constructor-arg index="0" ref="dbSqlSessionFactory" />
+	</bean>
+	
+	<!--======= 事务配置 Begin ================= -->
+	<!-- 事务管理器（由Spring管理MyBatis的事务） -->
+	<bean id="dbTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<!-- 关联数据源 -->
+		<qualifier value="dbDataSource"/>
+		<property name="dataSource" ref="dbDataSource"></property>
+	</bean>
+	<!-- 配置 Annotation 驱动，扫描@Transactional注解的类定义事务  -->
+	<tx:annotation-driven transaction-manager="dbTransactionManager" proxy-target-class="true"/>
+	<!-- 启用切面技术 -->  
+    <aop:aspectj-autoproxy/>
+    <!-- 配置切入点 --> 
+    <aop:config proxy-target-class="true">  
+        <aop:advisor pointcut="execution(* com.minstone.dbwizard..service.impl.*.*(..))" advice-ref="dbTxAdvice" /> 
+    </aop:config>  
+	<!-- 配置增强   -->
+    <tx:advice id="dbTxAdvice" transaction-manager="dbTransactionManager">  
+        <tx:attributes>  
+            <tx:method name="load*" propagation="REQUIRED" read-only="true" />  
+            <tx:method name="get*" propagation="REQUIRED" read-only="true" />  
+            <tx:method name="find*" propagation="REQUIRED" read-only="true" />  
+            <!-- 获取主键单独事务 -->
+            <tx:method name="takeSeq" propagation="REQUIRES_NEW" /> 
+            <tx:method name="*" propagation="NESTED" /><!-- 导向库事务需要嵌套到当前事务进行处理 -->
+        </tx:attributes>  
+    </tx:advice>
+	<!--======= 事务配置 End =================== -->
+
+</beans>

@@ -1,0 +1,18 @@
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%-- c标签库 --%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>   
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>  
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%-- 项目根目录 --%>
+<% request.setAttribute("root", request.getContextPath());%>
+<%-- 静态文件根目录 --%>
+<% request.setAttribute("static", request.getContextPath()+"/static");%>
+<%-- 外部css文件根目录 --%>
+<% request.setAttribute("css", request.getContextPath()+"/static/css");%>
+<%-- 外部images文件根目录 --%>
+<% request.setAttribute("images", request.getContextPath()+"/static/images");%>
+<%-- 外部js根目录 --%>
+<% request.setAttribute("js", request.getContextPath()+"/static/js");%>
+<%-- 静态组件根目录 --%>
+<% request.setAttribute("resource", request.getContextPath()+"/static/components");%>
+<%-- 定义外部项目名称 --%>

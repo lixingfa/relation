@@ -1,0 +1,447 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.minstone.webconfig</groupId>
+  <artifactId>WebConfig</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>war</packaging>
+  <name>WebConfig</name>
+  
+  <properties>
+		<!-- 源文件编码格式 -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<!-- junit版本 -->
+		<junit.version>4.12</junit.version>
+		<!-- log4j版本 -->
+		<log4j.version>1.2.17</log4j.version>
+		<slf4j.version>1.7.1</slf4j.version>
+		<!-- MySQL -->
+		<mysql.version>5.1.40</mysql.version>
+		<!-- oracle -->
+		<oracle.driver.version>10.2.0.4.0</oracle.driver.version>
+		<!-- commons-lang3版本 -->
+		<commons-lang3.version>3.2.1</commons-lang3.version>
+		<!-- commons-io版本 -->
+		<commons-io.version>2.4</commons-io.version>
+		<!-- common-logging -->
+		<commons-logging.version>1.2</commons-logging.version>
+		<!-- commons-beanutils -->
+		<commons-beanutils.version>1.9.2</commons-beanutils.version>
+		<!-- commons-codec -->
+		<commons-codec.version>1.10</commons-codec.version>
+		<!-- commons-collections -->
+		<commons-collections.version>3.2.2</commons-collections.version>
+		<!-- commons-digester -->
+		<commons-digester.version>2.1</commons-digester.version>
+		<!-- commons-fileupload -->
+		<commons-fileupload.version>1.3.1</commons-fileupload.version>
+		<!-- commons-compress -->
+		<commons-compress.version>1.10</commons-compress.version>
+		<!-- servlet-api -->
+		<servlet-api.version>2.5</servlet-api.version>
+		<!-- jsp-api -->
+		<jsp-api.version>2.1</jsp-api.version>
+		<!-- jstl -->
+		<jstl.version>1.2</jstl.version>
+		<!-- guava版本 -->
+		<guava.version>17.0</guava.version>
+		<!-- mybatis版本号 -->
+		<mybatis.version>3.4.0</mybatis.version>
+		<!-- mybatis-spring -->
+		<mybatis-spring.version>1.3.0</mybatis-spring.version>
+		<!-- 分页插件版本 -->
+		<mybatis.paginator.version>4.1.6</mybatis.paginator.version>
+		<!-- sql解析插件 -->
+		<jsqlparser.version>0.9.5</jsqlparser.version>
+		<!-- json -->
+		<fastjson.version>1.1.40</fastjson.version>
+		<!-- jackson -->
+		<jackson.version>2.5.0</jackson.version>
+		<!-- ognl -->
+		<ognl.version>3.0.6</ognl.version>
+		<!-- freemarker -->
+		<freemarker.version>2.3.22</freemarker.version>
+		<!-- druid -->
+		<druid.version>1.0.25</druid.version>
+		<!-- spring -->
+		<spring.version>4.0.8.RELEASE</spring.version>
+		<!-- flowGate -->
+		<flowGate.version>1.0</flowGate.version>
+		<!-- poi -->
+		<poi.version>3.9</poi.version>
+		<poiScratchpad.version>3.9</poiScratchpad.version>
+		<!-- axis -->
+		<axis.version>1.4</axis.version>
+		<!-- trsWcmv -->
+		<trswcmv.version>1.0</trswcmv.version>
+		<!-- httpclient -->
+		<commons-httpclient.version>3.1</commons-httpclient.version>
+		<httpClient.version>4.3.6</httpClient.version>
+		<!-- sf-json-lib -->		
+		<sfJsonlib.version>2.2.2</sfJsonlib.version>
+		<!-- flowEngine -->
+		<flowEngine.version>2.1.3</flowEngine.version>
+	</properties>
+	
+	 <dependencies>
+	  		<!-- junit -->
+	  		<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${junit.version}</version>
+				<scope>test</scope>
+			</dependency>
+			
+			<!-- log4j -->
+			<dependency>
+    			<groupId>log4j</groupId>
+    			<artifactId>log4j</artifactId>
+  				<version>${log4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			<dependency>
+			<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-log4j12</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			
+			<!-- 分页插件 start -->
+			<dependency>
+				<groupId>com.github.pagehelper</groupId>
+				<artifactId>pagehelper</artifactId>
+				<version>${mybatis.paginator.version}</version>
+			</dependency>
+			
+			<!-- sql解析插件 -->
+			<dependency>
+				<groupId>com.github.jsqlparser</groupId>
+				<artifactId>jsqlparser</artifactId>
+				<version>${jsqlparser.version}</version>
+			</dependency>
+			
+			<!-- mysql -->
+			<dependency>
+				<groupId>mysql</groupId>
+				<artifactId>mysql-connector-java</artifactId>
+				<version>${mysql.version}</version>
+			</dependency>
+
+			<!-- oracle -->
+			<dependency>
+				<groupId>com.oracle</groupId>
+				<artifactId>ojdbc14</artifactId>
+				<version>${oracle.driver.version}</version>
+			</dependency>
+			
+			<!-- json -->
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>fastjson</artifactId>
+				<version>${fastjson.version}</version>
+			</dependency>
+			
+			<!-- 返回值为json格式 -->
+			<dependency>
+   				 <groupId>com.fasterxml.jackson.core</groupId>
+   				 <artifactId>jackson-core</artifactId>
+   				 <version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+   				 <groupId>com.fasterxml.jackson.core</groupId>
+   				 <artifactId>jackson-annotations</artifactId>
+   				 <version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+   				 <groupId>com.fasterxml.jackson.core</groupId>
+   				 <artifactId>jackson-databind</artifactId>
+   				 <version>${jackson.version}</version>
+			</dependency>
+			
+			<!-- 上传组件包 -->
+			<dependency>
+				<groupId>commons-fileupload</groupId>
+				<artifactId>commons-fileupload</artifactId>
+				<version>${commons-fileupload.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>${commons-io.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-codec</groupId>
+				<artifactId>commons-codec</artifactId>
+				<version>${commons-codec.version}</version>
+			</dependency>
+			<!-- 文件压缩 -->
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-compress</artifactId>
+				<version>${commons-compress.version}</version>
+			</dependency>
+			
+			<!-- servlet-api -->
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>servlet-api</artifactId>
+				<version>${servlet-api.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			
+			<!-- jstl -->
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>jstl</artifactId>
+				<version>${jstl.version}</version>
+			</dependency>
+			
+			<!-- jsp-api -->
+			<dependency>
+				<groupId>javax.servlet.jsp</groupId>
+				<artifactId>jsp-api</artifactId>
+				<version>${jsp-api.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			
+			<!-- ognl -->
+			<dependency>
+				<groupId>ognl</groupId>
+				<artifactId>ognl</artifactId>
+				<version>${ognl.version}</version>
+			</dependency>
+			
+			<!-- freemarker -->
+			<dependency>
+				<groupId>org.freemarker</groupId>
+				<artifactId>freemarker</artifactId>
+				<version>${freemarker.version}</version>
+			</dependency>
+			
+			<!-- mybatis核心包 -->
+			<dependency>
+				<groupId>org.mybatis</groupId>
+				<artifactId>mybatis</artifactId>
+				<version>${mybatis.version}</version>
+			</dependency>
+			<!-- mybatis/spring包 -->
+			<dependency>
+				<groupId>org.mybatis</groupId>
+				<artifactId>mybatis-spring</artifactId>
+				<version>${mybatis-spring.version}</version>
+			</dependency>
+			<!-- druid -->
+			<dependency>
+		    	<groupId>com.alibaba</groupId>
+		    	<artifactId>druid</artifactId>
+		    	<version>${druid.version}</version>
+			</dependency>
+			
+			<!-- Spring Dependency Begin -->
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-aop</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-aspects</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-beans</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context-support</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-core</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-jms</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-orm</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-oxm</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-test</artifactId>
+				<version>${spring.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-tx</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-web</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-webmvc</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+		  	<!-- Spring Dependency End -->
+		  	<!-- flowEngine -->
+		  	<dependency>
+				<groupId>com.minstone.workflow.java</groupId>
+				<artifactId>FlowEngine</artifactId>
+				<version>${flowEngine.version}</version>
+			</dependency>
+		  	<!-- poi -->
+		  	<dependency>
+		  		<groupId>org.apache.poi</groupId>
+		    	<artifactId>poi</artifactId>
+		    	<version>${poi.version}</version>
+		  	</dependency>
+		  	<dependency>
+		  		<groupId>org.apache.poi</groupId>
+		    	<artifactId>poi-ooxml</artifactId>
+		    	<version>${poi.version}</version>
+		    	<exclusions>
+		    		<exclusion>
+		    			<artifactId>xml-apis</artifactId>
+		    			<groupId>xml-apis</groupId>
+		    		</exclusion>
+		    		<exclusion>
+		    			<artifactId>stax-api</artifactId>
+		    			<groupId>stax</groupId>
+		    		</exclusion>
+		    	</exclusions>
+		  	</dependency>
+		  	<!-- poi end -->
+		  	<!-- axis -->
+		  	<dependency>
+				<groupId>org.apache.axis</groupId>
+				<artifactId>axis</artifactId>
+				<version>${axis.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.axis</groupId>
+				<artifactId>axis-saaj</artifactId>
+				<version>${axis.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.axis</groupId>
+				<artifactId>axis-jaxrpc</artifactId>
+				<version>${axis.version}</version>
+				<scope>provided</scope>
+			</dependency>
+		  	<!-- axis end -->
+		  	<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${commons-lang3.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.minstone.approve</groupId>
+				<artifactId>FlowGate</artifactId>
+				<version>${flowGate.version}</version>
+			</dependency>
+			<!-- 环保受理公示，审批前公示，审批后公示接口 -->
+			<dependency>
+				<groupId>com.minstone.approve</groupId>
+				<artifactId>trswcmv6</artifactId>
+				<version>${trswcmv.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.minstone.approve</groupId>
+				<artifactId>trswcmv6ex</artifactId>
+				<version>${trswcmv.version}</version>
+			</dependency>
+			<!-- 增加poi对word的支持 -->
+			<dependency>
+	            <groupId>org.apache.poi</groupId>
+	            <artifactId>poi-scratchpad</artifactId>
+	            <version>${poiScratchpad.version}</version>
+	        </dependency>
+	        <!--sf.json  -->
+	        <dependency>
+				<groupId>net.sf.json-lib</groupId>
+				<artifactId>json-lib</artifactId>
+				<classifier>jdk13</classifier>
+				<version>${sfJsonlib.version}</version>
+			</dependency>
+			<!-- httpClient -->
+			<dependency>
+			    <groupId>commons-httpclient</groupId>
+			    <artifactId>commons-httpclient</artifactId>
+			    <version>${commons-httpclient.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpclient</artifactId>
+				<version>${httpClient.version}</version>
+			</dependency>
+	  </dependencies>
+	 <build>
+	 	<plugins>
+	 		<plugin>
+		        <artifactId>maven-compiler-plugin</artifactId>
+		        <configuration>
+		            <source>1.6</source>
+		            <target>1.6</target>
+		        </configuration>
+    		</plugin>
+	 		<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<version>2.5</version>
+					<warName>WebConfig</warName>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.12.4</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+	 	</plugins>
+	 	<resources>
+			<resource>
+				<directory>src/main/java</directory>
+				<!-- 是否替换资源中的属性 -->
+				<filtering>false</filtering>
+				<includes>
+					<include>**/*.xml</include>
+					<include>**/*.properties</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+	 </build>
+</project>

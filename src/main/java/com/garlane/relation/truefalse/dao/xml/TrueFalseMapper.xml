@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.garlane.relation.truefalse.dao.TrueFalseDao">
+	
+	<sql id="allFields">
+		t.uuid, t.condition, t.flag, t.page_url, t.create_time, t.project_name,t.tips,t.status,t.tf_name,t.parent_flag
+	</sql>
+	
+	<select id="loadByPoJo" resultType="com.garlane.relation.truefalse.model.TrueFalseModel">
+		select <include refid="allFields"></include>,a.action_url,a.tips as actionTips from web_config_truefalse t ,web_config_action a 
+		<if test="_parameter != null">
+			<where>
+				a.results = t.page_url
+				<if test="projectName !=null and projectName !=''">
+			 	 	and t.project_name like '%'|| #{projectName} || '%'
+			 	 </if>
+			 	 <if test="pageUrl !=null and pageUrl !=''">
+			 	 	and t.page_url like '%'|| #{page_url} || '%'
+			 	 </if>
+			 	 <if test="flag !=null and flag !=''">
+			 	 	and t.flag like '%'|| #{flag} || '%'
+			 	 </if>
+			 	 <if test="uuid !=null and uuid !=''">
+			 	 	and t.uuid like '%'|| #{uuid} || '%'
+			 	 </if>
+			 	 <if test="condition !=null and condition !=''">
+			 	 	and t.condition like '%'|| #{condition} || '%'
+			 	 </if>		 	 
+			 	 <if test="actionUrl !=null and actionUrl !=''">
+			 	 	and a.action_url like '%'|| #{actionUrl} || '%'
+			 	 </if>
+			</where>
+		</if>
+		 	 order by t.project_name asc,t.page_url asc,t.flag asc,t.create_time desc
+	</select>
+	
+	<select id="loadByUuid" resultType="com.garlane.relation.truefalse.model.TrueFalseModel">
+		select <include refid="allFields"></include> from web_config_truefalse t 
+		where t.uuid = #{uuid}
+	</select>
+	
+	<delete id="deleteByUuids">
+		delete from web_config_truefalse 
+		where uuid in
+		<foreach collection="uuids" item="uuid" index="index" open="(" close=")" separator=",">
+			#{uuid}
+		</foreach>
+	</delete>
+	
+	<update id="updateSelective">
+	   update web_config_truefalse
+   	   <set>
+		    condition = #{condition},
+   	   		<if test="flag != null and flag != ''">
+		       flag = #{flag},
+   	   		</if>
+   	   		<if test="pageUrl != null and pageUrl != ''">
+		       page_url = #{pageUrl},
+   	   		</if>
+   	   		<if test="createTime !=null ">
+		       create_time = #{createTime},
+   	   		</if>
+   	   		<if test="projectName != null and projectName != ''">
+		       project_name = #{projectName},
+   	   		</if>
+   	   		<if test="tips != null and tips != ''">
+		       tips = #{tips},
+   	   		</if>
+   	   		<if test="status != null and status != ''">
+   	   			status=#{status},
+   	   		</if>
+   	   		<if test="tfName != null and tfName != ''">
+   	   			tf_name=#{tfName},
+   	   		</if>   	   		
+   	   		<if test="parentFlag != null and parentFlag != ''">
+   	   			parent_flag=#{parentFlag}
+   	   		</if>
+       </set>
+ 	   where uuid = #{uuid}
+	</update>
+	
+	<insert id="add">
+		<selectKey keyProperty="uuid" resultType="java.lang.String" order="BEFORE">
+            select sys_guid() from dual
+        </selectKey>
+        insert into web_config_truefalse
+        (uuid, condition, flag, page_url, create_time, project_name,tips,status,tf_name,parent_flag)
+		values 
+		(#{uuid},#{condition},#{flag},#{pageUrl},#{createTime},#{projectName},#{tips},#{status},#{tfName},#{parentFlag})
+	</insert>
+	
+</mapper>

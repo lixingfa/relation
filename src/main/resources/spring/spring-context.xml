@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context" 
+	   xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xmlns:cache="http://www.springframework.org/schema/cache"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+	   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+	   http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-4.0.xsd 
+	   http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
+    
+    <description>Spring Context Configuration</description>
+    
+    <!-- 初始化读取配置文件进行全局缓存 -->   
+	<bean id="propertyPlaceholderConfigurer" class="com.garlane.relation.common.utils.config.ApprPropConfigUtil">
+		<property name="ignoreResourceNotFound" value="true" />
+		<property name="locations" >
+			<list>
+ 				<value>file:${user.dir}/appr.properties</value>
+			</list>
+		</property>
+	</bean>
+    
+    <!-- 文件上传的配置 -->  
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">    
+	 	<!-- 默认编码 (ISO-8859-1) -->
+        <property name="defaultEncoding" value="UTF-8"/>
+        <!-- 最大内存大小 (10240) -->
+        <property name="maxInMemorySize" value="10240"/>
+        <!-- 上传后的目录名 -->
+        <!--<property name="uploadTempDir" value="/upload"/>-->
+        <!-- 最大文件大小，-1为无限止(-1),最大上传文件3M -->
+        <property name="maxUploadSize" value="-1"/>
+   </bean>  
+   
+    <!-- 导入mybatis配置 -->
+	<import resource="classpath:spring/spring-mybatis.xml" />
+    
+</beans>
