@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee" xmlns:jsp="http://java.sun.com/xml/ns/javaee/jsp" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
   <display-name>relation</display-name>
-  <welcome-file-list>
-    <welcome-file>index.jsp</welcome-file>
-  </welcome-file-list>
   <context-param>
     <param-name>contextConfigLocation</param-name>
     <param-value>classpath:spring/spring-context.xml</param-value>
@@ -87,81 +84,101 @@
     <filter-name>commonFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
-  <servlet>
-    <servlet-name>DruidStatView</servlet-name>
-    <servlet-class>com.alibaba.druid.support.http.StatViewServlet</servlet-class>
-    <init-param>
-      <param-name>allow</param-name>
-      <param-value>127.0.0.1</param-value>
-    </init-param>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>DruidStatView</servlet-name>
-    <url-pattern>/druid/*</url-pattern>
-  </servlet-mapping>
-  <session-config>
-    <session-timeout>1800</session-timeout>
-  </session-config>
-  <login-config>
-    <auth-method>FORM</auth-method>
-    <realm-name>MyJDBCRealm</realm-name>
-    <form-login-config>
-      <form-login-page>/login.do</form-login-page>
-      <form-error-page>/login.do?error</form-error-page>
-    </form-login-config>
-  </login-config>
-  <security-constraint>
-    <display-name>everyone</display-name>
-    <web-resource-collection>
-      <web-resource-name>AdminPages</web-resource-name>
-      <url-pattern>*.jsp</url-pattern>
-      <url-pattern>/admin/*</url-pattern>
-      <url-pattern>/appr/*</url-pattern>
-      <http-method>GET</http-method>
-      <http-method>POST</http-method>
-    </web-resource-collection>
-    <auth-constraint>
-      <role-name>*</role-name>
-    </auth-constraint>
-    <user-data-constraint>
-      <transport-guarantee>NONE</transport-guarantee>
-    </user-data-constraint>
-  </security-constraint>
-  <security-role>
-    <role-name>*</role-name>
-  </security-role>
-  <jsp-config>
-    <taglib>
-      <taglib-uri>tmpid.tld</taglib-uri>
-      <taglib-location>/WEB-INF/taglib/tmpid.tld</taglib-location>
-    </taglib>
-    <jsp-property-group>
-      <display-name>jsp display</display-name>
-      <url-pattern>*.jsp</url-pattern>
-      <el-ignored>false</el-ignored>
-      <page-encoding>utf-8</page-encoding>
-      <scripting-invalid>false</scripting-invalid>
-      <is-xml>false</is-xml>
-      <include-prelude>/WEB-INF/jsp/common/common.jspf</include-prelude>
-    </jsp-property-group>
-  </jsp-config>
-  <welcome-file-list>
-    <welcome-file>index</welcome-file>
-  </welcome-file-list>
-  <error-page>
-    <error-code>500</error-code>
-    <location>/WEB-INF/jsp/error/500.jsp</location>
-  </error-page>
-  <error-page>
-    <error-code>404</error-code>
-    <location>/WEB-INF/jsp/error/404.jsp</location>
-  </error-page>
-  <error-page>
-    <error-code>403</error-code>
-    <location>/WEB-INF/jsp/error/403.jsp</location>
-  </error-page>
-  <error-page>
-    <error-code>400</error-code>
-    <location>/WEB-INF/jsp/error/400.jsp</location>
-  </error-page>
+  
+	<!-- DruidStatView SQL监控 -->
+	<servlet>
+		<servlet-name>DruidStatView</servlet-name>
+		<servlet-class>com.alibaba.druid.support.http.StatViewServlet</servlet-class>
+		<init-param>
+			<!-- 用户名 -->
+			<param-name>loginUsername</param-name>
+			<param-value>druid</param-value>
+		</init-param>
+		<init-param>
+			<!-- 密码 -->
+			<param-name>loginPassword</param-name>
+			<param-value>minstone123</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DruidStatView</servlet-name>
+		<url-pattern>/druid/*</url-pattern>
+	</servlet-mapping>
+
+	<!-- session会话 -->
+	<session-config>
+		<session-timeout>1800</session-timeout>
+	</session-config>
+
+	<!-- 登录配置 -->
+	<login-config>
+		<auth-method>FORM</auth-method>
+		<!-- 东方通中间件支持 -->
+		<realm-name>MyJDBCRealm</realm-name>
+		<form-login-config>
+			<form-login-page>/login.do</form-login-page>
+			<form-error-page>/login.do?error</form-error-page>
+		</form-login-config>
+	</login-config>
+
+	<!-- 权限验证 -->
+	<security-constraint>
+		<display-name>everyone</display-name>
+		<web-resource-collection>
+			<web-resource-name>AdminPages</web-resource-name>
+			<url-pattern>*.do</url-pattern>
+     		<url-pattern>*.jsp</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>*</role-name>
+		</auth-constraint>
+		<user-data-constraint>
+			<transport-guarantee>NONE</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+
+	<security-role>
+    	<role-name>*</role-name>
+  	</security-role>
+  
+	<!-- jsp属性设置 -->
+	<jsp-config>
+		<!-- jsp继承标签 -->
+		<taglib>
+			<taglib-uri>tmpid.tld</taglib-uri>
+			<taglib-location>/WEB-INF/taglib/tmpid.tld</taglib-location>
+		</taglib>
+		<jsp-property-group>
+			<display-name>jsp display</display-name>
+			<url-pattern>*.jsp</url-pattern>
+			<el-ignored>false</el-ignored>
+			<page-encoding>utf-8</page-encoding>
+			<scripting-invalid>false</scripting-invalid>
+			<is-xml>false</is-xml>
+			<include-prelude>/WEB-INF/jsp/common/common.jspf</include-prelude>
+		</jsp-property-group>
+	</jsp-config>
+
+	<!-- 主页面 -->
+	<welcome-file-list>
+		<welcome-file>index</welcome-file>
+	</welcome-file-list>
+	
+	<!-- 错误页面 -->
+	<error-page>
+		<error-code>500</error-code>
+		<location>/WEB-INF/jsp/error/500.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/WEB-INF/jsp/error/404.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>403</error-code>
+		<location>/WEB-INF/jsp/error/403.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>400</error-code>
+		<location>/WEB-INF/jsp/error/400.jsp</location>
+	</error-page>
 </web-app>
