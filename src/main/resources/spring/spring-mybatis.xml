@@ -162,7 +162,7 @@
         <property name="dataSource" ref="dbDataSource"/>
         <property name="databaseIdProvider" ref="databaseIdProvider" />
         <property name="typeAliasesPackage" value="com.garlane.relation"/>
-        <property name="mapperLocations" value="classpath*:com/minstone/webconfig/**/*.xml"/>
+        <property name="mapperLocations" value="classpath*:com/garlane/relation/**/*.xml"/>
 		<property name="configLocation" value="classpath:mybatis/mybatis-config.xml"></property>
     </bean>
     
