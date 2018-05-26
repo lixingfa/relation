@@ -39,6 +39,7 @@
 	<br>
 	Messages:
 	<div id="i_stream_message_container" class="stream-main-upload-box" style="overflow: auto;height:200px;"></div>
+	<input type="hidden" id="fileArray"/>
 <br>
 
 <script type="text/javascript">
@@ -50,7 +51,7 @@ var extArr=extStr.split(',');
  * 是在ID为i_stream_message_container的页面元素中写日志
  */
  var config = {
-			maxSize:uploadFileMaxSize,//单个文件的大小限制，单位：字节
+			maxSize:${uploadFileMaxSize},//单个文件的大小限制，单位：字节
 			browseFileId : "i_select_files", 
 			browseFileBtn : "<div class='ie8css'>请选择文件</div>",
 			dragAndDropArea: "i_select_files", 
@@ -83,7 +84,7 @@ var extArr=extStr.split(',');
 				return false;
 			},
 			onMaxSizeExceed: function(file) {
-				alert("最大文件大小： " + (uploadFileMaxSize/1024)
+				alert("最大文件大小： " + (${uploadFileMaxSize}/1024)
 	   			+ " KB 但是 \"" + file.name + "\" 是：" + (file.size/1024).toFixed(2)+" KB");
 			},
 			onComplete: function(file) {
@@ -100,10 +101,8 @@ var extArr=extStr.split(',');
 				$("#fileArray").val("");
 				$("#fileArray").val(fileArray);
 				$.ajax({
-					url:"${root}/control/apprAttachment/saveAttachment.do",
+					url:"${root}/fileAnalyze/getFileLogic.do",
 					data:{
-						"attaVo.controlSeq":controlSeq,
-						"attaVo.stuffId":stuffId,
 						"attaVo.stuffName":encodeURIComponent(stuffName),
 						"attaVo.attachType":attachType,
 						"customSavePath":customSavePath,

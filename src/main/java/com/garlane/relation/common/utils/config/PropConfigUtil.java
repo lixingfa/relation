@@ -21,8 +21,8 @@ import org.springframework.util.StringUtils;
  * @author zyf
  * 
  */
-public class ApprPropConfigUtil extends PropertyPlaceholderConfigurer {
-	private final Logger logger = Logger.getLogger(ApprPropConfigUtil.class);
+public class PropConfigUtil extends PropertyPlaceholderConfigurer {
+	private final Logger logger = Logger.getLogger(PropConfigUtil.class);
 	private final static Map<String, String> resolvedProps = new HashMap<String, String>();// 将属性保存起来
 	
 	@Override

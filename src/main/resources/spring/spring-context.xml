@@ -12,11 +12,11 @@
     <description>Spring Context Configuration</description>
     
     <!-- 初始化读取配置文件进行全局缓存 -->   
-	<bean id="propertyPlaceholderConfigurer" class="com.garlane.relation.common.utils.config.ApprPropConfigUtil">
+	<bean id="propertyPlaceholderConfigurer" class="com.garlane.relation.common.utils.config.PropConfigUtil">
 		<property name="ignoreResourceNotFound" value="true" />
 		<property name="locations" >
 			<list>
- 				<value>file:${user.dir}/appr.properties</value>
+ 				<value>file:E:/relation.properties</value>
 			</list>
 		</property>
 	</bean>
