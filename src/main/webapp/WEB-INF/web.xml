@@ -22,20 +22,7 @@
   <listener>
     <listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
   </listener>
-  <servlet>
-    <servlet-name>springMVC</servlet-name>
-    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-    <init-param>
-      <param-name>contextConfigLocation</param-name>
-      <param-value>classpath:spring/spring-mvc.xml</param-value>
-    </init-param>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>springMVC</servlet-name>
-    <url-pattern>*.do</url-pattern>
-    <url-pattern>/index</url-pattern>
-  </servlet-mapping>
+  
   <filter>
     <filter-name>encodingFilter</filter-name>
     <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
@@ -84,6 +71,21 @@
     <filter-name>commonFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
+  
+  <servlet>
+    <servlet-name>springMVC</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <init-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>classpath:spring/spring-mvc.xml</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>springMVC</servlet-name>
+    <url-pattern>*.do</url-pattern>
+    <url-pattern>/index</url-pattern>
+  </servlet-mapping>
   <servlet>
     <servlet-name>DruidStatView</servlet-name>
     <servlet-class>com.alibaba.druid.support.http.StatViewServlet</servlet-class>
@@ -100,6 +102,34 @@
     <servlet-name>DruidStatView</servlet-name>
     <url-pattern>/druid/*</url-pattern>
   </servlet-mapping>
+  <servlet>
+		<servlet-name>TokenServlet</servlet-name>
+		<servlet-class>com.garlane.relation.common.servlet.TokenServlet</servlet-class>
+		<load-on-startup>0</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>TokenServlet</servlet-name>
+		<url-pattern>/TokenServlet</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>StreamServlet</servlet-name>
+		<servlet-class>com.garlane.relation.common.servlet.StreamServlet</servlet-class>
+		<load-on-startup>0</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>StreamServlet</servlet-name>
+		<url-pattern>/StreamServlet</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>FormDataServlet</servlet-name>
+		<servlet-class>com.garlane.relation.common.servlet.FormDataServlet</servlet-class>
+		<load-on-startup>0</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>FormDataServlet</servlet-name>
+		<url-pattern>/FormDataServlet</url-pattern>
+	</servlet-mapping>
+  
   <session-config>
     <session-timeout>1800</session-timeout>
   </session-config>

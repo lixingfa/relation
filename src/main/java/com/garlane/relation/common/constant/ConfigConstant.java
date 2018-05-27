@@ -21,16 +21,15 @@ public class ConfigConstant {
 	public static String DBNAME = PropConfigUtil.get("base.jdbc.name");
 
 	/**默认允许上传单文件最大值(单位字节) 50MB*/
-    public static final long DEFAULT_UPLOADFILE_MAX_SIZE =PropConfigUtil.get("UPLOADFILE_MAX_SIZE") == null?10485760*5*6L:Integer.parseInt(PropConfigUtil.get("UPLOADFILE_MAX_SIZE"));
+    public static final String UPLOADFILE_MAX_SIZE = PropConfigUtil.get("UPLOADFILE_MAX_SIZE", "314572800");
 	
-
+    /****/
+    public static final String UPLOADFILE_MAX_NUM = PropConfigUtil.get("UPLOADFILE_MAX_NUM","100");
+    
 	/** 附件上传默认物理路径 uploadFilestUserFilesh */
-	private static final String DEFAULT_ROOT_PATH_ATTACHMENT = File.separator + "uploadFilest" + File.separator + "UserDFileh"
-			+ File.separator;
+	private static final String DEFAULT_ROOT_PATH_ATTACHMENT = File.separator + "uploadFiles" + File.separator + "UserFile" + File.separator;
 
-	/**
-	 * 附件上传物理路径
-	 * */
+	/** 附件上传物理路径 * */
 	public static String ROOT_PATH_ATTACHMENT = PropConfigUtil.get("ROOT_PATH_ATTACH",DEFAULT_ROOT_PATH_ATTACHMENT);
 	
 	/**

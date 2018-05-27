@@ -30,7 +30,8 @@ public class uploadController extends BaseController {
 		try {
 			logger.info("跳转到上传界面");			
 			ModelAndView modelAndView = new ModelAndView("upload/upload");
-			modelAndView.addObject("uploadFileMaxSize",ConfigConstant.DEFAULT_UPLOADFILE_MAX_SIZE );
+			modelAndView.addObject("uploadFileMaxSize",ConfigConstant.UPLOADFILE_MAX_SIZE );
+			modelAndView.addObject("uploadFileMaxNum",ConfigConstant.UPLOADFILE_MAX_NUM );
 			return modelAndView;
 		} catch (Exception e) {
 			logger.error("跳转失败", e);

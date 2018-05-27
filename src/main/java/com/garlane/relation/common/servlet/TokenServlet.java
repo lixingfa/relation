@@ -11,10 +11,6 @@ import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.garlane.relation.common.servlet.uitl.TokenUtil;
 
-/**
- * @author linhx
- *
- */
 public class TokenServlet extends HttpServlet{
 	private static final long serialVersionUID = 8713634959941852995L;
 	static final String FILE_NAME_FIELD = "name";

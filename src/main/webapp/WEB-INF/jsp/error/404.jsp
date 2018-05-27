@@ -1,5 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
-	<rapid:override name="title"><title>广州明动软件股份有限公司</title></rapid:override>
+	<rapid:override name="title"><title>格兰科技</title></rapid:override>
 	
 	<rapid:override name="otherCss">
     <link rel="stylesheet" href="${css}/error/error.css">
@@ -15,7 +15,7 @@
 					<li>抱歉，页面好像去火星了~</li>  
 				</ul>    
 			</p>    
-			<p class="right"><a>广州明动软件股份有限公司</a></p>       
+			<p class="right"><a>格兰科技</a></p>       
 	    </div>
     </div>
 	</rapid:override>

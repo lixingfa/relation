@@ -30,7 +30,7 @@ public class PropConfigUtil extends PropertyPlaceholderConfigurer {
 
 		Set<Object> keySets = props.keySet();
 		if (keySets != null && keySets.size() != 0) {
-			logger.info("加载域环境目录下appr.properties文件");
+			logger.info("加载spring-context配置的relation.properties文件");
 		}
 		
 		for (Object key : keySets) {

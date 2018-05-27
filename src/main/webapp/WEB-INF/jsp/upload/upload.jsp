@@ -19,23 +19,15 @@
   
   <body>
 	<div id="i_select_files" class="stream-browse-files stream-browse-drag-files-area" style="display: block;">
-		<div>请选择文件</div><span>把文件(文件夹)拖拽到这里</span>
+		
 	</div>
 	<div id="i_stream_files_queue" class=" stream-main-upload-box">
-		<div class="stream-files-scroll" style="height: 200px;">
-			<ul id="files-container_1527176743142_01v_1"></ul>
-		</div>
-		<div id="total-container_1527176743142_01v_2" class="stream-total-tips">
-			上传总进度：<span class="stream-process-bar"><span style="width: 0%;"></span></span>
-			<span class="stream-percent">0%</span>，已上传<strong class="_stream-total-uploaded">&nbsp;</strong>
-				，总文件大小<strong class="_stream-total-size">&nbsp;</strong></div>
+	
 	</div>
-	<button onclick="javascript:_t.upload();">开始上传</button>|
-	<button onclick="javascript:_t.stop();">停止上传</button>|
-	<button onclick="javascript:_t.cancel();">取消</button>|
-	<button onclick="javascript:_t.disable();">禁用文件选择</button>|
-	<button onclick="javascript:_t.destroy();_t=null;_t=new Stream(config);">清空上传队列</button>|
-	<button onclick="javascript:_t.enable();">启用文件选择</button>
+	<button onclick="javascript:_t.upload();">开始上传</button>
+	<button onclick="javascript:_t.stop();">停止上传</button>
+	<button onclick="javascript:_t.cancel();">取消</button>
+	<button onclick="javascript:_t.destroy();_t=null;_t=new Stream(config);">清空上传队列</button>
 	<br>
 	Messages:
 	<div id="i_stream_message_container" class="stream-main-upload-box" style="overflow: auto;height:200px;"></div>
@@ -43,8 +35,10 @@
 <br>
 
 <script type="text/javascript">
-var extStr='.html,.htm,.js,.css,.png,.jpg,.gif,.swf';
+var extStr=".html,.htm,.js,.css,.png,.jpg,.gif,.swf";
 var extArr=extStr.split(',');
+
+var fileArray = {};
 /**stream上传控件，官网：http://www.twinkling.cn/
  * 配置文件（如果没有默认字样，说明默认值就是注释下的值）
  * 但是，on*（onSelect， onMaxSizeExceed...）等函数的默认行为
@@ -55,17 +49,17 @@ var extArr=extStr.split(',');
 			browseFileId : "i_select_files", 
 			browseFileBtn : "<div class='ie8css'>请选择文件</div>",
 			dragAndDropArea: "i_select_files", 
-			dragAndDropTips: tags, 
+			//dragAndDropTips: tags, 
 			filesQueueId : "i_stream_files_queue", 
 			filesQueueHeight : 220, // 文件上传容器的高度（px）
 			multipleFiles: true, // 多个文件一起上传
 			autoUploading: false,//选择文件后是否自动上传
-			postVarsPerFile : postParms,//上传文件时传入的参数
+			//postVarsPerFile : postParms,//上传文件时传入的参数
 			tokenURL : "${root}/TokenServlet",//根据文件名、大小等信息获取Token的URI（用于生成断点续传、跨域的令牌）
 			frmUploadURL : "${root}/FormDataServlet",//Flash上传的URI
 			uploadURL : "${root}/StreamServlet",//HTML5上传的URI
-			simLimit: 10,//单次最大上传文件个数
-			swfURL : "${resource}/stream/FlashUploader.swf", //SWF文件的位置 
+			simLimit: ${uploadFileMaxNum},//单次最大上传文件个数
+			swfURL : "${resource}/stream/swf/FlashUploader.swf", //SWF文件的位置 
 			extFilters :extArr,//允许上传文件的类型--这里启用会导致谷歌浏览器选择文件窗口加载缓慢
 			//formed:true,//采用表单上传(FLASH)方式
 			/** 文件重复的响应事件  */

@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -22,6 +24,7 @@ import com.garlane.relation.common.servlet.uitl.IoUtil;
 import com.garlane.relation.common.servlet.uitl.StreamException;
 import com.garlane.relation.common.servlet.uitl.StreamRange;
 import com.garlane.relation.common.utils.AttachmentUtil;
+import com.garlane.relation.common.utils.web.WebUtil;
 
 /**
  * File reserved servlet, mainly reading the request parameter and its file
@@ -32,6 +35,7 @@ public class StreamServlet extends HttpServlet {
     private static final long serialVersionUID = -4508191159365889082L;
     
     private static final Logger logger = Logger.getLogger(StreamServlet.class);
+    private SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmssSSSS");
     
     /** when the has increased to 10kb, then flush it to the hard-disk. */
     static final int BUFFER_LENGTH = 10240;
@@ -49,7 +53,7 @@ public class StreamServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        
+    	
         doOptions(req, resp);
         
         JSONObject json = new JSONObject();
@@ -57,8 +61,8 @@ public class StreamServlet extends HttpServlet {
         final String token = req.getParameter(TokenServlet.TOKEN_FIELD);
         final String size = req.getParameter(TokenServlet.FILE_SIZE_FIELD);
         final String fileName = req.getParameter(TokenServlet.FILE_NAME_FIELD);
-        final String customSavePath = req.getParameter(TokenServlet.FILE_PATH_FIELD);
-        final String filePath = ConfigConstant.ROOT_PATH_ATTACHMENT + customSavePath;
+        //这里组装路径
+        final String filePath = ConfigConstant.ROOT_PATH_ATTACHMENT + File.separator + format.format(new Date()) + File.separator;//TODO 没拿到当前用户 WebUtil.getRemoteUser()
         String newFileName = fileName;
         long start = 0;
         boolean success = true;
@@ -101,9 +105,8 @@ public class StreamServlet extends HttpServlet {
         
         final String token = req.getParameter(TokenServlet.TOKEN_FIELD);
         final String fileName = req.getParameter(TokenServlet.FILE_NAME_FIELD);
-        final String customSavePath = req.getParameter(TokenServlet.FILE_PATH_FIELD);
         //这里组装路径
-        final String filePath = ConfigConstant.ROOT_PATH_ATTACHMENT + customSavePath;
+        final String filePath = ConfigConstant.ROOT_PATH_ATTACHMENT + File.separator + format.format(new Date()) + File.separator;//TODO 没拿到当前用户 WebUtil.getRemoteUser()
         StreamRange range = IoUtil.parseRange(req);
         
         OutputStream out = null;
@@ -148,7 +151,7 @@ public class StreamServlet extends HttpServlet {
             /** rename the file */
             String newFileName = null;
             if (range.getSize() == start) {
-                long maxSize = ConfigConstant.DEFAULT_UPLOADFILE_MAX_SIZE;
+                long maxSize = Long.parseLong(ConfigConstant.UPLOADFILE_MAX_SIZE);
                 if(range.getSize()>maxSize){
                     success = false;
                     message = "最大文件大小： " + maxSize
