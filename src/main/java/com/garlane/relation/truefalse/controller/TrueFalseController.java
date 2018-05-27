@@ -102,7 +102,7 @@ public class TrueFalseController extends BaseController {
     public List<WebConfigTreeModel> loadTrueFalseTree(String actionProjName, HttpServletRequest request){
         List<WebConfigTreeModel> temp = null;
         try{
-            temp = trueFalseService.loadTree(actionProjName);
+//            temp = trueFalseService.loadTree(actionProjName);
         }catch(Exception e){
             logger.error("获取平台请求树数据异常",e);
         }

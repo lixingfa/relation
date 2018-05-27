@@ -46,28 +46,6 @@ public interface BaseService<T> {
      */
      void add(T actionModel) throws SuperServiceException;
 
-     /**
-      * 
-      * loadTree:(加载jsp树). <br/> 
-      * @author zhouwx
-      * @date 2017年12月5日下午2:30:32
-      * @param actionProjName
-      * @return
-      * @throws SuperServiceException
-      */
-     List<WebConfigTreeModel> loadTree(String actionProjName) throws SuperServiceException;
-
-    /**
-     * 
-     * 
-     * @param absolutePath
-     * @param suffix 后缀
-     * @return
-     * @author zhouwx
-     * @date 2017年11月8日 上午11:48:44
-     */
-     List<Map<String, String>> loadComboBoxUrlFlag(String absolutePath,String suffix);
-
     /**
      * 
      * 

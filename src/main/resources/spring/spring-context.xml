@@ -30,8 +30,8 @@
         <!-- 上传后的目录名 -->
         <!--<property name="uploadTempDir" value="/upload"/>-->
         <!-- 最大文件大小，-1为无限止(-1),最大上传文件3M -->
-        <property name="maxUploadSize" value="-1"/>
-   </bean>  
+        <property name="maxUploadSize" value="${UPLOADFILE_MAX_SIZE}"/>
+   </bean>
    
     <!-- 导入mybatis配置 -->
 	<import resource="classpath:spring/spring-mybatis.xml" />

@@ -102,33 +102,6 @@
     <servlet-name>DruidStatView</servlet-name>
     <url-pattern>/druid/*</url-pattern>
   </servlet-mapping>
-  <servlet>
-		<servlet-name>TokenServlet</servlet-name>
-		<servlet-class>com.garlane.relation.common.servlet.TokenServlet</servlet-class>
-		<load-on-startup>0</load-on-startup>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>TokenServlet</servlet-name>
-		<url-pattern>/TokenServlet</url-pattern>
-	</servlet-mapping>
-	<servlet>
-		<servlet-name>StreamServlet</servlet-name>
-		<servlet-class>com.garlane.relation.common.servlet.StreamServlet</servlet-class>
-		<load-on-startup>0</load-on-startup>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>StreamServlet</servlet-name>
-		<url-pattern>/StreamServlet</url-pattern>
-	</servlet-mapping>
-	<servlet>
-		<servlet-name>FormDataServlet</servlet-name>
-		<servlet-class>com.garlane.relation.common.servlet.FormDataServlet</servlet-class>
-		<load-on-startup>0</load-on-startup>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>FormDataServlet</servlet-name>
-		<url-pattern>/FormDataServlet</url-pattern>
-	</servlet-mapping>
   
   <session-config>
     <session-timeout>1800</session-timeout>

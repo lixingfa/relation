@@ -19,6 +19,4 @@
 	    </div>
     </div>
 	</rapid:override>
-	
-<jsp:include page="/WEB-INF/jsp/common/commonMould.jsp" />
 

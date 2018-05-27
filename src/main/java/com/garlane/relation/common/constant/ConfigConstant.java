@@ -21,16 +21,19 @@ public class ConfigConstant {
 	public static String DBNAME = PropConfigUtil.get("base.jdbc.name");
 
 	/**默认允许上传单文件最大值(单位字节) 50MB*/
-    public static final String UPLOADFILE_MAX_SIZE = PropConfigUtil.get("UPLOADFILE_MAX_SIZE", "314572800");
+    public static final Long UPLOADFILE_MAX_SIZE = Long.parseLong(PropConfigUtil.get("UPLOADFILE_MAX_SIZE", "314572800"));
 	
-    /****/
-    public static final String UPLOADFILE_MAX_NUM = PropConfigUtil.get("UPLOADFILE_MAX_NUM","100");
+    /**上传的最大文件数量**/
+    public static final Long UPLOADFILE_MAX_NUM = Long.parseLong(PropConfigUtil.get("UPLOADFILE_MAX_NUM","100"));
     
-	/** 附件上传默认物理路径 uploadFilestUserFilesh */
+	/** 附件上传默认物理路径 uploadFilestUserFilesh **/
 	private static final String DEFAULT_ROOT_PATH_ATTACHMENT = File.separator + "uploadFiles" + File.separator + "UserFile" + File.separator;
 
-	/** 附件上传物理路径 * */
-	public static String ROOT_PATH_ATTACHMENT = PropConfigUtil.get("ROOT_PATH_ATTACH",DEFAULT_ROOT_PATH_ATTACHMENT);
+	/** 附件上传物理路径 **/
+	public static String ROOT_PATH_ATTACHMENT = PropConfigUtil.get("ROOT_PATH_ATTACHMENT",DEFAULT_ROOT_PATH_ATTACHMENT);
+	
+	/**允许上传的后缀**/
+	public static String UPLOAD_FILE_SUFFIXS = PropConfigUtil.get("UPLOAD_FILE_SUFFIXS", "html,htm,js,css,png,jpg,gif,swf");
 	
 	/**
 	 *	错误页面跳转路径定义
