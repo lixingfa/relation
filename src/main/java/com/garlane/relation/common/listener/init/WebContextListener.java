@@ -10,8 +10,6 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
-import com.garlane.relation.common.constant.NumConstant;
-
 /**
  *	初始化项目时执行
  *	@author lixingfa
@@ -26,7 +24,7 @@ public class WebContextListener implements ServletContextListener, ApplicationLi
 	private final static String systemName = "relation";
 	
 	/**系统启动加载次数*/
-	private int systemStartNum = NumConstant.COMMON_NUMBER_ONE;
+	private int systemStartNum = 1;
 	
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
@@ -63,9 +61,9 @@ public class WebContextListener implements ServletContextListener, ApplicationLi
 		}else{
 			ApplicationContext  ctx = event.getApplicationContext();
 			WebContextListener webContextListener = (WebContextListener) ctx.getBean("webContextListener");
-			if(ctx.getParent()!=null && webContextListener.systemStartNum==NumConstant.COMMON_NUMBER_ONE){
+			if(ctx.getParent()!=null && webContextListener.systemStartNum==1){
 				logger.info("\r\n===================== "+systemName+"启动完成  =======================\r\n");
-				webContextListener.systemStartNum = NumConstant.COMMON_NUMBER_TWO;
+				webContextListener.systemStartNum = 2;
 			}
 		}
 	}

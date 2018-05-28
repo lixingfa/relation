@@ -18,8 +18,9 @@
   <body>
 	<form action="${root}/upload/upload.do" method="post" enctype="multipart/form-data" id="form">
       項目页面目录：<input type="file" name="multipartFile" id="fileFolder" webkitdirectory><!-- 上传文件夹 -->
-      <span id="tips"></span><input type="button" value="提交上传" onclick="upload();">
+   <input type="button" value="提交上传" onclick="upload();">
   </form>
+  <div id="tips" style="width:100%;height:80%;border:solid 1px #ccc;overflow-y:auto;"></div>
   <script type="text/javascript">
   	/*document.getElementById('fileFolder').onchange = function(e) {
 		actual_filesSize=0;
@@ -55,11 +56,22 @@
 	  };*/
 	  function upload(){
 		$("#form").ajaxSubmit(function (result) {
-        	$("#tips").text(result.message);
-        		$("#tips").text(result.message);
-            	if(result.successful){
-                	alert(result.data);
-                 }
+        	$("#tips").append(result.message + "<br/>");
+        	//上传成功
+        	if(result.successful){
+            	$.ajax({
+                    type: "post",
+                    url: "${root}/fileAnalyze/getFileLogic.do",
+                    data: {path:result.data},
+                    dataType: "json",
+                    success: function(data){
+                    	$("#tips").append(data.message + "<br/>");
+                    	if(data.successful){
+                    		
+                    	}
+                    }
+                });
+             }
 		});	  
 	  }
   </script>

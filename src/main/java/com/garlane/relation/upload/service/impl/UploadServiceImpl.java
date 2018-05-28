@@ -50,11 +50,16 @@ public class UploadServiceImpl implements UploadService{
 			}
 			String path = ConfigConstant.ROOT_PATH_ATTACHMENT + format.format(new Date()) + File.separator;//TODO 要加上当前用户名
 			new File(path).mkdirs();
+			String priorPath = null;
 			//写入文件
 			for (MultipartFile mf : files) {
 				//保持上传时的目录结构
 				String name = ((CommonsMultipartFile)mf).getFileItem().getName();//找这个找得好辛苦，幸好看着源码找到了
-				FileUtils.FileCreate(path + name);
+				String dir = name.substring(0, name.lastIndexOf("/"));
+				if (!dir.equals(priorPath)) {
+					priorPath = dir;
+					FileUtils.FileCreate(path + name);					
+				}
 				mf.transferTo(new File(path + name));
 			}
 			return path;
