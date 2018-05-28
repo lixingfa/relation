@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="../static/components/easyui/themes/default/easyui.css"/>
+
+<script type="text/javascript" src="../static/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="../static/components/easyui/jquery.easyui.min.js"></script>
+</head>
+
+<body>
+	<div region="center" split="true" style="border:0;background:#eee;">
+   			<table id="areaList"></table>
+   	</div>
+    <div id="editWindow" style="display:none;"></div>  
+    
+<script type="text/javascript">	
+		/* 初始化加载完成后执行 */
+		$(function(){
+			$('#areaList').treegrid({    
+					fit: true,
+					nowrap: true, 
+					autoRowHeight: true,
+					animate:true,
+					scrollbarSize: 0,
+					striped: true,
+					collapsible:true,
+					singleSelect:false,
+					rownumbers:true,
+					url:'json/areaList.json',
+					idField:'areaSeq',
+					treeField:'areaName',
+					columns:[[
+						{field:'ck', checkbox: true},
+						{field:'areaSeq', hidden:true},
+						{field:'areaName',title:'地区名称',width:'30%'},
+						{field:'jcAreaSeq',title:'行政区划代码',width:'40%'},
+						{field:'monitorPhone',title:'监督电话',width:'30%', align: 'center'}
+					]],
+					toolbar:[{
+						id:'addArea',
+						text:'添加顶级地区',
+						iconCls:'icon16-plus',
+						handler:function(){
+							var areaList = $(".datagrid-btable");
+							if(areaList.length > 1){
+								$.messager.alert("操作提示", "只能有一个顶级地区","warning");
+								return;
+							}else{
+								
+							}
+						}
+					},{
+						id:'addSubArea',
+						text:'增加下属地区',
+						iconCls:'icon16-plus-small',
+						handler:function(){
+							//日志埋点
+							track(_maq.push(['_action', '基础数据管理_地区管理_新增下属地区']));
+							var selected = $("#areaList").treegrid('getSelections');
+							if(selected.length!=1){
+								$.messager.alert("操作提示", "请选择一个地区","warning");
+								return;
+							}else{
+								top.dialog({
+								    id: 'edit',
+								    url : '${root}/admin/system/area/toEditArea.do?saveOrUpdate=save&parentAreaSeq='+selected[0].areaSeq+"&parentAreaName="+encodeURIComponent(encodeURIComponent(selected[0].areaName)),
+								    width: 620,
+									height:640,
+									title:'新增下属地区',
+									onclose:function(){
+										if(typeof(this.returnValue[0]) == "undefined")return;
+				    					$('#areaList').treegrid('reload');//根节点
+				    				}
+								}).showModal();
+							}	
+						}
+					},{
+						id:'editUnit',
+						text:'编辑地区',
+						iconCls:'icon-edit',
+						handler:function(){
+							//日志埋点
+							track(_maq.push(['_action', '基础数据管理_地区管理_编辑地区']));
+							var selected = $("#areaList").treegrid('getSelections');
+							if(selected.length!=1){
+								$.messager.alert("操作提示", "请选择一个地区","warning");
+								return;
+							}else{
+								top.dialog({
+								    id: 'edit',
+								    url : '${root}/admin/system/area/toEditArea.do?saveOrUpdate=isUpdate'+'&areaSeq='+selected[0].areaSeq,
+								    width: 620,
+									height:640,
+									title:'编辑地区',
+									onclose:function(){
+										if(typeof(this.returnValue[0]) == "undefined")return;
+										$('#areaList').treegrid('reload');//根节点
+				    				}
+								}).showModal();
+							}
+						}
+					},{
+						id:'deleteUnit',
+						text:'删除地区',
+						iconCls:'icon16-minus',
+						handler:function(){
+							//日志埋点
+							track(_maq.push(['_action', '基础数据管理_地区管理_删除地区']));
+							var selected = $("#areaList").treegrid('getSelections');
+							if(selected.length<1){
+								$.messager.alert("操作提示", "请选择地区","warning");
+								return;
+							}else{
+								var areaSeq = "";
+								for(var i = 0;i < selected.length; i++){
+									areaSeq += selected[i].areaSeq+",";
+								}
+								areaSeq = areaSeq.substring(0,areaSeq.length-1);
+								var areaName = "";
+								for(var i = 0;i <selected.length; i++){
+									areaName += selected[i].areaName+",";
+								}
+								areaName = areaName.substring(0,areaName.length-1);
+								$.messager.confirm('删除确认',areaName + "的管理员及子地区都会被删除，确信要删除吗？",function(r){    
+    								if (r){    
+										var url = '${root}/admin/system/area/deleteArea.do';
+										$.ajax({
+											url: url,
+											type: 'post',
+											data: {
+												'areaSeq': areaSeq,
+												'areaName': areaName
+											},
+											success: function(data) {
+												if(data.successful){
+													$.messager.alert("操作提示", "删除地区成功!","info",function(){
+														top.dialog({id:'edit'}).close([1]).remove();
+													});
+													$('#areaList').treegrid('clearSelections');//清除选择
+													$('#areaList').treegrid('reload');//根节点
+												}else{
+													$.messager.alert("操作提示", "删除地区失败!" + data.message,"error");
+												}
+											},
+											error: function(error) {
+												$.messager.alert("操作提示", "系统错误！","error");
+											}
+										});	
+    								}    
+								});
+							}
+						}
+					}],
+					onBeforeLoad:function(row,param){//加载之前
+						if(row){
+							$(this).treegrid('options').url = '${root}/admin/system/area/loadListSubArea.do?parentAreaSeq=' + row.areaSeq;
+						}else{
+							$(this).treegrid('options').url = '${root}/admin/system/area/loadListArea.do';
+						}
+					}
+				});
+			
+			/**添加地区******/
+			$('#dd').dialog({    
+				title: '编辑地区',    
+				width: 400,    
+				height: 200,    
+				closed: false,    
+				cache: false,    
+				href: 'areaEdit.html',    
+				modal: true   
+			});    
+			$('#dd').dialog('refresh', 'areaEdit.html');  
+			
+		});
+	</script>
+</body>
+</html>
