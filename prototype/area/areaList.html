@@ -3,22 +3,55 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" type="text/css" href="../static/components/easyui/themes/default/easyui.css"/>
+<link rel="stylesheet" type="text/css" href="../static/components/easyui/themes/icon.css"/>
+<link rel="stylesheet" type="text/css" href="../static/css/style.css"/>
 
 <script type="text/javascript" src="../static/js/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="../static/components/easyui/jquery.easyui.min.js"></script>
 </head>
 
 <body>
-	<div region="center" split="true" style="border:0;background:#eee;">
-   			<table id="areaList" style="height:600px;"></table>
-   	</div>
-    <div id="editWindow" style="display:none;"></div>  
-    
-<script type="text/javascript">	
-		/* 初始化加载完成后执行 */
+    <table id="areaList" style="width:700px;height:800px"></table>
+    <div id="w" class="easyui-window" data-options="iconCls:'icon-save'" style="width:310px;height:200px;padding:10px;">
+    	<form id="form" method="post">
+        	<table border="0">
+              <tr>
+                <td class="textRight">
+	                <label for="areaName">地区名称:</label>
+                </td>
+                <td>
+                	<input class="easyui-validatebox" type="text" name="areaName" data-options="required:true" 
+                validateOnCreate="false" validateOnBlur="true" missingMessage="请输入地区名称"/>
+                <input class="easyui-validatebox" type="hidden" name="areaSeq"/><!--没有label就用自己的名字做字段名-->
+                </td>
+              </tr>
+              <tr>
+                <td class="textRight">
+                	<label for="jcAreaSeq">行政区划代码:</label>
+                </td>
+                <td>
+                	<input class="easyui-validatebox" type="text" name="jcAreaSeq" data-options="required:true"
+                validateOnCreate="false" validateOnBlur="true" missingMessage="请输入行政区划代码" />
+                </td>
+              </tr>
+              <tr>
+              	<td colspan="2">
+                	<a id="btn" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a>
+                    <a id="btn" href="javascript:$('#w').window('close');" class="easyui-linkbutton" data-options="iconCls:'icon-remove'">取消</a>
+                 </td>
+              </tr>
+            </table>
+        </form>  
+
+    </div>
+</body>
+<script type="text/javascript">
 		$(function(){
+			$('#w').window('close');
+				   
 			$('#areaList').treegrid({    
 					fit: true,
+					lines: true,
 					nowrap: true, 
 					autoRowHeight: true,
 					animate:true,
@@ -33,57 +66,52 @@
 						{field:'ck', checkbox: true},
 						{field:'areaSeq', hidden:true},
 						{field:'areaName',title:'地区名称',width:'30%'},
-						{field:'jcAreaSeq',title:'行政区划代码',width:'40%'},
-						{field:'monitorPhone',title:'监督电话',width:'30%', align: 'center'}
+						{field:'jcAreaSeq',title:'行政区划代码',width:'40%'}
 					]],
 					data:[{
-	"areaSeq": 1,
+	"areaSeq":"8250b441b7c347d68049b8aa1a10f6a1",
 	"areaName": "广东省",
-	"status":"close",
+	"state":"closed",
 	"children": [{
 		"areaName": "广州市",
-		"areaSeq": "0201",
-			  "jcAreaSeq":"440101000000"
+		"areaSeq": "02e2198e33244c26a11c954710fc64b4",
+		"jcAreaSeq":"440101000000"
 	}, {
 		"areaName": "深圳市",
-		"areaSeq": "0202",
-					  "jcAreaSeq":"440301000000",
+		"areaSeq": "f6932014926b4dc4a70537cf40ea6f61",
+		"jcAreaSeq":"440301000000",
+		"state":"closed",
 		"children": [{
 			"areaName": "福田区",
-			 "jcAreaSeq":"440304000000",
-			"areaSeq": "02021"
+			"jcAreaSeq":"440304000000",
+			"areaSeq": "0addd5bed4734a87b346a7df47452a3b"
 		}, {
-			"areaSeq": "02022",
-			 "jcAreaSeq":"440305000000",
+			"areaSeq": "a291cbd23c6942b1bd9b843b52f75066",
+			"jcAreaSeq":"440305000000",
 			"areaName": "南山区"
 		}]
 	}]
 }, {
 	"areaName": "新疆维吾尔族自治区",
-	"areaSeq": "closed",
+	"areaSeq": "5973477abe1f4659b85a164b8439e352",
+	"state":"closed",
 	"children": [{
 		"areaName": "克孜勒苏柯尔克孜自治州",
-	  "areaSeq": "07991",
-	  "jcAreaSeq":"653000000000"
+		"areaSeq": "f9fff18ab3224d1f9f330effbc43842e",
+		"jcAreaSeq":"653000000000"
 	}, {
 		"areaName": "乌鲁木齐市",
-	  	"areaSeq":"07992",
+	  	"areaSeq":"cfdac1b3a2734626b604cf4edf97b1ef",
 		"jcAreaSeq":"650100000000"
 	}]
-}]
-,
+}],
 					toolbar:[{
 						id:'addArea',
 						text:'添加顶级地区',
 						iconCls:'icon16-plus',
 						handler:function(){
-							var areaList = $(".datagrid-btable");
-							if(areaList.length > 1){
-								$.messager.alert("操作提示", "只能有一个顶级地区","warning");
-								return;
-							}else{
-								
-							}
+							$('#w').window({"title":"添加顶级地区"});
+							$('#w').window('open');
 						}
 					},{
 						id:'addSubArea',
@@ -203,5 +231,4 @@
 			
 		});
 	</script>
-</body>
 </html>

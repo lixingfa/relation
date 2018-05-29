@@ -1,1 +1,37 @@
-[{"parentAreaName":null,"state":"closed","childCount":0,"delayFlowName":null,"specialFlowName":null,"rescissionFlowName":null,"returnFlowName":null,"unitCode":null,"isSearch":null,"unitAreaCode":null,"areaSeq":"1","areaName":"广东省","parentAreaSeq":"0","theSeq":"001","theParentSeq":null,"monitorPhone":"11","noticeTitle":"广东","seekPhone":null,"netAddress":null,"heringUnit":null,"heringName":null,"heringAcc":null,"heringBank":null,"delayFlowid":null,"specialFlowid":"296","consultationFlowid":null,"consultationMan":null,"complanitFlowid":null,"complanitMan":null,"rescissionFlowid":"299","returnFlowid":null,"orderNum":null,"barType":null,"globalOrder":null,"votePort":null,"renewDays":null,"xzqhCode":null,"areaDesc":null,"areaImg":null,"areaImgType":null,"jcAreaSeq":"440000","areaLevel":1,"lzcityApproveUnitInfos":[]}]
+[{
+	"areaSeq":"8250b441b7c347d68049b8aa1a10f6a1",
+	"areaName": "广东省",
+	"state":"closed",
+	"children": [{
+		"areaName": "广州市",
+		"areaSeq": "02e2198e33244c26a11c954710fc64b4",
+		"jcAreaSeq":"440101000000"
+	}, {
+		"areaName": "深圳市",
+		"areaSeq": "f6932014926b4dc4a70537cf40ea6f61",
+		"jcAreaSeq":"440301000000",
+		"state":"closed",
+		"children": [{
+			"areaName": "福田区",
+			"jcAreaSeq":"440304000000",
+			"areaSeq": "0addd5bed4734a87b346a7df47452a3b"
+		}, {
+			"areaSeq": "a291cbd23c6942b1bd9b843b52f75066",
+			"jcAreaSeq":"440305000000",
+			"areaName": "南山区"
+		}]
+	}]
+}, {
+	"areaName": "新疆维吾尔族自治区",
+	"areaSeq": "5973477abe1f4659b85a164b8439e352",
+	"state":"closed",
+	"children": [{
+		"areaName": "克孜勒苏柯尔克孜自治州",
+		"areaSeq": "f9fff18ab3224d1f9f330effbc43842e",
+		"jcAreaSeq":"653000000000"
+	}, {
+		"areaName": "乌鲁木齐市",
+	  	"areaSeq":"cfdac1b3a2734626b604cf4edf97b1ef",
+		"jcAreaSeq":"650100000000"
+	}]
+}]
