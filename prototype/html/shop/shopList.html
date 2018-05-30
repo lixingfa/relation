@@ -11,27 +11,27 @@
 </head>
 
 <body>
-    <table id="areaList" style="width:700px;height:800px"></table>
+    <table id="shopList" style="width:700px;height:800px"></table>
     <div id="w" class="easyui-window" data-options="iconCls:'icon-save'" style="width:310px;height:200px;padding:10px;left:500px;top:200px;">
     	<form id="form" method="post">
         	<table border="0">
               <tr>
                 <td class="textRight">
-	                <label for="unitName">单位名称:</label>
+	                <label for="shopName">店名:</label>
                 </td>
                 <td>
-                	<input class="easyui-validatebox" type="text" name="unitName" id="unitName" data-options="required:true" 
-                validateOnCreate="false" validateOnBlur="true" missingMessage="请输入单位名称"/>
-                <input type="hidden" name="unitSeq" id="unitSeq"/><!--没有label就用自己的名字做字段名-->
-                <input type="hidden" name="parentunitSeq" id="parentunitSeq"/>
+                	<input class="easyui-validatebox" type="text" name="shopName" id="shopName" data-options="required:true" 
+                validateOnCreate="false" validateOnBlur="true" missingMessage="请输入店名"/>
+                <input type="hidden" name="shopSeq" id="shopSeq"/><!--没有label就用自己的名字做字段名-->
+                <input type="hidden" name="parentshopSeq" id="parentshopSeq"/>
                 </td>
               </tr>
               <tr>
                 <td class="textRight">
-                	<label for="jcunitSeq">行政区划代码:</label>
+                	<label for="jcshopSeq">行政区划代码:</label>
                 </td>
                 <td>
-                	<input class="easyui-validatebox" type="text" name="jcunitSeq" id="jcunitSeq" data-options="required:true"
+                	<input class="easyui-validatebox" type="text" name="jcshopSeq" id="jcshopSeq" data-options="required:true"
                 validateOnCreate="false" validateOnBlur="true" missingMessage="请输入行政区划代码" />
                 </td>
               </tr>
@@ -65,15 +65,14 @@
 			        
 			    },    
 			    success:function(data){    
-			    	$('#areaList').treegrid('reload');//根节点
+			    	$('#shopList').treegrid('reload');//根节点
 			    }    
 			});  
 
 			//列表
-			$('#areaList').treegrid({    
+			$('#shopList').datagrid({    
 					fit: true,
-					lines: true,
-					nowrap: true, 
+					nowrap: false, 
 					autoRowHeight: true,
 					animate:true,
 					scrollbarSize: 0,
@@ -81,133 +80,144 @@
 					collapsible:true,
 					singleSelect:false,
 					rownumbers:true,
-					idField:'unitSeq',
-					treeField:'unitName',
+					idField:'shopSeq',
+					treeField:'shopName',
+					pagination:true,
+					pageList: [20,40,80,160],
 					columns:[[
 						{field:'ck', checkbox: true},
-						{field:'unitSeq', hidden:true},
-						{field:'unitName',title:'单位名称',width:'30%'},
-						{field:'jcunitSeq',title:'行政区划代码',width:'40%'}
+						{field:'shopSeq', hidden:true},
+						{field:'shopName',title:'店名',width:'200'},
+						{title:'所属地区',field:'areaName',width:'100'},
+						{title:'详细地址',field:'address',width:'300',
+							formatter: function(value,row,index){
+								//点击弹框百度地图
+								return value;
+							}
+						},
+						{title:'店长',field:'staffName',width:'100',
+							formatter: function(value,row,index){
+								//点击弹框店长信息
+								return value;
+							}
+						},
+						{title:'联系电话',field:'telephone',width:'150'}
 					]],
-					data:[{
-	"unitSeq":"8250b441b7c347d68049b8aa1a10f6a1",
-	"unitName": "广东省",
-	"state":"closed",
-	"parentunitSeq":null,
-	"children": [{
-		"unitName": "广州市",
-		"unitSeq": "02e2198e33244c26a11c954710fc64b4",
-		"jcunitSeq":"440101000000",
-		"parentunitSeq":"8250b441b7c347d68049b8aa1a10f6a1"
-	}, {
-		"unitName": "深圳市",
-		"unitSeq": "f6932014926b4dc4a70537cf40ea6f61",
-		"jcunitSeq":"440301000000",
-		"parentunitSeq":"8250b441b7c347d68049b8aa1a10f6a1",
-		"state":"closed",
-		"children": [{
-			"unitName": "福田区",
-			"jcunitSeq":"440304000000",
-			"unitSeq": "0addd5bed4734a87b346a7df47452a3b",
-			"parentunitSeq":"f6932014926b4dc4a70537cf40ea6f61"
-		}, {
-			"unitSeq": "a291cbd23c6942b1bd9b843b52f75066",
-			"jcunitSeq":"440305000000",
-			"unitName": "南山区",
-			"parentunitSeq":"f6932014926b4dc4a70537cf40ea6f61"
-		}]
-	}]
-}, {
-	"unitName": "新疆维吾尔族自治区",
-	"unitSeq": "5973477abe1f4659b85a164b8439e352",
-	"state":"closed",
-	"children": [{
-		"unitName": "克孜勒苏柯尔克孜自治州",
-		"unitSeq": "f9fff18ab3224d1f9f330effbc43842e",
-		"jcunitSeq":"653000000000",
-		"parentunitSeq":"f9fff18ab3224d1f9f330effbc43842e"
-	}, {
-		"unitName": "乌鲁木齐市",
-	  	"unitSeq":"cfdac1b3a2734626b604cf4edf97b1ef",
-		"jcunitSeq":"650100000000",
-		"parentunitSeq":"f9fff18ab3224d1f9f330effbc43842e"
-	}]
-}],
+					data:{
+    "total":5,
+    "rows":[
+        {
+            "shopName":"郎奇空调专卖店",
+            "address":"福华路399号中海大厦一楼",
+            "areaName":"福田区",
+            "shopSeq":"e9d41307ac7341f0b1f45f467d8bfc95",
+            "areaSeq":"0addd5bed4734a87b346a7df47452a3b",
+            "staffName":"黄福华",
+            "telephone":"0755-122356446",
+            "staffSeq":"0d11de1d4487456d808596279d82f759"
+        },
+        {
+            "shopName":"郎奇空调南山营业部",
+            "address":"前海路0366号山水情商厦B2-8765号",
+            "areaSeq":"a291cbd23c6942b1bd9b843b52f75066",
+            "shopSeq":"cc46e27f91384eb6931eb3af90c5e8ee",
+            "areaName":"南山区",
+            "staffName":"周敏",
+            "telephone":"0755-83657876",
+            "staffSeq":"0a0e2c6b0cca41baa8456571f948fa82"
+        },
+        {
+            "shopName":"克孜勒苏柯尔克孜郎奇空调专卖店",
+            "address":"喀什市亚瓦格路10号",
+            "areaName":"克孜勒苏柯尔克孜自治州",
+            "areaSeq":"f9fff18ab3224d1f9f330effbc43842e",
+            "shopSeq":"a16aaf5766e64638921228526898090b",
+            "staffName":"王莉",
+            "telephone":"0908-5211233477",
+            "staffSeq":"bd8edd2a927448ce8941c2bf467fba92"
+        },
+        {
+            "shopName":"郎奇空调",
+            "address":"天山区健康路219号",
+            "areaName":"乌鲁木齐市",
+            "areaSeq":"cfdac1b3a2734626b604cf4edf97b1ef",
+            "shopSeq":"17fe4dfe8d884362bd01f24224407592",
+            "staffName":"古塔热力",
+            "telephone":"0991-567845677",
+            "staffSeq":"e582143ca579473fa8ca994665e42ad2"
+        },
+		{
+            "shopName":"郎奇空调天猫旗舰店",
+            "address":"https://www.tmall.com/?spm=a211oj.11498583.a2226mz.1.5589499axB3TzY",
+            "areaName":"",
+            "areaSeq":"",
+            "shopSeq":"17fe4dfe8d884362bd01f24224407222",
+            "staffName":"张维新",
+            "telephone":"010-2231423445",
+            "staffSeq":"e582143ca579473fa8ca994665e42222"
+        }
+    ]
+},
 					toolbar:[{
 						id:'addArea',
-						text:'添加顶级单位',
+						text:'添加店铺',
 						iconCls:'icon-add',
 						handler:function(){
-							$('#w').window({"title":"添加顶级单位"});
+							$('#w').window({"title":"添加顶级店铺"});
 							$('#w').window('open');
 						}
 					},{
-						id:'addSubArea',
-						text:'增加下属单位',
-						iconCls:'icon-add',
-						handler:function(){
-							var selected = $("#areaList").treegrid('getSelections');
-							if(selected.length!=1){
-								$.messager.alert("操作提示", "请选择一个单位","warning");
-								return;
-							}else{
-								$("#parentunitSeq").val(selected[0].unitSeq);
-								$('#w').window({"title":"添加子单位"});
-								$('#w').window('open');
-							}	
-						}
-					},{
 						id:'editArea',
-						text:'编辑单位',
+						text:'编辑店铺',
 						iconCls:'icon-edit',
 						handler:function(){
-							var selected = $("#areaList").treegrid('getSelections');
+							var selected = $("#shopList").treegrid('getSelections');
 							if(selected.length!=1){
-								$.messager.alert("操作提示", "请选择一个单位","warning");
+								$.messager.alert("操作提示", "请选择一个店铺","warning");
 								return;
 							}else{
 								selected = selected[0];
-								$("#unitSeq").val(selected.unitSeq);
-								$("#unitName").val(selected.unitName);
-								$("#jcunitSeq").val(selected.jcunitSeq);
-								$("#parentunitSeq").val(selected.parentunitSeq);
+								$("#shopSeq").val(selected.shopSeq);
+								$("#shopName").val(selected.shopName);
+								$("#jcshopSeq").val(selected.jcshopSeq);
+								$("#parentshopSeq").val(selected.parentshopSeq);
 								$('#w').window('open');
 							}
 						}
 					},{
 						id:'deleteArea',//重视id的作用
-						text:'删除单位',
+						text:'删除店铺',
 						iconCls:'icon-remove',
 						handler:function(){
-							var selected = $("#areaList").treegrid('getSelections');
+							var selected = $("#shopList").treegrid('getSelections');
 							if(selected.length<1){
-								$.messager.alert("操作提示", "请选择单位","warning");
+								$.messager.alert("操作提示", "请选择店铺","warning");
 								return;
 							}else{
-								var unitSeq = "";
+								var shopSeq = "";
 								for(var i = 0;i < selected.length; i++){
-									unitSeq += selected[i].unitSeq+",";
+									shopSeq += selected[i].shopSeq+",";
 								}
-								unitSeq = unitSeq.substring(0,unitSeq.length-1);
-								$.messager.confirm('删除确认',unitName + "的管理员及子单位都会被删除，确信要删除吗？",function(r){    
+								shopSeq = shopSeq.substring(0,shopSeq.length-1);
+								$.messager.confirm('删除确认',shopName + "的管理员及子店铺都会被删除，确信要删除吗？",function(r){    
     								if (r){    
 										
-										$('#areaList').treegrid('reload');
+										$('#shopList').treegrid('reload');
     								}    
 								});
 							}
 						}
 					},{
 						id:'addArea',
-						text:'添加单位',
+						text:'添加店铺',
 						iconCls:'icon-add',
 						handler:function(){
-							var selected = $("#areaList").treegrid('getSelections');
+							var selected = $("#shopList").treegrid('getSelections');
 							if(selected.length!=1){
-								$.messager.alert("操作提示", "请选择一个单位","warning");
+								$.messager.alert("操作提示", "请选择一个店铺","warning");
 								return;
 							}else{
-								$("#parentunitSeq").val(selected[0].unitSeq);
+								$("#parentshopSeq").val(selected[0].shopSeq);
 								$('#w').window('open');
 							}
 						}
