@@ -2,17 +2,17 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" type="text/css" href="../static/components/easyui/themes/default/easyui.css"/>
-<link rel="stylesheet" type="text/css" href="../static/components/easyui/themes/icon.css"/>
-<link rel="stylesheet" type="text/css" href="../static/css/style.css"/>
+<link rel="stylesheet" type="text/css" href="../../static/components/easyui/themes/default/easyui.css"/>
+<link rel="stylesheet" type="text/css" href="../../static/components/easyui/themes/icon.css"/>
+<link rel="stylesheet" type="text/css" href="../../static/css/style.css"/>
 
-<script type="text/javascript" src="../static/js/jquery-3.3.1.min.js"></script>
-<script type="text/javascript" src="../static/components/easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../../static/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="../../static/components/easyui/jquery.easyui.min.js"></script>
 </head>
 
 <body>
     <table id="areaList" style="width:700px;height:800px"></table>
-    <div id="w" class="easyui-window" data-options="iconCls:'icon-save'" style="width:310px;height:200px;padding:10px;">
+    <div id="w" class="easyui-window" data-options="iconCls:'icon-save'" style="width:310px;height:200px;padding:10px;left:500px;top:200px;">
     	<form id="form" method="post">
         	<table border="0">
               <tr>
@@ -20,9 +20,10 @@
 	                <label for="areaName">地区名称:</label>
                 </td>
                 <td>
-                	<input class="easyui-validatebox" type="text" name="areaName" data-options="required:true" 
+                	<input class="easyui-validatebox" type="text" name="areaName" id="areaName" data-options="required:true" 
                 validateOnCreate="false" validateOnBlur="true" missingMessage="请输入地区名称"/>
-                <input class="easyui-validatebox" type="hidden" name="areaSeq"/><!--没有label就用自己的名字做字段名-->
+                <input type="hidden" name="areaSeq" id="areaSeq"/><!--没有label就用自己的名字做字段名-->
+                <input type="hidden" name="parentAreaSeq" id="parentAreaSeq"/>
                 </td>
               </tr>
               <tr>
@@ -30,14 +31,14 @@
                 	<label for="jcAreaSeq">行政区划代码:</label>
                 </td>
                 <td>
-                	<input class="easyui-validatebox" type="text" name="jcAreaSeq" data-options="required:true"
+                	<input class="easyui-validatebox" type="text" name="jcAreaSeq" id="jcAreaSeq" data-options="required:true"
                 validateOnCreate="false" validateOnBlur="true" missingMessage="请输入行政区划代码" />
                 </td>
               </tr>
               <tr>
               	<td colspan="2">
-                	<a id="btn" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a>
-                    <a id="btn" href="javascript:$('#w').window('close');" class="easyui-linkbutton" data-options="iconCls:'icon-remove'">取消</a>
+                	<a id="btn" href="javascript:$('#form').submit();" class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a>
+                    <a id="btn" href="javascript:closeWindow('w');" class="easyui-linkbutton" data-options="iconCls:'icon-remove'">取消</a>
                  </td>
               </tr>
             </table>
@@ -46,9 +47,29 @@
     </div>
 </body>
 <script type="text/javascript">
+
+			function closeWindow(id){
+				$('#' + id).window('close');
+				$('#' + id).find("input").each(function(index,obj){
+					$(obj).val("");
+				});
+			}
+			
+			
 		$(function(){
+			//窗口
 			$('#w').window('close');
-				   
+			//提交
+			$('#form').form('submit', {
+			    onSubmit: function(){    
+			        
+			    },    
+			    success:function(data){    
+			    	$('#areaList').treegrid('reload');//根节点
+			    }    
+			});  
+
+			//列表
 			$('#areaList').treegrid({    
 					fit: true,
 					lines: true,
@@ -72,23 +93,28 @@
 	"areaSeq":"8250b441b7c347d68049b8aa1a10f6a1",
 	"areaName": "广东省",
 	"state":"closed",
+	"parentAreaSeq":null,
 	"children": [{
 		"areaName": "广州市",
 		"areaSeq": "02e2198e33244c26a11c954710fc64b4",
-		"jcAreaSeq":"440101000000"
+		"jcAreaSeq":"440101000000",
+		"parentAreaSeq":"8250b441b7c347d68049b8aa1a10f6a1"
 	}, {
 		"areaName": "深圳市",
 		"areaSeq": "f6932014926b4dc4a70537cf40ea6f61",
 		"jcAreaSeq":"440301000000",
+		"parentAreaSeq":"8250b441b7c347d68049b8aa1a10f6a1",
 		"state":"closed",
 		"children": [{
 			"areaName": "福田区",
 			"jcAreaSeq":"440304000000",
-			"areaSeq": "0addd5bed4734a87b346a7df47452a3b"
+			"areaSeq": "0addd5bed4734a87b346a7df47452a3b",
+			"parentAreaSeq":"f6932014926b4dc4a70537cf40ea6f61"
 		}, {
 			"areaSeq": "a291cbd23c6942b1bd9b843b52f75066",
 			"jcAreaSeq":"440305000000",
-			"areaName": "南山区"
+			"areaName": "南山区",
+			"parentAreaSeq":"f6932014926b4dc4a70537cf40ea6f61"
 		}]
 	}]
 }, {
@@ -98,17 +124,19 @@
 	"children": [{
 		"areaName": "克孜勒苏柯尔克孜自治州",
 		"areaSeq": "f9fff18ab3224d1f9f330effbc43842e",
-		"jcAreaSeq":"653000000000"
+		"jcAreaSeq":"653000000000",
+		"parentAreaSeq":"f9fff18ab3224d1f9f330effbc43842e"
 	}, {
 		"areaName": "乌鲁木齐市",
 	  	"areaSeq":"cfdac1b3a2734626b604cf4edf97b1ef",
-		"jcAreaSeq":"650100000000"
+		"jcAreaSeq":"650100000000",
+		"parentAreaSeq":"f9fff18ab3224d1f9f330effbc43842e"
 	}]
 }],
 					toolbar:[{
 						id:'addArea',
 						text:'添加顶级地区',
-						iconCls:'icon16-plus',
+						iconCls:'icon-add',
 						handler:function(){
 							$('#w').window({"title":"添加顶级地区"});
 							$('#w').window('open');
@@ -116,60 +144,41 @@
 					},{
 						id:'addSubArea',
 						text:'增加下属地区',
-						iconCls:'icon16-plus-small',
+						iconCls:'icon-add',
 						handler:function(){
-							//日志埋点
-							track(_maq.push(['_action', '基础数据管理_地区管理_新增下属地区']));
 							var selected = $("#areaList").treegrid('getSelections');
 							if(selected.length!=1){
 								$.messager.alert("操作提示", "请选择一个地区","warning");
 								return;
 							}else{
-								top.dialog({
-								    id: 'edit',
-								    url : '${root}/admin/system/area/toEditArea.do?saveOrUpdate=save&parentAreaSeq='+selected[0].areaSeq+"&parentAreaName="+encodeURIComponent(encodeURIComponent(selected[0].areaName)),
-								    width: 620,
-									height:640,
-									title:'新增下属地区',
-									onclose:function(){
-										if(typeof(this.returnValue[0]) == "undefined")return;
-				    					$('#areaList').treegrid('reload');//根节点
-				    				}
-								}).showModal();
+								$("#parentAreaSeq").val(selected[0].areaSeq);
+								$('#w').window({"title":"添加子地区"});
+								$('#w').window('open');
 							}	
 						}
 					},{
-						id:'editUnit',
+						id:'editArea',
 						text:'编辑地区',
 						iconCls:'icon-edit',
 						handler:function(){
-							//日志埋点
-							track(_maq.push(['_action', '基础数据管理_地区管理_编辑地区']));
 							var selected = $("#areaList").treegrid('getSelections');
 							if(selected.length!=1){
 								$.messager.alert("操作提示", "请选择一个地区","warning");
 								return;
 							}else{
-								top.dialog({
-								    id: 'edit',
-								    url : '${root}/admin/system/area/toEditArea.do?saveOrUpdate=isUpdate'+'&areaSeq='+selected[0].areaSeq,
-								    width: 620,
-									height:640,
-									title:'编辑地区',
-									onclose:function(){
-										if(typeof(this.returnValue[0]) == "undefined")return;
-										$('#areaList').treegrid('reload');//根节点
-				    				}
-								}).showModal();
+								selected = selected[0];
+								$("#areaSeq").val(selected.areaSeq);
+								$("#areaName").val(selected.areaName);
+								$("#jcAreaSeq").val(selected.jcAreaSeq);
+								$("#parentAreaSeq").val(selected.parentAreaSeq);
+								$('#w').window('open');
 							}
 						}
 					},{
-						id:'deleteUnit',
+						id:'deleteArea',//重视id的作用
 						text:'删除地区',
-						iconCls:'icon16-minus',
+						iconCls:'icon-remove',
 						handler:function(){
-							//日志埋点
-							track(_maq.push(['_action', '基础数据管理_地区管理_删除地区']));
 							var selected = $("#areaList").treegrid('getSelections');
 							if(selected.length<1){
 								$.messager.alert("操作提示", "请选择地区","warning");
@@ -180,54 +189,30 @@
 									areaSeq += selected[i].areaSeq+",";
 								}
 								areaSeq = areaSeq.substring(0,areaSeq.length-1);
-								var areaName = "";
-								for(var i = 0;i <selected.length; i++){
-									areaName += selected[i].areaName+",";
-								}
-								areaName = areaName.substring(0,areaName.length-1);
 								$.messager.confirm('删除确认',areaName + "的管理员及子地区都会被删除，确信要删除吗？",function(r){    
     								if (r){    
-										var url = '${root}/admin/system/area/deleteArea.do';
-										$.ajax({
-											url: url,
-											type: 'post',
-											data: {
-												'areaSeq': areaSeq,
-												'areaName': areaName
-											},
-											success: function(data) {
-												if(data.successful){
-													$.messager.alert("操作提示", "删除地区成功!","info",function(){
-														top.dialog({id:'edit'}).close([1]).remove();
-													});
-													$('#areaList').treegrid('clearSelections');//清除选择
-													$('#areaList').treegrid('reload');//根节点
-												}else{
-													$.messager.alert("操作提示", "删除地区失败!" + data.message,"error");
-												}
-											},
-											error: function(error) {
-												$.messager.alert("操作提示", "系统错误！","error");
-											}
-										});	
+										
+										$('#areaList').treegrid('reload');
     								}    
 								});
 							}
 						}
+					},{
+						id:'addArea',
+						text:'添加单位',
+						iconCls:'icon-add',
+						handler:function(){
+							var selected = $("#areaList").treegrid('getSelections');
+							if(selected.length!=1){
+								$.messager.alert("操作提示", "请选择一个地区","warning");
+								return;
+							}else{
+								$("#parentAreaSeq").val(selected[0].areaSeq);
+								$('#w').window('open');
+							}
+						}
 					}]
 				});
-			
-			/**添加地区******/
-			$('#dd').dialog({    
-				title: '编辑地区',    
-				width: 400,    
-				height: 200,    
-				closed: false,    
-				cache: false,    
-				href: 'areaEdit.html',    
-				modal: true   
-			});    
-			$('#dd').dialog('refresh', 'areaEdit.html');  
 			
 		});
 	</script>
