@@ -1,0 +1,214 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="../../static/components/easyui/themes/default/easyui.css"/>
+<link rel="stylesheet" type="text/css" href="../../static/components/easyui/themes/icon.css"/>
+<link rel="stylesheet" type="text/css" href="../../static/css/style.css"/>
+
+<script type="text/javascript" src="../../static/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="../../static/components/easyui/jquery.easyui.min.js"></script>
+<title>员工管理</title>
+</head>
+
+<body>
+    <table id="staffList" style="width:700px;height:800px"></table>
+    <div id="w" class="easyui-window" data-options="iconCls:'icon-save'" style="width:310px;height:200px;padding:10px;left:500px;top:200px;">
+    	<form id="form" method="post">
+        	<table border="0">
+              <tr>
+                <td class="textRight">
+	                <label for="staffName">店名:</label>
+                </td>
+                <td>
+                	<input class="easyui-validatebox" type="text" name="staffName" id="staffName" data-options="required:true" 
+                validateOnCreate="false" validateOnBlur="true" missingMessage="请输入店名"/>
+                <input type="hidden" name="staffSeq" id="staffSeq"/><!--没有label就用自己的名字做字段名-->
+                <input type="hidden" name="parentstaffSeq" id="parentstaffSeq"/>
+                </td>
+              </tr>
+              <tr>
+                <td class="textRight">
+                	<label for="jcstaffSeq">行政区划代码:</label>
+                </td>
+                <td>
+                	<input class="easyui-validatebox" type="text" name="jcstaffSeq" id="jcstaffSeq" data-options="required:true"
+                validateOnCreate="false" validateOnBlur="true" missingMessage="请输入行政区划代码" />
+                </td>
+              </tr>
+              <tr>
+              	<td colspan="2">
+                	<a id="btn" href="javascript:$('#form').submit();" class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a>
+                    <a id="btn" href="javascript:closeWindow('w');" class="easyui-linkbutton" data-options="iconCls:'icon-remove'">取消</a>
+                 </td>
+              </tr>
+            </table>
+        </form>  
+
+    </div>
+</body>
+<script type="text/javascript">
+
+			function closeWindow(id){//学会抽取共性
+				$('#' + id).window('close');
+				$('#' + id).find("input").each(function(index,obj){
+					$(obj).val("");
+				});
+			}
+			
+			
+		$(function(){
+			//窗口
+			$('#w').window('close');
+			//提交
+			$('#form').form('submit', {
+			    onSubmit: function(){    
+			        
+			    },    
+			    success:function(data){    
+			    	$('#staffList').treegrid('reload');//根节点
+			    }    
+			});  
+
+			//列表
+			$('#staffList').datagrid({    
+					fit: true,
+					nowrap: false, 
+					autoRowHeight: true,
+					animate:true,
+					scrollbarSize: 0,
+					striped: true,
+					collapsible:true,
+					singleSelect:false,
+					rownumbers:true,
+					idField:'staffSeq',
+					treeField:'staffName',
+					pagination:true,
+					pageList: [20,40,80,160],
+					columns:[[
+						{field:'ck', checkbox: true},
+						{field:'staffSeq', hidden:true},
+						{field:'staffName',title:'店名',width:'200'},
+						{title:'职位',field:'position',width:'100'},
+						{title:'性别',field:'sex',width:'300'},
+						{title:'照片',field:'photo',width:'100',
+							formatter: function(value,row,index){
+								return '<img src="" title="" style="width:310px;height:200px;"/>';
+							}
+						},
+						{title:'联系电话',field:'telephone',width:'150'}
+					]],
+					data:{
+    "total":5,
+    "rows":[
+        {
+            "photo":"",
+            "position":"店长",            
+            "sex":"男",
+            "staffName":"黄福华",
+            "telephone":"1355555555",
+            "staffSeq":"0d11de1d4487456d808596279d82f759"
+        },
+        {
+        	"photo":"",
+            "position":"店长",
+            "sex":"女",
+            "staffName":"周敏",
+            "telephone":"18664555124",
+            "staffSeq":"0a0e2c6b0cca41baa8456571f948fa82"
+        },
+        {
+        	"photo":"",
+            "position":"店长",
+            "sex":"女",
+            "staffName":"王莉",
+            "telephone":"0908-5211233477",
+            "staffSeq":"bd8edd2a927448ce8941c2bf467fba92"
+        },
+        {
+        	"photo":"",
+            "position":"店长",
+            "sex":"男",
+            "staffName":"古塔热力",
+            "telephone":"0991-567845677",
+            "staffSeq":"e582143ca579473fa8ca994665e42ad2"
+        },
+		{
+        	"photo":"",
+            "position":"店长",
+            "sex":"男",
+            "staffName":"张维新",
+            "telephone":"010-2231423445",
+            "staffSeq":"e582143ca579473fa8ca994665e42222"
+        }
+    ]
+},
+					toolbar:[{
+						id:'addArea',
+						text:'添加店铺',
+						iconCls:'icon-add',
+						handler:function(){
+							$('#w').window({"title":"添加顶级店铺"});
+							$('#w').window('open');
+						}
+					},{
+						id:'editArea',
+						text:'编辑店铺',
+						iconCls:'icon-edit',
+						handler:function(){
+							var selected = $("#staffList").treegrid('getSelections');
+							if(selected.length!=1){
+								$.messager.alert("操作提示", "请选择一个店铺","warning");
+								return;
+							}else{
+								selected = selected[0];
+								$("#staffSeq").val(selected.staffSeq);
+								$("#staffName").val(selected.staffName);
+								$("#jcstaffSeq").val(selected.jcstaffSeq);
+								$("#parentstaffSeq").val(selected.parentstaffSeq);
+								$('#w').window('open');
+							}
+						}
+					},{
+						id:'deleteArea',//重视id的作用
+						text:'删除店铺',
+						iconCls:'icon-remove',
+						handler:function(){
+							var selected = $("#staffList").treegrid('getSelections');
+							if(selected.length<1){
+								$.messager.alert("操作提示", "请选择店铺","warning");
+								return;
+							}else{
+								var staffSeq = "";
+								for(var i = 0;i < selected.length; i++){
+									staffSeq += selected[i].staffSeq+",";
+								}
+								staffSeq = staffSeq.substring(0,staffSeq.length-1);
+								$.messager.confirm('删除确认',staffName + "的管理员及子店铺都会被删除，确信要删除吗？",function(r){    
+    								if (r){    
+										
+										$('#staffList').treegrid('reload');
+    								}    
+								});
+							}
+						}
+					},{
+						id:'addArea',
+						text:'添加店铺',
+						iconCls:'icon-add',
+						handler:function(){
+							var selected = $("#staffList").treegrid('getSelections');
+							if(selected.length!=1){
+								$.messager.alert("操作提示", "请选择一个店铺","warning");
+								return;
+							}else{
+								$("#parentstaffSeq").val(selected[0].staffSeq);
+								$('#w').window('open');
+							}
+						}
+					}]
+				});
+			
+		});
+	</script>
+</html>
