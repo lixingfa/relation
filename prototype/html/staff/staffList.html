@@ -13,42 +13,80 @@
 
 <body>
     <table id="staffList" style="width:700px;height:800px"></table>
-    <div id="w" class="easyui-window" data-options="iconCls:'icon-save'" style="width:310px;height:200px;padding:10px;left:500px;top:200px;">
+    <div id="w" class="easyui-window" data-options="iconCls:'icon-save'" style="width:550px;height:400px;padding:10px;">
     	<form id="form" method="post">
         	<table border="0">
               <tr>
                 <td class="textRight">
-	                <label for="staffName">店名:</label>
+	                <label for="staffName">姓名:</label>
                 </td>
                 <td>
-                	<input class="easyui-validatebox" type="text" name="staffName" id="staffName" data-options="required:true" 
-                validateOnCreate="false" validateOnBlur="true" missingMessage="请输入店名"/>
+                	<input class="easyui-textbox" type="text" name="staffName" id="staffName" data-options="required:true" style="width:250px;"
+                validateOnCreate="false" validateOnBlur="true" missingMessage="请输入姓名"/>
                 <input type="hidden" name="staffSeq" id="staffSeq"/><!--没有label就用自己的名字做字段名-->
-                <input type="hidden" name="parentstaffSeq" id="parentstaffSeq"/>
+                </td>
+                <td rowspan="4">
+                	<img src="../img/default.jpg" width="150" height="150" onclick="upload();"/><!--上传的先这样约定-->
+                    <input type="hidden" id="photo" name="photo" value="../img/default.jpg"/>
                 </td>
               </tr>
               <tr>
                 <td class="textRight">
-                	<label for="jcstaffSeq">行政区划代码:</label>
+                	<label for="sex">性别:</label>
                 </td>
                 <td>
-                	<input class="easyui-validatebox" type="text" name="jcstaffSeq" id="jcstaffSeq" data-options="required:true"
-                validateOnCreate="false" validateOnBlur="true" missingMessage="请输入行政区划代码" />
+                	<select name="sex" id="sex" class="easyui-combobox" style="width:70px;"
+                	data-options="required:true" validateOnCreate="false" validateOnBlur="true" missingMessage="请选择性别"
+                	validType:'selectNeed[\'#sex\']'>
+                		<option value=""></option>
+                		<option value="男">男</option>
+                		<option value="女">女</option>
+                	</select>
+                 </td>
+                </tr>
+                <tr>
+                	<td class="textRight">
+                	<label for="position">职位：</label>
+                   </td>
+                   <td>
+                	<select name="position" id="position" class="easyui-combobox" style="width:125px;"
+                	data-options="required:true" validateOnCreate="false" validateOnBlur="true" missingMessage="请选择职位"
+                	validType:'selectNeed[\'#position\']'>
+                		<option value=""></option>
+                		<option value="1">安装师傅</option>
+                		<option value="2">客服</option>
+                		<option value="3">导购</option>
+                		<option value="4">店长</option>
+                	</select>
+                </td>
+                </tr>
+                <tr>
+                <td  class="textRight"><label for="telephone">联系电话：</label></td>
+                <td>
+                	<input class="easyui-textbox" type="text" name="telephone" id="telephone" data-options="required:true" style="width:250px;"
+                validateOnCreate="false" validateOnBlur="true" missingMessage="请输入联系方式"/>
+                <input type="hidden" name="staffSeq" id="staffSeq"/><!-- 故意留的，验证查错。需要用到树的算法。 -->
                 </td>
               </tr>
               <tr>
-              	<td colspan="2">
+              	<td colspan="3">
                 	<a id="btn" href="javascript:$('#form').submit();" class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a>
                     <a id="btn" href="javascript:closeWindow('w');" class="easyui-linkbutton" data-options="iconCls:'icon-remove'">取消</a>
                  </td>
               </tr>
             </table>
-        </form>  
-
+        </form>
     </div>
 </body>
 <script type="text/javascript">
-
+			$.extend($.fn.validatebox.defaults.rules, {			
+			    selectNeed: {
+			       validator: function(value, param) {
+			           return $(param[0]).find("option:contains('"+value+"')").val() != '';  
+			       }
+			   }
+			});
+			
 			function closeWindow(id){//学会抽取共性
 				$('#' + id).window('close');
 				$('#' + id).find("input").each(function(index,obj){
@@ -59,14 +97,14 @@
 			
 		$(function(){
 			//窗口
-			$('#w').window('close');
+			//$('#w').window('close');
 			//提交
 			$('#form').form('submit', {
 			    onSubmit: function(){    
 			        
 			    },    
 			    success:function(data){    
-			    	$('#staffList').treegrid('reload');//根节点
+			    	$('#staffList').datagrid('reload');//根节点
 			    }    
 			});  
 
@@ -88,12 +126,12 @@
 					columns:[[
 						{field:'ck', checkbox: true},
 						{field:'staffSeq', hidden:true},
-						{field:'staffName',title:'店名',width:'200'},
+						{field:'staffName',title:'姓名',width:'200'},
 						{title:'职位',field:'position',width:'100'},
-						{title:'性别',field:'sex',width:'300'},
-						{title:'照片',field:'photo',width:'100',
+						{title:'性别',field:'sex',width:'20'},
+						{title:'照片',field:'photo',width:'160',
 							formatter: function(value,row,index){
-								return '<img src="" title="" style="width:310px;height:200px;"/>';
+								return '<img src="'+ value +'" title="'+ staffName +'" alt="'+ staffName +'" style="width:150px;height:150px;"/>';
 							}
 						},
 						{title:'联系电话',field:'telephone',width:'150'}
@@ -102,7 +140,7 @@
     "total":5,
     "rows":[
         {
-            "photo":"",
+            "photo":"../img/1.jpg",
             "position":"店长",            
             "sex":"男",
             "staffName":"黄福华",
@@ -110,7 +148,7 @@
             "staffSeq":"0d11de1d4487456d808596279d82f759"
         },
         {
-        	"photo":"",
+        	"photo":"../img/0.jpg",
             "position":"店长",
             "sex":"女",
             "staffName":"周敏",
@@ -118,7 +156,7 @@
             "staffSeq":"0a0e2c6b0cca41baa8456571f948fa82"
         },
         {
-        	"photo":"",
+        	"photo":"../img/0.jpg",
             "position":"店长",
             "sex":"女",
             "staffName":"王莉",
@@ -126,7 +164,7 @@
             "staffSeq":"bd8edd2a927448ce8941c2bf467fba92"
         },
         {
-        	"photo":"",
+        	"photo":"../img/1.jpg",
             "position":"店长",
             "sex":"男",
             "staffName":"古塔热力",
@@ -134,7 +172,7 @@
             "staffSeq":"e582143ca579473fa8ca994665e42ad2"
         },
 		{
-        	"photo":"",
+        	"photo":"../img/1.jpg",
             "position":"店长",
             "sex":"男",
             "staffName":"张维新",
@@ -145,10 +183,10 @@
 },
 					toolbar:[{
 						id:'addArea',
-						text:'添加店铺',
+						text:'添加员工',
 						iconCls:'icon-add',
 						handler:function(){
-							$('#w').window({"title":"添加顶级店铺"});
+							$('#w').window({"title":"添加员工"});
 							$('#w').window('open');
 						}
 					},{
@@ -156,7 +194,7 @@
 						text:'编辑店铺',
 						iconCls:'icon-edit',
 						handler:function(){
-							var selected = $("#staffList").treegrid('getSelections');
+							var selected = $("#staffList").datagrid('getSelections');
 							if(selected.length!=1){
 								$.messager.alert("操作提示", "请选择一个店铺","warning");
 								return;
@@ -174,7 +212,7 @@
 						text:'删除店铺',
 						iconCls:'icon-remove',
 						handler:function(){
-							var selected = $("#staffList").treegrid('getSelections');
+							var selected = $("#staffList").datagrid('getSelections');
 							if(selected.length<1){
 								$.messager.alert("操作提示", "请选择店铺","warning");
 								return;
@@ -185,9 +223,8 @@
 								}
 								staffSeq = staffSeq.substring(0,staffSeq.length-1);
 								$.messager.confirm('删除确认',staffName + "的管理员及子店铺都会被删除，确信要删除吗？",function(r){    
-    								if (r){    
-										
-										$('#staffList').treegrid('reload');
+    								if (r){
+    									$('#staffList').datagrid('reload');
     								}    
 								});
 							}
@@ -197,7 +234,7 @@
 						text:'添加店铺',
 						iconCls:'icon-add',
 						handler:function(){
-							var selected = $("#staffList").treegrid('getSelections');
+							var selected = $("#staffList").datagrid('getSelections');
 							if(selected.length!=1){
 								$.messager.alert("操作提示", "请选择一个店铺","warning");
 								return;

@@ -8,11 +8,12 @@
 
 <script type="text/javascript" src="../../static/js/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="../../static/components/easyui/jquery.easyui.min.js"></script>
+<title>店铺管理</title>
 </head>
 
 <body>
     <table id="shopList" style="width:700px;height:800px"></table>
-    <div id="w" class="easyui-window" data-options="iconCls:'icon-save'" style="width:310px;height:200px;padding:10px;left:500px;top:200px;">
+    <div id="w" class="easyui-window" data-options="iconCls:'icon-save'" style="width:310px;height:200px;padding:10px;">
     	<form id="form" method="post">
         	<table border="0">
               <tr>
@@ -20,7 +21,7 @@
 	                <label for="shopName">店名:</label>
                 </td>
                 <td>
-                	<input class="easyui-validatebox" type="text" name="shopName" id="shopName" data-options="required:true" 
+                	<input class="easyui-textbox" type="text" name="shopName" id="shopName" data-options="required:true" 
                 validateOnCreate="false" validateOnBlur="true" missingMessage="请输入店名"/>
                 <input type="hidden" name="shopSeq" id="shopSeq"/><!--没有label就用自己的名字做字段名-->
                 <input type="hidden" name="parentshopSeq" id="parentshopSeq"/>
@@ -31,7 +32,7 @@
                 	<label for="jcshopSeq">行政区划代码:</label>
                 </td>
                 <td>
-                	<input class="easyui-validatebox" type="text" name="jcshopSeq" id="jcshopSeq" data-options="required:true"
+                	<input class="easyui-textbox" type="text" name="jcshopSeq" id="jcshopSeq" data-options="required:true"
                 validateOnCreate="false" validateOnBlur="true" missingMessage="请输入行政区划代码" />
                 </td>
               </tr>
@@ -65,7 +66,7 @@
 			        
 			    },    
 			    success:function(data){    
-			    	$('#shopList').treegrid('reload');//根节点
+			    	$('#shopList').datagrid('reload');//根节点
 			    }    
 			});  
 
@@ -171,7 +172,7 @@
 						text:'编辑店铺',
 						iconCls:'icon-edit',
 						handler:function(){
-							var selected = $("#shopList").treegrid('getSelections');
+							var selected = $("#shopList").datagrid('getSelections');
 							if(selected.length!=1){
 								$.messager.alert("操作提示", "请选择一个店铺","warning");
 								return;
@@ -189,7 +190,7 @@
 						text:'删除店铺',
 						iconCls:'icon-remove',
 						handler:function(){
-							var selected = $("#shopList").treegrid('getSelections');
+							var selected = $("#shopList").datagrid('getSelections');
 							if(selected.length<1){
 								$.messager.alert("操作提示", "请选择店铺","warning");
 								return;
@@ -202,7 +203,7 @@
 								$.messager.confirm('删除确认',shopName + "的管理员及子店铺都会被删除，确信要删除吗？",function(r){    
     								if (r){    
 										
-										$('#shopList').treegrid('reload');
+										$('#shopList').datagrid('reload');
     								}    
 								});
 							}
@@ -212,7 +213,7 @@
 						text:'添加店铺',
 						iconCls:'icon-add',
 						handler:function(){
-							var selected = $("#shopList").treegrid('getSelections');
+							var selected = $("#shopList").datagrid('getSelections');
 							if(selected.length!=1){
 								$.messager.alert("操作提示", "请选择一个店铺","warning");
 								return;
