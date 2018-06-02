@@ -13,7 +13,7 @@
 
 <body>
     <table id="staffList" style="width:700px;height:800px"></table>
-    <div id="w" class="easyui-window" data-options="iconCls:'icon-save'" style="width:550px;height:400px;padding:10px;">
+    <div id="w" class="easyui-window" data-options="iconCls:'icon-save'" style="width:530px;height:280px;padding:10px;">
     	<form id="form" method="post">
         	<table border="0">
               <tr>
@@ -26,8 +26,9 @@
                 <input type="hidden" name="staffSeq" id="staffSeq"/><!--没有label就用自己的名字做字段名-->
                 </td>
                 <td rowspan="4">
-                	<img src="../img/default.jpg" width="150" height="150" onclick="upload();"/><!--上传的先这样约定-->
+                	<img src="../img/default.jpg" width="150" height="150" onclick="upload();"/><br/>
                     <input type="hidden" id="photo" name="photo" value="../img/default.jpg"/>
+                    <input type="file" id="file" style="width:150px;"/><!--上传的先这样约定-->
                 </td>
               </tr>
               <tr>
@@ -69,7 +70,7 @@
                 </td>
               </tr>
               <tr>
-              	<td colspan="3">
+              	<td colspan="3" align="center">
                 	<a id="btn" href="javascript:$('#form').submit();" class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a>
                     <a id="btn" href="javascript:closeWindow('w');" class="easyui-linkbutton" data-options="iconCls:'icon-remove'">取消</a>
                  </td>
