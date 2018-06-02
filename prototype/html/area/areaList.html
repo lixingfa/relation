@@ -8,11 +8,13 @@
 
 <script type="text/javascript" src="../../static/js/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="../../static/components/easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../../static/components/easyui/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="../../static/js/default.js"></script>
 </head>
 
 <body>
     <table id="areaList" style="width:700px;height:800px"></table>
-    <div id="w" class="easyui-window" data-options="iconCls:'icon-save'" style="width:310px;height:200px;padding:10px;left:500px;top:200px;">
+    <div id="w" class="easyui-window" data-options="iconCls:'icon-save'" style="width:310px;height:170px;padding:10px;left:500px;top:200px;">
     	<form id="form" method="post">
         	<table border="0">
               <tr>
@@ -20,7 +22,7 @@
 	                <label for="areaName">地区名称:</label>
                 </td>
                 <td>
-                	<input class="easyui-validatebox" type="text" name="areaName" id="areaName" data-options="required:true" 
+                	<input class="easyui-textbox" type="text" name="areaName" id="areaName" data-options="required:true" 
                 validateOnCreate="false" validateOnBlur="true" missingMessage="请输入地区名称"/>
                 <input type="hidden" name="areaSeq" id="areaSeq"/><!--没有label就用自己的名字做字段名-->
                 <input type="hidden" name="parentAreaSeq" id="parentAreaSeq"/>
@@ -31,12 +33,12 @@
                 	<label for="jcAreaSeq">行政区划代码:</label>
                 </td>
                 <td>
-                	<input class="easyui-validatebox" type="text" name="jcAreaSeq" id="jcAreaSeq" data-options="required:true"
+                	<input class="easyui-textbox" type="text" name="jcAreaSeq" id="jcAreaSeq" data-options="required:true"
                 validateOnCreate="false" validateOnBlur="true" missingMessage="请输入行政区划代码" />
                 </td>
               </tr>
               <tr>
-              	<td colspan="2">
+              	<td colspan="2" align="center">
                 	<a id="btn" href="javascript:$('#form').submit();" class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a>
                     <a id="btn" href="javascript:closeWindow('w');" class="easyui-linkbutton" data-options="iconCls:'icon-remove'">取消</a>
                  </td>
@@ -167,8 +169,8 @@
 							}else{
 								selected = selected[0];
 								$("#areaSeq").val(selected.areaSeq);
-								$("#areaName").val(selected.areaName);
-								$("#jcAreaSeq").val(selected.jcAreaSeq);
+								$("#areaName").textbox('setValue',selected.areaName);
+								$("#jcAreaSeq").textbox('setValue',selected.jcAreaSeq);
 								$("#parentAreaSeq").val(selected.parentAreaSeq);
 								$('#w').window('open');
 							}

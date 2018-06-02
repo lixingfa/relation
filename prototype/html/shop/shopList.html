@@ -8,6 +8,8 @@
 
 <script type="text/javascript" src="../../static/js/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="../../static/components/easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../../static/components/easyui/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="../../static/js/default.js"></script>
 <title>店铺管理</title>
 </head>
 
@@ -84,7 +86,7 @@
 					idField:'shopSeq',
 					treeField:'shopName',
 					pagination:true,
-					pageList: [20,40,80,160],
+					pageList: [10,20,40,80,160],
 					columns:[[
 						{field:'ck', checkbox: true},
 						{field:'shopSeq', hidden:true},
@@ -160,7 +162,7 @@
     ]
 },
 					toolbar:[{
-						id:'addArea',
+						id:'addShop',
 						text:'添加店铺',
 						iconCls:'icon-add',
 						handler:function(){
@@ -168,7 +170,7 @@
 							$('#w').window('open');
 						}
 					},{
-						id:'editArea',
+						id:'editShop',
 						text:'编辑店铺',
 						iconCls:'icon-edit',
 						handler:function(){
@@ -186,7 +188,7 @@
 							}
 						}
 					},{
-						id:'deleteArea',//重视id的作用
+						id:'deleteShop',//重视id的作用
 						text:'删除店铺',
 						iconCls:'icon-remove',
 						handler:function(){

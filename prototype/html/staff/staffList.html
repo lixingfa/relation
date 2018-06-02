@@ -8,6 +8,8 @@
 
 <script type="text/javascript" src="../../static/js/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="../../static/components/easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../../static/components/easyui/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="../../static/js/default.js"></script>
 <title>员工管理</title>
 </head>
 
@@ -26,9 +28,10 @@
                 <input type="hidden" name="staffSeq" id="staffSeq"/><!--没有label就用自己的名字做字段名-->
                 </td>
                 <td rowspan="4">
-                	<img src="../img/default.jpg" width="150" height="150" onclick="upload();"/><br/>
+                	<img id="photoImg" src="../img/default.jpg" width="150" height="150" /><br/>
                     <input type="hidden" id="photo" name="photo" value="../img/default.jpg"/>
-                    <input type="file" id="file" style="width:150px;"/><!--上传的先这样约定-->
+                    <input type="file" id="file" style="width:100px;" maxSize=""/><!--上传的先这样约定 onclick="upload();"-->
+                    <input type="button" value="上传"/>
                 </td>
               </tr>
               <tr>
@@ -88,17 +91,24 @@
 			   }
 			});
 			
-			function closeWindow(id){//学会抽取共性
+			function closeWindow(id){
 				$('#' + id).window('close');
 				$('#' + id).find("input").each(function(index,obj){
 					$(obj).val("");
 				});
+				$('#' + id).find("input.easyui-textbox").each(function(index,obj){
+					$(obj).textbox('setValue',"");
+				});
+				$('#' + id).find("select").each(function(index,obj){
+					$(obj).combobox('setValue',"");
+				});
+				$("#photoImg").attr("src","../img/default.jpg");
 			}
 			
 			
 		$(function(){
 			//窗口
-			//$('#w').window('close');
+			$('#w').window('close');
 			//提交
 			$('#form').form('submit', {
 			    onSubmit: function(){    
@@ -123,7 +133,7 @@
 					idField:'staffSeq',
 					treeField:'staffName',
 					pagination:true,
-					pageList: [20,40,80,160],
+					pageList: [10,20,40,80,160],//pageSize默认是10，如果跟初始的不符合，就会出问题
 					columns:[[
 						{field:'ck', checkbox: true},
 						{field:'staffSeq', hidden:true},
@@ -183,7 +193,7 @@
     ]
 },
 					toolbar:[{
-						id:'addArea',
+						id:'addStaff',
 						text:'添加员工',
 						iconCls:'icon-add',
 						handler:function(){
@@ -191,31 +201,35 @@
 							$('#w').window('open');
 						}
 					},{
-						id:'editArea',
-						text:'编辑店铺',
+						id:'editStaff',
+						text:'编辑员工信息',
 						iconCls:'icon-edit',
 						handler:function(){
 							var selected = $("#staffList").datagrid('getSelections');
 							if(selected.length!=1){
-								$.messager.alert("操作提示", "请选择一个店铺","warning");
+								$.messager.alert("操作提示", "请选择一个员工","warning");
 								return;
 							}else{
 								selected = selected[0];
+								$('#w').window({"title":"编辑员工信息"});
 								$("#staffSeq").val(selected.staffSeq);
-								$("#staffName").val(selected.staffName);
-								$("#jcstaffSeq").val(selected.jcstaffSeq);
-								$("#parentstaffSeq").val(selected.parentstaffSeq);
+								$("#staffName").textbox('setValue',selected.staffName);
+								$("#photo").val(selected.photo);
+								$("#photoImg").attr("src",selected.photo);
+								$("#sex").combobox('setValue',selected.sex);
+								$("#position").combobox('setValue',selected.position);
+								$("#telephone").textbox('setValue',selected.telephone);
 								$('#w').window('open');
 							}
 						}
 					},{
-						id:'deleteArea',//重视id的作用
-						text:'删除店铺',
+						id:'deleteStaff',//重视id的作用
+						text:'删除员工信息',
 						iconCls:'icon-remove',
 						handler:function(){
 							var selected = $("#staffList").datagrid('getSelections');
 							if(selected.length<1){
-								$.messager.alert("操作提示", "请选择店铺","warning");
+								$.messager.alert("操作提示", "请选择员工","warning");
 								return;
 							}else{
 								var staffSeq = "";
@@ -223,25 +237,11 @@
 									staffSeq += selected[i].staffSeq+",";
 								}
 								staffSeq = staffSeq.substring(0,staffSeq.length-1);
-								$.messager.confirm('删除确认',staffName + "的管理员及子店铺都会被删除，确信要删除吗？",function(r){    
+								$.messager.confirm('删除确认',"选择的员工信息都会被删除，确信要删除吗？",function(r){    
     								if (r){
     									$('#staffList').datagrid('reload');
     								}    
 								});
-							}
-						}
-					},{
-						id:'addArea',
-						text:'添加店铺',
-						iconCls:'icon-add',
-						handler:function(){
-							var selected = $("#staffList").datagrid('getSelections');
-							if(selected.length!=1){
-								$.messager.alert("操作提示", "请选择一个店铺","warning");
-								return;
-							}else{
-								$("#parentstaffSeq").val(selected[0].staffSeq);
-								$('#w').window('open');
 							}
 						}
 					}]
