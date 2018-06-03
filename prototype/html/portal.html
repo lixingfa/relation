@@ -3,32 +3,26 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" type="text/css" href="../static/components/easyui/themes/default/easyui.css"/>
+<link rel="stylesheet" type="text/css" href="../static/css/style.css"/>
 
 <script type="text/javascript" src="../static/js/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="../static/components/easyui/jquery.easyui.min.js"></script>
 <title>工作平台</title>
-<style type="text/css">
-iframe{
-	border:none;
-	width:100%;
-	height:100%;
-}
-</style>
 </head>
 
 <body>
 <div id="tt" class="easyui-tabs" style="width:100%;height:600px;">
-	 <div title="工作台" style="padding:20px;display:none;">   
+	 <div title="工作台" style="display:none;">   
         <iframe src="http://echarts.baidu.com/examples/index.html"></iframe>
     </div>
     <div title="地区管理" style="display:none;">   
         <iframe src="area/areaList.html"></iframe>
     </div>   
-    <div title="单位管理" data-options="closable:true" style="overflow:auto;padding:20px;display:none;">   
+    <div title="店铺管理" data-options="closable:true" style="display:none;">   
         <iframe src="shop/shopList.html"></iframe>
     </div>   
-    <div title="用户管理" style="padding:20px;display:none;">   
-        tab3    
+    <div title="员工管理" style="display:none;">   
+        <iframe src="staff/staffList.html"></iframe>
     </div>   
 </div> 
 </body>
