@@ -13,8 +13,31 @@
 <title>员工管理</title>
 </head>
 
-<body>
-    <table id="staffList" style="width:700px;height:800px"></table>
+<body class="easyui-layout">
+	<div data-options="region:'north'" class="searchArea">
+    	<form id="searchForm">
+        	<span>店名：</span><input class="easyui-textbox" type="text" name="shopName"/>
+            <span>姓名：</span><input class="easyui-textbox" type="text" name="staffName"/>
+            <span>工号：</span><input class="easyui-textbox" type="text" name="workCode"/>
+            <span>性别：</span><select name="sex" class="easyui-combobox" style="width:70px;"><!--严格校验id-->
+                		<option value=""></option>
+                		<option value="男">男</option>
+                		<option value="女">女</option>
+                	</select>
+            <span>职位：</span><select name="position" class="easyui-combobox" style="width:125px;">
+                		<option value=""></option>
+                		<option value="1">安装师傅</option>
+                		<option value="2">客服</option>
+                		<option value="3">导购</option>
+                		<option value="4">店长</option>
+                	</select>
+            <a href="javascript:search();" class="easyui-linkbutton" data-options="iconCls:'icon-search'">查询</a><!--连js都懒得写了-->
+            <a href="javascript:export();" class="easyui-linkbutton" data-options="iconCls:'icon-save'">导出</a>
+        </form>
+    </div>
+    <div data-options="region:'center'">
+    	<table id="staffList" style="width:700px;height:800px"></table>
+    </div>
     <div id="w" class="easyui-window" data-options="iconCls:'icon-save'" style="width:530px;height:280px;padding:10px;">
     	<form id="form" method="post">
         	<table border="0">
@@ -27,7 +50,7 @@
                 validateOnCreate="false" validateOnBlur="true" missingMessage="请输入姓名"/>
                 <input type="hidden" name="staffSeq" id="staffSeq"/><!--没有label就用自己的名字做字段名-->
                 </td>
-                <td rowspan="4">
+                <td rowspan="5">
                 	<img id="photoImg" src="../img/default.jpg" width="150" height="150" /><br/>
                     <input type="hidden" id="photo" name="photo" value="../img/default.jpg"/>
                     <input type="file" id="file" style="width:100px;" maxSize=""/><!--上传的先这样约定 onclick="upload();"-->
@@ -48,6 +71,15 @@
                 	</select>
                  </td>
                 </tr>
+                <tr>
+                <td class="textRight">
+	                <label for="workCode">工号:</label>
+                </td>
+                <td>
+                	<input class="easyui-textbox" type="text" name="workCode" id="workCode" data-options="required:true" style="width:250px;"
+                validateOnCreate="false" validateOnBlur="true" missingMessage="请输入工号"/>
+                </td>
+              </tr>
                 <tr>
                 	<td class="textRight">
                 	<label for="position">职位：</label>
@@ -74,8 +106,8 @@
               </tr>
               <tr>
               	<td colspan="3" align="center">
-                	<a id="btn" href="javascript:$('#form').submit();" class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a>
-                    <a id="btn" href="javascript:closeWindow('w');" class="easyui-linkbutton" data-options="iconCls:'icon-remove'">取消</a>
+                	<a id="btn" href="javascript:submit();" class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a>
+                    <a id="btn" href="javascript:closeWindow('w');$('#photoImg').attr('src','../img/default.jpg');" class="easyui-linkbutton" data-options="iconCls:'icon-remove'">取消</a>
                  </td>
               </tr>
             </table>
@@ -83,37 +115,20 @@
     </div>
 </body>
 <script type="text/javascript">
-			$.extend($.fn.validatebox.defaults.rules, {			
-			    selectNeed: {
-			       validator: function(value, param) {
-			           return $(param[0]).find("option:contains('"+value+"')").val() != '';  
-			       }
-			   }
-			});
-			
-			function closeWindow(id){
-				$('#' + id).window('close');
-				$('#' + id).find("input").each(function(index,obj){
-					$(obj).val("");
-				});
-				$('#' + id).find("input.easyui-textbox").each(function(index,obj){
-					$(obj).textbox('setValue',"");
-				});
-				$('#' + id).find("select").each(function(index,obj){
-					$(obj).combobox('setValue',"");
-				});
-				$("#photoImg").attr("src","../img/default.jpg");
+			function submit(){
+				var b = $("#form").form('validate');
+				if(b){
+					$('#form').submit();
+				}else{
+					return false;
+				}
 			}
-			
 			
 		$(function(){
 			//窗口
 			$('#w').window('close');
 			//提交
-			$('#form').form('submit', {
-			    onSubmit: function(){    
-			        
-			    },    
+			$('#form').form('submit', {   
 			    success:function(data){    
 			    	$('#staffList').datagrid('reload');//根节点
 			    }    
@@ -138,11 +153,12 @@
 						{field:'ck', checkbox: true},
 						{field:'staffSeq', hidden:true},
 						{field:'staffName',title:'姓名',width:'200'},
+						{field:'workCode',title:'工号',width:'200'},
 						{title:'职位',field:'position',width:'100'},
-						{title:'性别',field:'sex',width:'20'},
-						{title:'照片',field:'photo',width:'160',
+						{title:'性别',field:'sex',width:'40'},
+						{title:'照片',field:'photo',width:'110',
 							formatter: function(value,row,index){
-								return '<img src="'+ value +'" title="'+ staffName +'" alt="'+ staffName +'" style="width:150px;height:150px;"/>';
+								return '<img src="'+ value +'" title="'+ staffName +'" alt="'+ staffName +'" style="width:100px;height:100px;"/>';
 							}
 						},
 						{title:'联系电话',field:'telephone',width:'150'}
@@ -154,6 +170,7 @@
             "photo":"../img/1.jpg",
             "position":"店长",            
             "sex":"男",
+			"workCode":"LQ0039",
             "staffName":"黄福华",
             "telephone":"1355555555",
             "staffSeq":"0d11de1d4487456d808596279d82f759"
@@ -162,6 +179,7 @@
         	"photo":"../img/0.jpg",
             "position":"店长",
             "sex":"女",
+			"workCode":"LQ0068",
             "staffName":"周敏",
             "telephone":"18664555124",
             "staffSeq":"0a0e2c6b0cca41baa8456571f948fa82"
@@ -170,6 +188,7 @@
         	"photo":"../img/0.jpg",
             "position":"店长",
             "sex":"女",
+			"workCode":"LQ00546",
             "staffName":"王莉",
             "telephone":"0908-5211233477",
             "staffSeq":"bd8edd2a927448ce8941c2bf467fba92"
@@ -178,6 +197,7 @@
         	"photo":"../img/1.jpg",
             "position":"店长",
             "sex":"男",
+			"workCode":"LQ0650",
             "staffName":"古塔热力",
             "telephone":"0991-567845677",
             "staffSeq":"e582143ca579473fa8ca994665e42ad2"
@@ -186,6 +206,7 @@
         	"photo":"../img/1.jpg",
             "position":"店长",
             "sex":"男",
+			"workCode":"LQ00123",
             "staffName":"张维新",
             "telephone":"010-2231423445",
             "staffSeq":"e582143ca579473fa8ca994665e42222"
@@ -214,6 +235,7 @@
 								$('#w').window({"title":"编辑员工信息"});
 								$("#staffSeq").val(selected.staffSeq);
 								$("#staffName").textbox('setValue',selected.staffName);
+								$("#workCode").textbox('setValue',selected.workCode);
 								$("#photo").val(selected.photo);
 								$("#photoImg").attr("src",selected.photo);
 								$("#sex").combobox('setValue',selected.sex);
@@ -244,7 +266,10 @@
 								});
 							}
 						}
-					}]
+					}],
+					onLoadSuccess:function(){
+						$('#staffList').datagrid("clearSelections");
+					}
 				});
 			
 		});
