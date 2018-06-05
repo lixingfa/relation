@@ -152,8 +152,8 @@
 					columns:[[
 						{field:'ck', checkbox: true},
 						{field:'staffSeq', hidden:true},
+						{field:'workCode',title:'工号',width:'100'},
 						{field:'staffName',title:'姓名',width:'200'},
-						{field:'workCode',title:'工号',width:'200'},
 						{title:'职位',field:'position',width:'100'},
 						{title:'性别',field:'sex',width:'40'},
 						{title:'照片',field:'photo',width:'110',
@@ -161,12 +161,14 @@
 								return '<img src="'+ value +'" title="'+ staffName +'" alt="'+ staffName +'" style="width:100px;height:100px;"/>';
 							}
 						},
-						{title:'联系电话',field:'telephone',width:'150'}
+						{title:'联系电话',field:'telephone',width:'150'},
+						{title:'所在店铺',field:'shopName',width:'200'}
 					]],
 					data:{
     "total":5,
     "rows":[
         {
+			"shopName":"郎奇空调专卖店",
             "photo":"../img/1.jpg",
             "position":"店长",            
             "sex":"男",
@@ -176,6 +178,7 @@
             "staffSeq":"0d11de1d4487456d808596279d82f759"
         },
         {
+			"shopName":"郎奇空调南山营业部",
         	"photo":"../img/0.jpg",
             "position":"店长",
             "sex":"女",
@@ -185,6 +188,7 @@
             "staffSeq":"0a0e2c6b0cca41baa8456571f948fa82"
         },
         {
+			"shopName":"克孜勒苏柯尔克孜郎奇空调专卖店",
         	"photo":"../img/0.jpg",
             "position":"店长",
             "sex":"女",
@@ -194,6 +198,7 @@
             "staffSeq":"bd8edd2a927448ce8941c2bf467fba92"
         },
         {
+			"shopName":"郎奇空调",
         	"photo":"../img/1.jpg",
             "position":"店长",
             "sex":"男",
@@ -203,6 +208,7 @@
             "staffSeq":"e582143ca579473fa8ca994665e42ad2"
         },
 		{
+			"shopName":"郎奇空调天猫旗舰店",
         	"photo":"../img/1.jpg",
             "position":"店长",
             "sex":"男",
