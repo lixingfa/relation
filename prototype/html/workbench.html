@@ -21,14 +21,18 @@
                     <div class="inform item-box">
                         <div class="inform-hd">
                             <label>招标公告</label>
-                            <a href="javascript:;">更多<span>&gt;</span></a>
+                            <a href="bidList.html">
+                            <!---进入招标公告列表页，分页查询，每页20条-->
+                            更多<span>&gt;</span></a>
                         </div>
                         <ul>
-                        <!---循环，-->
+                        <!---循环，招标公告，时间倒序-->
                             <li>
                                 <span></span>
-                                <a href="javascript:;" class="ellipsis">uimaker信息管理<i></i></a>
-                                <label>04-13</label>
+                                <a href="bid.html?bidId=公告id" class="ellipsis" target="_blank" bl="公告标题">
+                                <!---进入招标公告详细页，有公告标题，公告发布日期；公告内容-->
+                                uimaker信息管理<i></i></a>
+                                <label bl="公告发布日期">04-13</label>
                             </li>
                             <!---循环结束-->
                             <li>

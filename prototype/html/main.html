@@ -26,32 +26,32 @@
             	<span class="msgts">10</span>
                 <div class="pf-user-photo">
                     <img src="../static/images/main/user.png" alt="">                   
-                </div>
-                <h4 class="pf-user-name ellipsis" id="userName">uimaker</h4>
+                </div><!--业务语言 Business Language-->
+                <h4 class="pf-user-name ellipsis" bl="用户名">uimaker</h4><!--表示从用户名字段读出，这是注释，不是业务语言-->
                 <i class="iconfont xiala">&#xe607;</i>
 
                 <div class="pf-user-panel">
                     <ul class="pf-user-opt">
                         <li>
-                            <a href="javascript:userInfo.html;" bl="userInfo"><!--业务语言 Business Language-->
+                            <a href="userInfo.html;" target="_blank"><!---查询单个用户，修改-->
                                 <i class="iconfont">&#xe60d;</i>
                                 <span class="pf-opt-name">用户信息</span>
                             </a>
                         </li>
                          <li class="pf-modify-pwd">
-                            <a href="http://www.uimaker.com">
+                            <a href="msgts.html" target="_blank"><!---查询未读消息列表-->
                                 <i class="iconfont">&#xe6f8;</i>
-                                <span class="pf-opt-name">消息<i class="mailtext">[10]</i></span>
+                                <span class="pf-opt-name">消息<i class="mailtext">[<span bl="未读消息总数">10</span>]</i></span>
                             </a>
                         </li>
                         <li class="pf-modify-pwd">
-                            <a href="http://www.uimaker.com">
+                            <a href="modifyPwd.html"  target="_blank"><!---修改密码-->
                                 <i class="iconfont">&#xe634;</i>
                                 <span class="pf-opt-name">修改密码</span>
                             </a>
                         </li>
                         <li class="pf-logout">
-                            <a href="javascript:logout();">
+                            <a href="javascript:logout();"><!---退出登录，返回login.html-->
                                 <i class="iconfont">&#xe60e;</i>
                                 <span class="pf-opt-name">退出</span>
                             </a>
@@ -85,6 +85,7 @@
          <div id="mm-tabcloseall">关闭所有</div>
          <div id="mm-tabcloseother">关闭其他</div> 
     </div>
+    <!--
     <div id="dlg" class="easyui-dialog" title="业务日志查看" data-options="closed:true,modal:true" style="width:720px;height:490px;padding:10px;display:none;">
       <link rel="stylesheet" type="text/css" href="../static/css/process.css">
       <div class="time-line">
@@ -175,7 +176,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div>-->
     <script type="text/javascript" src="../static/jquery.min.js"></script>
     <script type="text/javascript" src="../static/jquery.easyui.min.js"></script>
     <script type="text/javascript" src="../static/js/menu.js"></script>
@@ -307,12 +308,6 @@
       replace(document, style)
 
     }
-	/**
-	userInfo{
-		弹框，反显：用户编号，用户名，密码，用户等级；
-		
-		}
-	*/
     </script>
 </body> 
 </html>
