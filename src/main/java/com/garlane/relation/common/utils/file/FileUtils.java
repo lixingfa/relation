@@ -14,7 +14,7 @@ import java.io.Reader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**文件操作
  * 
@@ -22,6 +22,8 @@ import org.apache.commons.lang.StringUtils;
  *
  */
 public class FileUtils {
+	
+	private static Logger log = Logger.getLogger(FileUtils.class);
 	/**文件内容列表<行列表>*/
 	private static ArrayList<ArrayList<String>> fileContents = new ArrayList<ArrayList<String>>();
 	
@@ -30,10 +32,10 @@ public class FileUtils {
 	 * @param pagePath 文件（夹）路径
 	 * @return 文件内容列表<行列表>
 	 */
-	public static ArrayList<ArrayList<String>> getFileContents(String pagePath){
+	public static ArrayList<ArrayList<String>> getFileContents(String pagePath) throws Exception{
 		File pageFile = new File(pagePath);
 		if (pageFile.isDirectory()) {//是目录
-			System.out.println("\t目录"+pageFile.getName());
+			log.info("\t目录"+pageFile.getName());
 			File[] subFiles = pageFile.listFiles();
 			for (int i = 0; i < subFiles.length; i++) {
 				getFileContents(subFiles[i].getPath());
@@ -42,10 +44,9 @@ public class FileUtils {
 			try {
 				fileContents.add(readFileByLines(pagePath));
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.error("读取"+pageFile.getName()+"的内容", e);
+				throw e;				
 			}
-			System.out.println("读取"+pageFile.getName()+"的内容");			
 		}
 		return fileContents;
 	}

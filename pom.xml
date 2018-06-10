@@ -2,11 +2,11 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.minstone.webconfig</groupId>
-  <artifactId>WebConfig</artifactId>
+  <groupId>com.garlane.relation</groupId>
+  <artifactId>relation</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>war</packaging>
-  <name>WebConfig</name>
+  <name>relation</name>
   
   <properties>
 		<!-- 源文件编码格式 -->
@@ -393,7 +393,7 @@
 				<version>2.2</version>
 				<configuration>
 					<version>2.5</version>
-					<warName>WebConfig</warName>
+					<warName>relation</warName>
 				</configuration>
 			</plugin>
 			<plugin>

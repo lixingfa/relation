@@ -1,28 +1,18 @@
 package com.garlane.relation.upload.controller;
-
-import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.garlane.relation.common.constant.ConfigConstant;
 import com.garlane.relation.common.controller.BaseController;
 import com.garlane.relation.common.model.result.ResultModel;
-import com.garlane.relation.common.utils.exception.SuperServiceException;
 import com.garlane.relation.upload.service.UploadService;
 
 /**

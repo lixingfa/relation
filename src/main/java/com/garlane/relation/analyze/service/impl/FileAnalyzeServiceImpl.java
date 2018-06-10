@@ -3,6 +3,8 @@
  */
 package com.garlane.relation.analyze.service.impl;
 
+import java.io.File;
+
 import org.springframework.stereotype.Service;
 
 import com.garlane.relation.analyze.service.FileAnalyzeService;
@@ -24,6 +26,7 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 	 * @throws SuperServiceException
 	 */
 	public void getFileLogic(String path) throws SuperServiceException{
+		File prototype = new File(path);
 		
 	}
 }

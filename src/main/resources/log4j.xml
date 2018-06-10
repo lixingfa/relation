@@ -27,7 +27,7 @@
     
     <!-- FILE -->
     <appender name="R" class="org.apache.log4j.RollingFileAppender">  
-    	<param name="File" value="${user.dir}/MCubeApprILogs/WebConfig/WebConfig.log" />
+    	<param name="File" value="${user.dir}/MCubeApprILogs/relation/relation.log" />
     	<param name="Append" value="true" />
     	<param name="Threshold" value="debug" />
     	<param name="ImmediateFlush" value="true" />
