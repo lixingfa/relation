@@ -21,16 +21,14 @@
                     <div class="inform item-box">
                         <div class="inform-hd">
                             <label>招标公告</label>
-                            <a href="bidList.html">
-                            <!---进入招标公告列表页，分页查询，每页20条-->
-                            更多<span>&gt;</span></a>
+                            <a href="bidList.html?状态=未成交">更多<span>&gt;</span></a><!---进入招标公告列表页，分页查询，每页20条-->
                         </div>
                         <ul>
-                        <!---循环，招标公告，时间倒序-->
+                        <!---循环，6条招标公告，时间倒序-->
                             <li>
                                 <span></span>
-                                <a href="bid.html?bidId=公告id" class="ellipsis" target="_blank" bl="公告标题">
-                                <!---进入招标公告详细页，有公告标题，公告发布日期；公告内容-->
+                                <a href="bid.html?公告id" class="ellipsis" target="_blank" bl="公告标题">
+                                <!---进入招标公告详细页，公告标题，公告发布日期，公告内容-->
                                 uimaker信息管理<i></i></a>
                                 <label bl="公告发布日期">04-13</label>
                             </li>
@@ -65,14 +63,14 @@
                     <div class="price item-box">
                         <div class="inform-hd">
                             <label>成交合同</label>
-                            <a href="javascript:;">更多<span>&gt;</span></a>
+                            <a href="bidList.html?状态=已成交">更多<span>&gt;</span></a>
                         </div>
                         <ul>
-                        <!---循环，-->
+                        <!---循环，7条成交的合同，时间倒序-->
                             <li>
                                 <span></span>
-                                <a href="javascript:;" class="ellipsis">界面设计后台界面UI作品</a>
-                                <label>04-13</label>
+                                <a href="bid.html?公告id" class="ellipsis" target="_blank" bl="公告标题">界面设计后台界面UI作品</a>
+                                <label bl="公告成交日期">04-13</label>
                             </li>
                             <!---循环结束-->
                             <li>
@@ -113,14 +111,14 @@
                             <a href="javascript:;">更多<span>&gt;</span></a>
                         </div>
                         <div class="attached-tab">
-                            <a href="javascript:;" class="current item-left" attached="public-attached">采购商投诉</a>
-                            <a href="javascript:;" class="item-right" attached="inner-attached">供应商投诉</a>
+                            <a href="complainList.html?投诉类型=1" class="current item-left" attached="public-attached">采购商投诉</a>
+                            <a href="complainList.html?投诉类型=2" class="item-right" attached="inner-attached">供应商投诉</a>
                         </div>
                         <ul class="public-attached">
-                        <!---循环，-->
+                        <!---循环，6条投诉，来自采购商，时间降序-->
                             <li>
                                 <span></span>
-                                <a href="javascript:;" class="ellipsis">界面设计作品PSD源文件免费下载</a>
+                                <a href="complain.html?投诉id" class="ellipsis" target="_blank" bl="投诉标题">界面设计作品PSD源文件免费下载</a>
                             </li>
                             <!---循环结束-->
                             <li>
@@ -145,10 +143,10 @@
                             </li>
                         </ul>
                         <ul class="inner-attached hide">
-                        <!---循环，-->
+                        <!---循环，6条投诉，来自供应商，时间降序-->
                            <li>
                                 <span></span>
-                                <a href="javascript:;" class="ellipsis">意见建议反馈内容模版</a>
+                                <a href="complain.html?投诉id" class="ellipsis" target="_blank" bl="投诉标题">意见建议反馈内容模版</a>
                             </li>
                             <!---循环结束-->
                             <li>

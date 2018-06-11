@@ -13,7 +13,12 @@ import java.io.RandomAccessFile;
 import java.io.Reader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.annotation.processing.FilerException;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 /**文件操作
@@ -23,30 +28,29 @@ import org.apache.log4j.Logger;
  */
 public class FileUtils {
 	
-	private static Logger log = Logger.getLogger(FileUtils.class);
-	/**文件内容列表<行列表>*/
-	private static ArrayList<ArrayList<String>> fileContents = new ArrayList<ArrayList<String>>();
+	private static Logger logger = Logger.getLogger(FileUtils.class);
 	
 	/**
 	 * 获取某个文件夹下所有文件及其子文件夹下所有文件的内容
 	 * @param pagePath 文件（夹）路径
 	 * @return 文件内容列表<行列表>
 	 */
-	public static ArrayList<ArrayList<String>> getFileContents(String pagePath) throws Exception{
+	public static ArrayList<ArrayList<String>> getFileContents(String pagePath) throws IOException,Exception{
+		ArrayList<ArrayList<String>> fileContents = new ArrayList<ArrayList<String>>();
 		File pageFile = new File(pagePath);
 		if (pageFile.isDirectory()) {//是目录
-			log.info("\t目录"+pageFile.getName());
+			logger.info("\t目录"+pageFile.getName());
 			File[] subFiles = pageFile.listFiles();
 			for (int i = 0; i < subFiles.length; i++) {
-				getFileContents(subFiles[i].getPath());
+				fileContents.addAll(getFileContents(subFiles[i].getPath()));
 			}
 		}else {
 			try {
 				fileContents.add(readFileByLines(pagePath));
-			} catch (Exception e) {
-				log.error("读取"+pageFile.getName()+"的内容", e);
-				throw e;				
-			}
+			} catch (IOException e) {
+				logger.error("读取"+pageFile.getName()+"的内容", e);
+				throw e;
+			}		
 		}
 		return fileContents;
 	}
@@ -155,7 +159,7 @@ public class FileUtils {
      * @param fileName
      * @return 内容列表，每个值代表一行
      */
-    public static ArrayList<String> readFileByLines(String fileName) throws Exception{
+    public static ArrayList<String> readFileByLines(String fileName) throws IOException,Exception{
     	ArrayList<String> arrayList = new ArrayList<String>();
         BufferedReader reader = null;
         int line = 1;
@@ -175,12 +179,13 @@ public class FileUtils {
             }
             reader.close();
         } catch (IOException e) {
-        	throw new Exception(fileName + "第" + line + "读取错误");
+        	throw new IOException(fileName + "第" + line + "读取错误");
         } finally {
             if (reader != null) {
                 try {
                     reader.close();
 	                } catch (IOException e1) {
+	                	throw e1;
 	                }
             }
         }
@@ -233,7 +238,7 @@ public class FileUtils {
      * @param fileName
      * @return 文件内容
      */
-    public static String getFileString(String fileName) {
+    public static String getFileString(String fileName) throws IOException{
         StringBuffer sBuffer = new StringBuffer();
         BufferedReader reader = null;
         int line = 1;
@@ -248,13 +253,15 @@ public class FileUtils {
             }
             reader.close();
         } catch (IOException e) {
-            System.out.println("读取第" + line + "发生错误");
-            e.printStackTrace();
+        	logger.error("读取第" + line + "发生错误", e);
+            throw e;
         } finally {
             if (reader != null) {
                 try {
                     reader.close();
                 } catch (IOException e1) {
+                	logger.error("关闭文件流发生错误。", e1);
+                    throw e1;
                 }
             }
         }
@@ -380,15 +387,6 @@ public class FileUtils {
 		}
     }
     
-    /**给父目录与即将创建的子目录
-     */
-    public static void FileCreate(String path){    	
-    	path = path.substring(0,path.lastIndexOf("/"));
-    	if (!new File(path).exists()) {
-			new File(path).mkdirs();
-		}
-    }
-    
 	/**
 	 * 判断文件的编码格式
 	 * @param fileName :file
@@ -415,4 +413,44 @@ public class FileUtils {
 		bin.close();
 		return code;
 	}
+	
+	/**给父目录与即将创建的子目录
+     */
+    public static void FileCreate(String path){    	
+    	path = path.substring(0,path.lastIndexOf("/"));
+    	if (!new File(path).exists()) {
+			new File(path).mkdirs();
+		}
+    }
+	
+	/**
+     * getDirectoryContent:(获取某个文件或文件夹下的内容，不包含子文件夹的，以文件、文件内容字符串的形式返回)
+     * @author lixingfa
+     * @date 2018年4月2日下午4:56:21
+     * @param dirPath
+     * @return Map<String, String>
+     */
+    public static Map<String, String> getDirectoryContent(String dirPath,String suffix) throws IOException{
+    	Map<String, String> map = new HashMap<String, String>();
+    	File file = new File(dirPath);
+    	if (file.isDirectory()) {//是目录
+			File[] subFiles = file.listFiles();
+			for (int i = 0; i < subFiles.length; i++) {
+				String path = subFiles[0].getAbsolutePath();
+				if (StringUtils.isNotBlank(suffix) && path.lastIndexOf(suffix) == -1) {//没有这个后缀
+					continue;
+				}
+				map.put(path, getFileString(path));
+			}
+		}else {
+			if (StringUtils.isNotBlank(suffix) && dirPath.lastIndexOf(suffix) == -1) {//没有这个后缀
+				return map;
+			}
+			map.put(dirPath, getFileString(dirPath));
+		}
+    	return map;
+    }
+    public static Map<String, String> getDirectoryContent(String dirPath) throws IOException{
+    	return getDirectoryContent(dirPath, null);
+    }
 }

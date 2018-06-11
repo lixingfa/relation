@@ -11,7 +11,7 @@ public class FilePathUtil {
     private final static Logger LOGGER = Logger.getLogger(FilePathUtil.class);
 
     // 不同系统下默认分隔符
-    private final static String LINUX_SEPAR = "/";
+    public final static String LINUX_SEPAR = "/";
 
     private final static String WINDOW_SEPAR = "\\";
 
