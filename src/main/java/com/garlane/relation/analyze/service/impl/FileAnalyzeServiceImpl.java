@@ -43,11 +43,11 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 		if (prototype.isDirectory()) {
 			try {
 				log.info("读取html数据");
-				Map<String, String> contents = FileUtils.getDirectoryContent(path + "/" + FileConstant.HTML + "/",FileConstant.HTML);
-				
+				Map<String, String> htmlContents = FileUtils.getDirectoryContent(path + "/" + FileConstant.HTML + "/",FileConstant.HTML);
+				htmlAnalyzes(htmlContents);
 				
 				log.info("读取js数据");
-				contents.putAll(FileUtils.getDirectoryContent(path + "/" + JS_PATH,FileConstant.JS));
+				htmlContents.putAll(FileUtils.getDirectoryContent(path + "/" + JS_PATH,FileConstant.JS));
 				log.info("读取数据完成，开始解析。");
 				
 			} catch (Exception e) {
@@ -67,9 +67,14 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 	}
 	
 	private void htmlAnalyze(String content){
-		Document doc = Jsoup.parse(content);
-		Elements forms = doc.select("form");
-		
-		Elements inputs = forms.select("input");
+		try {
+			Document doc = Jsoup.parse(content);
+			Elements forms = doc.select("form");
+			
+			Elements inputs = forms.select("input");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

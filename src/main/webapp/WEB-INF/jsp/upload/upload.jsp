@@ -19,6 +19,7 @@
 	<form action="${root}/upload/upload.do" method="post" enctype="multipart/form-data" id="form">
       項目页面目录：<input type="file" name="multipartFile" id="fileFolder" webkitdirectory><!-- 上传文件夹 -->
    <input type="button" value="提交上传" onclick="upload();">
+   <a href="${root}/fileAnalyze/getFileLogic.do">测试解析效果</a>
   </form>
   <div id="tips" style="width:100%;height:80%;border:solid 1px #ccc;overflow-y:auto;"></div>
   <script type="text/javascript">

@@ -243,8 +243,8 @@ public class FileUtils {
         BufferedReader reader = null;
         int line = 1;
         try {
-            //reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), Charset.forName("GBK")));//gbk转utf-8
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), Charset.forName("utf-8")));//gbk转utf-8
+//            reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
             String tempString = null;
             // 一次读入一行，直到读入null为文件结束
             while ((tempString = reader.readLine()) != null) {
