@@ -436,7 +436,7 @@ public class FileUtils {
     	if (file.isDirectory()) {//是目录
 			File[] subFiles = file.listFiles();
 			for (int i = 0; i < subFiles.length; i++) {
-				String path = subFiles[0].getAbsolutePath();
+				String path = subFiles[i].getAbsolutePath();
 				if (StringUtils.isNotBlank(suffix) && path.lastIndexOf(suffix) == -1) {//没有这个后缀
 					continue;
 				}

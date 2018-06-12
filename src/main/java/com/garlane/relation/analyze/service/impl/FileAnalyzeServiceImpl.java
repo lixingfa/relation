@@ -4,7 +4,11 @@
 package com.garlane.relation.analyze.service.impl;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
@@ -15,8 +19,11 @@ import org.springframework.stereotype.Service;
 
 import com.garlane.relation.analyze.service.FileAnalyzeService;
 import com.garlane.relation.common.constant.FileConstant;
+import com.garlane.relation.common.constant.PageConstant;
+import com.garlane.relation.common.model.page.AModel;
+import com.garlane.relation.common.model.page.FormModel;
+import com.garlane.relation.common.model.page.InputModel;
 import com.garlane.relation.common.utils.exception.SuperServiceException;
-import com.garlane.relation.common.utils.file.FilePathUtil;
 import com.garlane.relation.common.utils.file.FileUtils;
 
 /**
@@ -30,7 +37,7 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 	private static final Logger log = Logger.getLogger(FileAnalyzeServiceImpl.class);
 	
 	private static final String JS_PATH = "static/js/";
-	
+	private static final String BLPat = "<!---[^(-->)]+-->";
 	/**
 	 * getFileLogic:(获取项目业务逻辑)
 	 * @author lixingfa
@@ -45,6 +52,7 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 				log.info("读取html数据");
 				Map<String, String> htmlContents = FileUtils.getDirectoryContent(path + "/" + FileConstant.HTML + "/",FileConstant.HTML);
 				htmlAnalyzes(htmlContents);
+				log.info("解析html文件里的业务语言");
 				
 				log.info("读取js数据");
 				htmlContents.putAll(FileUtils.getDirectoryContent(path + "/" + JS_PATH,FileConstant.JS));
@@ -67,14 +75,52 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 	}
 	
 	private void htmlAnalyze(String content){
+		//这个方法应该是产出业务逻辑模型了
 		try {
 			Document doc = Jsoup.parse(content);
+			//处理表单
 			Elements forms = doc.select("form");
-			
-			Elements inputs = forms.select("input");
+			for (Element form : forms) {
+				FormModel formModel = new FormModel();
+				Elements inputs = form.select("input");
+				for (Element input : inputs) {
+					InputModel inputModel = new InputModel();
+					inputModel.setId(input.attr(PageConstant.ID));
+					inputModel.setMaxlength(input.attr(PageConstant.MAXLENGTH));
+					inputModel.setName(input.attr(PageConstant.NAME));
+					inputModel.setPlaceholder(input.attr(PageConstant.PLACEHOLDER));
+					inputModel.setValue(input.attr(PageConstant.VALUE));
+					formModel.getInputs().add(inputModel);
+				}
+			}
+			//获取html里的业务语言
+			List<String> BLs = new ArrayList<String>();
+			Pattern pattern = Pattern.compile(BLPat);
+			Matcher matcher = pattern.matcher(content);
+			while (matcher.find()) {
+				BLs.add(matcher.group());		
+			}
+			//处理业务语言 TODO 待优化
+			Elements as = doc.select("a");
+			for (Element a : as) {
+				AModel aModel = new AModel(a.attr(PageConstant.HREF),a.text());
+				String html = a.outerHtml();
+				int i = content.indexOf(html);
+				int j = content.indexOf(ch);
+			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public static void main(String[] args) {
+		String s = "立即注册</a><!---进入注册页，填写公司名称、法人信息、登录用户名、密码、注册邮箱，选择供应商还是采购商，上传公司资质-->>登录</a><!---验证码、账号、密码均正确-->";
+		Pattern pattern = Pattern.compile(BLPat);
+		Matcher matcher = pattern.matcher(s);
+		while (matcher.find()) {
+			String string = matcher.group();
+			System.out.println(string);			
 		}
 	}
 }

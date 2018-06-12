@@ -17,9 +17,12 @@ public class InputModel {
 	private String placeholder;
 	/**输入框的名称标准方式下是用lable标签定义的，其for属性指向input的id*/
 	private String lableText;
+	/**规定输入字段中的字符的最大长度*/
+	private String maxlength;
+	/**值*/
+	private String value;
 	
-	
-	/********************************/
+	/*****************************/
 	public String getId() {
 		return id;
 	}
@@ -44,5 +47,16 @@ public class InputModel {
 	public void setLableText(String lableText) {
 		this.lableText = lableText;
 	}
-	
+	public String getMaxlength() {
+		return maxlength;
+	}
+	public void setMaxlength(String maxlength) {
+		this.maxlength = maxlength;
+	}
+	public String getValue() {
+		return value;
+	}
+	public void setValue(String value) {
+		this.value = value;
+	}	
 }

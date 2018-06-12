@@ -15,4 +15,12 @@ public class FormModel {
 	
 	List<InputModel> inputs = new ArrayList<InputModel>();
 
+	/*********************************/
+	public List<InputModel> getInputs() {
+		return inputs;
+	}
+
+	public void setInputs(List<InputModel> inputs) {
+		this.inputs = inputs;
+	}
 }
