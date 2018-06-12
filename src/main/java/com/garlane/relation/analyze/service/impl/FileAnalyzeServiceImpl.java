@@ -5,6 +5,7 @@ package com.garlane.relation.analyze.service.impl;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -94,19 +95,26 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 				}
 			}
 			//获取html里的业务语言
-			List<String> BLs = new ArrayList<String>();
+			Map<String, Integer> BLs = new HashMap<String, Integer>();
 			Pattern pattern = Pattern.compile(BLPat);
 			Matcher matcher = pattern.matcher(content);
 			while (matcher.find()) {
-				BLs.add(matcher.group());		
+				String bl = matcher.group();
+				BLs.put(bl,content.indexOf(bl));		
 			}
 			//处理业务语言 TODO 待优化
 			Elements as = doc.select("a");
 			for (Element a : as) {
 				AModel aModel = new AModel(a.attr(PageConstant.HREF),a.text());
-				String html = a.outerHtml();
-				int i = content.indexOf(html);
-				int j = content.indexOf(ch);
+				String outerHtml = a.outerHtml();
+				int i = content.indexOf(outerHtml);
+				for (String key : BLs.keySet()) {
+					if (BLs.get(key) - (i + outerHtml.length()) <= 2) {
+						aModel.setBL(key);
+						BLs.remove(key);
+						break;
+					}
+				}
 			}
 			
 		} catch (Exception e) {
