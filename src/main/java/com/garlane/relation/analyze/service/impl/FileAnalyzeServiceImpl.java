@@ -53,10 +53,12 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 				log.info("读取html数据");
 				Map<String, String> htmlContents = FileUtils.getDirectoryContent(path + "/" + FileConstant.HTML + "/",FileConstant.HTML);
 				htmlAnalyzes(htmlContents);
+				
 				log.info("解析html文件里的业务语言");
 				
 				log.info("读取js数据");
 				htmlContents.putAll(FileUtils.getDirectoryContent(path + "/" + JS_PATH,FileConstant.JS));
+				
 				log.info("读取数据完成，开始解析。");
 				
 			} catch (Exception e) {
@@ -67,7 +69,12 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 		}
 	}
 	
-	
+	/**
+	 * htmlAnalyzes:(HTML页面分析)
+	 * @author lixingfa
+	 * @date 2018年6月13日下午7:31:59
+	 * @param htmlContents
+	 */
 	private void htmlAnalyzes(Map<String, String> htmlContents){
 		for (String path : htmlContents.keySet()) {
 			String content = htmlContents.get(path);
@@ -75,6 +82,12 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 		}
 	}
 	
+	/**
+	 * htmlAnalyze:(分析单个html页面)
+	 * @author lixingfa
+	 * @date 2018年6月13日下午7:32:22
+	 * @param content
+	 */
 	private void htmlAnalyze(String content){
 		//这个方法应该是产出业务逻辑模型了
 		try {
@@ -124,6 +137,10 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private void jsAnalyze(String content){
+		
 	}
 	
 	public static void main(String[] args) {
