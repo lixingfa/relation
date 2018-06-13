@@ -79,6 +79,8 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 		//这个方法应该是产出业务逻辑模型了
 		try {
 			Document doc = Jsoup.parse(content);
+			List<FormModel> formModels = new ArrayList<FormModel>();
+			List<AModel> aModels = new ArrayList<AModel>();
 			//处理表单
 			Elements forms = doc.select("form");
 			for (Element form : forms) {
@@ -93,6 +95,7 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 					inputModel.setValue(input.attr(PageConstant.VALUE));
 					formModel.getInputs().add(inputModel);
 				}
+				formModels.add(formModel);
 			}
 			//获取html里的业务语言
 			Map<String, Integer> BLs = new HashMap<String, Integer>();
@@ -110,11 +113,12 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 				int i = content.indexOf(outerHtml);
 				for (String key : BLs.keySet()) {
 					if (BLs.get(key) - (i + outerHtml.length()) <= 2) {
-						aModel.setBL(key);
+						aModel.setBL(key);//业务语言与链接关联
 						BLs.remove(key);
 						break;
 					}
 				}
+				aModels.add(aModel);
 			}
 			
 		} catch (Exception e) {
