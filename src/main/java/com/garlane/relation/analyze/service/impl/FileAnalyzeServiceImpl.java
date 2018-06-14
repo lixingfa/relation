@@ -22,6 +22,7 @@ import com.garlane.relation.analyze.service.FileAnalyzeService;
 import com.garlane.relation.common.constant.FileConstant;
 import com.garlane.relation.common.constant.PageConstant;
 import com.garlane.relation.common.model.page.AModel;
+import com.garlane.relation.common.model.page.BLModel;
 import com.garlane.relation.common.model.page.FormModel;
 import com.garlane.relation.common.model.page.InputModel;
 import com.garlane.relation.common.utils.exception.SuperServiceException;
@@ -38,7 +39,8 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 	private static final Logger log = Logger.getLogger(FileAnalyzeServiceImpl.class);
 	
 	private static final String JS_PATH = "static/js/";
-	private static final String BLPat = "<!---[^(-->)]+-->";
+	private static final String HTMLBL = "<!---[^(-->)]+-->";
+	private static final String JSBL = "/\\*\\*\\*[^(\\*\\*/)]+\\*\\*/";
 	/**
 	 * getFileLogic:(获取项目业务逻辑)
 	 * @author lixingfa
@@ -94,6 +96,7 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 			Document doc = Jsoup.parse(content);
 			List<FormModel> formModels = new ArrayList<FormModel>();
 			List<AModel> aModels = new ArrayList<AModel>();
+			List<BLModel> blModels = new ArrayList<BLModel>();
 			//处理表单
 			Elements forms = doc.select("form");
 			for (Element form : forms) {
@@ -110,9 +113,14 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 				}
 				formModels.add(formModel);
 			}
+			//处理bl标签标注的动态内容
+			Elements bls = doc.getElementsByAttribute("bl");
+			for (Element bl : bls) {
+				blModels.add(new BLModel(bl.attr("bl"), bl.text()));
+			}
 			//获取html里的业务语言
 			Map<String, Integer> BLs = new HashMap<String, Integer>();
-			Pattern pattern = Pattern.compile(BLPat);
+			Pattern pattern = Pattern.compile(HTMLBL);
 			Matcher matcher = pattern.matcher(content);
 			while (matcher.find()) {
 				String bl = matcher.group();
@@ -141,12 +149,8 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 	
 	private void jsAnalyze(String content){
 		
-	}
-	
-	public static void main(String[] args) {
-		String s = "立即注册</a><!---进入注册页，填写公司名称、法人信息、登录用户名、密码、注册邮箱，选择供应商还是采购商，上传公司资质-->>登录</a><!---验证码、账号、密码均正确-->";
-		Pattern pattern = Pattern.compile(BLPat);
-		Matcher matcher = pattern.matcher(s);
+		Pattern pattern = Pattern.compile(JSBL);
+		Matcher matcher = pattern.matcher(content);
 		while (matcher.find()) {
 			String string = matcher.group();
 			System.out.println(string);			
