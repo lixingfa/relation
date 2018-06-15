@@ -5,7 +5,7 @@
     <appender name="CONSOLE.ERR" class="org.apache.log4j.ConsoleAppender">  
         <param name="target" value="System.err" />  
         <layout class="org.apache.log4j.PatternLayout">  
-            <param name="ConversionPattern" value="%-d{yyyy-MM-dd HH:mm:ss}[%p]( %l)%n%m%n" />  
+            <param name="ConversionPattern" value="%-d{yyyy-MM-dd HH:mm:ss:SSS}[%p]( %l)%n%m%n" />  
         </layout>  
         <filter class="org.apache.log4j.varia.LevelRangeFilter">  
             <param name="LevelMin" value="error" />  
@@ -16,10 +16,10 @@
     <appender name="CONSOLE.OUT" class="org.apache.log4j.ConsoleAppender">  
         <param name="target" value="System.out" />  
         <layout class="org.apache.log4j.PatternLayout">  
-            <param name="ConversionPattern" value="%-d{yyyy-MM-dd HH:mm:ss}[%p]( %l)%n%m%n" />  
+            <param name="ConversionPattern" value="%-d{yyyy-MM-dd HH:mm:ss:SSS}[%thread][%p]( %l)%n%m%n" />  
         </layout>  
         <filter class="org.apache.log4j.varia.LevelRangeFilter">  
-            <param name="LevelMin" value="debug" />  
+            <param name="LevelMin" value="info" />  
             <param name="LevelMax" value="warn" />  
             <param name="AcceptOnMatch" value="false" />  
         </filter>  
@@ -27,24 +27,24 @@
     
     <!-- FILE -->
     <appender name="R" class="org.apache.log4j.RollingFileAppender">  
-    	<param name="File" value="${user.dir}/MCubeApprILogs/relation/relation.log" />
+    	<param name="File" value="${user.dir}/MCubeApprILogs/ApprBase/ApprBase.log" />
     	<param name="Append" value="true" />
     	<param name="Threshold" value="debug" />
     	<param name="ImmediateFlush" value="true" />
-    	<param name="MaxFileSize" value="1MB" />
-    	<param name="MaxBackupIndex" value="10" />
+    	<param name="MaxFileSize" value="10MB" />
+    	<param name="MaxBackupIndex" value="50" />
         <layout class="org.apache.log4j.PatternLayout">  
-            <param name="ConversionPattern" value="%-d{yyyy-MM-dd HH:mm:ss}[%p]( %l)%n%m%n" />  
+            <param name="ConversionPattern" value="%-d{yyyy-MM-dd HH:mm:ss:SSS}[%thread][%p]( %l)%n%m%n" />  
         </layout>  
     </appender> 
      
-     <!-- other --> 
-    <logger name="org.apache.ibatis">  
-        <level value="warn" />  
-    </logger> 
-    <logger name="org.mybatis.spring">  
-        <level value="warn" />  
-    </logger>
+     <!-- other -->
+	<logger name="org.apache.ibatis">
+		<level value="warn" />
+	</logger>
+	<logger name="org.mybatis.spring">
+		<level value="warn" />
+	</logger>
     <logger name="org.springframework">  
         <level value="info" />  
     </logger> 
@@ -60,14 +60,15 @@
     <logger name="java.sql">  
         <level value="debug" />  
     </logger>
+    <logger name="net.sf.ezmorph">  
+        <level value="error" />  
+    </logger>
   
-  
-    <!-- Root Logger -->  
-    <root>  
-        <priority value="debug" />  
-        <appender-ref ref="CONSOLE.ERR" />  
-        <appender-ref ref="CONSOLE.OUT" />  
-        <appender-ref ref="R" />
-    </root>  
-  
+    <!-- Root Logger -->
+	<root>
+		<priority value="debug" />
+		<appender-ref ref="CONSOLE.ERR" />
+		<appender-ref ref="CONSOLE.OUT" />
+		<appender-ref ref="R" />
+	</root>  
 </log4j:configuration>  

@@ -126,7 +126,7 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 				String bl = matcher.group();
 				BLs.put(bl,content.indexOf(bl));		
 			}
-			//处理业务语言 TODO 待优化
+			//a标签与业务语言关联
 			Elements as = doc.select("a");
 			for (Element a : as) {
 				AModel aModel = new AModel(a.attr(PageConstant.HREF),a.text());
@@ -140,10 +140,11 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 					}
 				}
 				aModels.add(aModel);
-			}
-			
+			}			
 		} catch (Exception e) {
 			e.printStackTrace();
+			log.error("处理文件出错。", e);
+			throw new SuperServiceException("处理文件出错。", e);
 		}
 	}
 	
