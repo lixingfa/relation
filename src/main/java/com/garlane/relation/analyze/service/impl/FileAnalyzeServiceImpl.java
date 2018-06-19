@@ -18,13 +18,14 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
+import com.garlane.relation.analyze.model.AModel;
+import com.garlane.relation.analyze.model.BLModel;
+import com.garlane.relation.analyze.model.FormModel;
+import com.garlane.relation.analyze.model.HTMLModel;
+import com.garlane.relation.analyze.model.InputModel;
 import com.garlane.relation.analyze.service.FileAnalyzeService;
 import com.garlane.relation.common.constant.FileConstant;
 import com.garlane.relation.common.constant.PageConstant;
-import com.garlane.relation.common.model.page.AModel;
-import com.garlane.relation.common.model.page.BLModel;
-import com.garlane.relation.common.model.page.FormModel;
-import com.garlane.relation.common.model.page.InputModel;
 import com.garlane.relation.common.utils.exception.SuperServiceException;
 import com.garlane.relation.common.utils.file.FileUtils;
 
@@ -54,13 +55,11 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 			try {
 				log.info("读取html数据");
 				Map<String, String> htmlContents = FileUtils.getDirectoryContent(path + "/" + FileConstant.HTML + "/",FileConstant.HTML);
-				htmlAnalyzes(htmlContents);
-				
-				log.info("解析html文件里的业务语言");
-				
+				List<HTMLModel> htmlModels = htmlAnalyzes(htmlContents);				
+				log.info("解析html文件里的业务语言");				
 				log.info("读取js数据");
-				htmlContents.putAll(FileUtils.getDirectoryContent(path + "/" + JS_PATH,FileConstant.JS));
-				
+				//htmlContents.putAll(FileUtils.getDirectoryContent(path + "/" + JS_PATH,FileConstant.JS));
+				//从html引用的里面读取
 				log.info("读取数据完成，开始解析。");
 				
 			} catch (Exception e) {
@@ -77,11 +76,13 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 	 * @date 2018年6月13日下午7:31:59
 	 * @param htmlContents
 	 */
-	private void htmlAnalyzes(Map<String, String> htmlContents){
+	private List<HTMLModel> htmlAnalyzes(Map<String, String> htmlContents){
+		List<HTMLModel> htmlModels = new ArrayList<HTMLModel>();
 		for (String path : htmlContents.keySet()) {
 			String content = htmlContents.get(path);
-			htmlAnalyze(content);
+			htmlModels.add(htmlAnalyze(path,content));
 		}
+		return htmlModels;
 	}
 	
 	/**
@@ -90,18 +91,18 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 	 * @date 2018年6月13日下午7:32:22
 	 * @param content
 	 */
-	private void htmlAnalyze(String content){
-		//这个方法应该是产出业务逻辑模型了
+	private HTMLModel htmlAnalyze(String path,String content){
+		HTMLModel htmlModel = new HTMLModel(path);
 		try {
 			Document doc = Jsoup.parse(content);
 			List<FormModel> formModels = new ArrayList<FormModel>();
 			List<AModel> aModels = new ArrayList<AModel>();
 			List<BLModel> blModels = new ArrayList<BLModel>();
 			//处理表单
-			Elements forms = doc.select("form");
+			Elements forms = doc.select(PageConstant.FORM);
 			for (Element form : forms) {
 				FormModel formModel = new FormModel();
-				Elements inputs = form.select("input");
+				Elements inputs = form.select(PageConstant.INPUT);
 				for (Element input : inputs) {
 					InputModel inputModel = new InputModel();
 					inputModel.setId(input.attr(PageConstant.ID));
@@ -113,11 +114,12 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 				}
 				formModels.add(formModel);
 			}
+			htmlModel.setFormModels(formModels);
 			//处理bl标签标注的动态内容
 			Elements bls = doc.getElementsByAttribute("bl");
 			for (Element bl : bls) {
 				blModels.add(new BLModel(bl.attr("bl"), bl.text()));
-			}
+			}			
 			//获取html里的业务语言
 			Map<String, Integer> BLs = new HashMap<String, Integer>();
 			Pattern pattern = Pattern.compile(HTMLBL);
@@ -126,6 +128,8 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 				String bl = matcher.group();
 				BLs.put(bl,content.indexOf(bl));		
 			}
+			blModels.addAll(htmlJsAnalyze(content));
+			htmlModel.setBls(blModels);
 			//a标签与业务语言关联
 			Elements as = doc.select("a");
 			for (Element a : as) {
@@ -140,7 +144,9 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 					}
 				}
 				aModels.add(aModel);
-			}			
+			}
+			htmlModel.setaModels(aModels);
+			return htmlModel;
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("处理文件出错。", e);
@@ -148,13 +154,19 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 		}
 	}
 	
-	private void jsAnalyze(String content){
-		
+	/**
+	 * 处理html中JS脚本的业务语言
+	 * @param content
+	 * @return
+	 */
+	private List<BLModel> htmlJsAnalyze(String content){
+		List<BLModel> blModels = new ArrayList<BLModel>();
 		Pattern pattern = Pattern.compile(JSBL);
 		Matcher matcher = pattern.matcher(content);
 		while (matcher.find()) {
 			String string = matcher.group();
-			System.out.println(string);			
+			blModels.add(new BLModel(null, string));
 		}
+		return blModels;
 	}
 }

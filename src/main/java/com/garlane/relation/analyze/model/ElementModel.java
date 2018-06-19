@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.garlane.relation.common.model.page;
+package com.garlane.relation.analyze.model;
 
 import com.garlane.relation.common.constant.DBConstant;
 
