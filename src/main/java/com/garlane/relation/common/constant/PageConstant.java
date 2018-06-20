@@ -19,6 +19,7 @@ public class PageConstant {
 	public static final String MAXLENGTH = "maxlength";
 	public static final String VALUE = "value";
 	public static final String HREF = "href";
+	public static final String SRC = "src";
 	
 	/**输入类型*/
 	public static enum INPUTTYPE{

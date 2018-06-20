@@ -53,11 +53,17 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 		File prototype = new File(path);
 		if (prototype.isDirectory()) {
 			try {
+				//TODO MVC实时查看日志
 				log.info("读取html数据");
 				Map<String, String> htmlContents = FileUtils.getDirectoryContent(path + "/" + FileConstant.HTML + "/",FileConstant.HTML);
 				List<HTMLModel> htmlModels = htmlAnalyzes(htmlContents);			
-				log.info("解析HTML里引用的js");
-				
+				log.info("解析" + path + "/" + FileConstant.JS + "/下的JS文件，非业务JS不要放在这里。" );
+				Map<String, String> jsContents = FileUtils.getDirectoryContent(path + "/" + FileConstant.JS + "/",FileConstant.JS);
+				List<BLModel> jsBLModels = new ArrayList<BLModel>();
+				for (String key : jsContents.keySet()) {
+					jsBLModels.addAll(jsAnalyze(jsContents.get(key)));
+				}
+				log.info("开始分析业务逻辑");
 				
 			} catch (Exception e) {
 				throw new SuperServiceException("读取文件数据出现错误", e);
@@ -125,7 +131,7 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 				String bl = matcher.group();
 				BLs.put(bl,content.indexOf(bl));		
 			}
-			blModels.addAll(htmlJsAnalyze(content));
+			blModels.addAll(jsAnalyze(content));
 			htmlModel.setBls(blModels);
 			log.info("a标签与业务语言关联");
 			Elements as = doc.select("a");
@@ -147,8 +153,10 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 			pattern = Pattern.compile(JSSRC);
 			matcher = pattern.matcher(content);
 			while (matcher.find()) {
-				String string = matcher.group();
-				htmlModel.getJsSrc().add(string);
+				String s = matcher.group();
+				s = s.substring(s.indexOf(PageConstant.SRC));
+				s = s.substring(0, s.indexOf("\""));
+				htmlModel.getJsSrc().add(s);
 			}
 			return htmlModel;
 		} catch (Exception e) {
@@ -163,7 +171,7 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 	 * @param content
 	 * @return
 	 */
-	private List<BLModel> htmlJsAnalyze(String content){
+	private List<BLModel> jsAnalyze(String content){
 		List<BLModel> blModels = new ArrayList<BLModel>();
 		Pattern pattern = Pattern.compile(JSBL);
 		Matcher matcher = pattern.matcher(content);
