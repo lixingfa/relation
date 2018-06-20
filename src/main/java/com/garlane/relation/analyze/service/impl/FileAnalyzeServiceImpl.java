@@ -39,7 +39,7 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 
 	private static final Logger log = Logger.getLogger(FileAnalyzeServiceImpl.class);
 	
-	private static final String JS_PATH = "static/js/";
+	private static final String JSSRC = "<script [ \"/a-zA-Z=.]+ [ \"/a-zA-Z=.]+></script>";
 	private static final String HTMLBL = "<!---[^(-->)]+-->";
 	private static final String JSBL = "/\\*\\*\\*[^(\\*\\*/)]+\\*\\*/";
 	/**
@@ -55,12 +55,9 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 			try {
 				log.info("读取html数据");
 				Map<String, String> htmlContents = FileUtils.getDirectoryContent(path + "/" + FileConstant.HTML + "/",FileConstant.HTML);
-				List<HTMLModel> htmlModels = htmlAnalyzes(htmlContents);				
-				log.info("解析html文件里的业务语言");				
-				log.info("读取js数据");
-				//htmlContents.putAll(FileUtils.getDirectoryContent(path + "/" + JS_PATH,FileConstant.JS));
-				//从html引用的里面读取
-				log.info("读取数据完成，开始解析。");
+				List<HTMLModel> htmlModels = htmlAnalyzes(htmlContents);			
+				log.info("解析HTML里引用的js");
+				
 				
 			} catch (Exception e) {
 				throw new SuperServiceException("读取文件数据出现错误", e);
@@ -98,7 +95,7 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 			List<FormModel> formModels = new ArrayList<FormModel>();
 			List<AModel> aModels = new ArrayList<AModel>();
 			List<BLModel> blModels = new ArrayList<BLModel>();
-			//处理表单
+			log.info("处理表单");
 			Elements forms = doc.select(PageConstant.FORM);
 			for (Element form : forms) {
 				FormModel formModel = new FormModel();
@@ -115,12 +112,12 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 				formModels.add(formModel);
 			}
 			htmlModel.setFormModels(formModels);
-			//处理bl标签标注的动态内容
+			log.info("处理bl标签标注的动态内容");
 			Elements bls = doc.getElementsByAttribute("bl");
 			for (Element bl : bls) {
 				blModels.add(new BLModel(bl.attr("bl"), bl.text()));
 			}			
-			//获取html里的业务语言
+			log.info("获取html里的业务语言");
 			Map<String, Integer> BLs = new HashMap<String, Integer>();
 			Pattern pattern = Pattern.compile(HTMLBL);
 			Matcher matcher = pattern.matcher(content);
@@ -130,7 +127,7 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 			}
 			blModels.addAll(htmlJsAnalyze(content));
 			htmlModel.setBls(blModels);
-			//a标签与业务语言关联
+			log.info("a标签与业务语言关联");
 			Elements as = doc.select("a");
 			for (Element a : as) {
 				AModel aModel = new AModel(a.attr(PageConstant.HREF),a.text());
@@ -146,6 +143,13 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 				aModels.add(aModel);
 			}
 			htmlModel.setaModels(aModels);
+			log.info("获取js引用");
+			pattern = Pattern.compile(JSSRC);
+			matcher = pattern.matcher(content);
+			while (matcher.find()) {
+				String string = matcher.group();
+				htmlModel.getJsSrc().add(string);
+			}
 			return htmlModel;
 		} catch (Exception e) {
 			e.printStackTrace();
