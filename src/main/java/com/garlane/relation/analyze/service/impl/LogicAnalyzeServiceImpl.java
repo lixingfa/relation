@@ -25,7 +25,7 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 	 */
 	public void LogicAnalyze(List<HTMLModel> htmlModels,List<BLModel> jsBLModels)throws SuperServiceException{
 		log.info("处理form");//同一个form表示一起完成一个事务，查询、修改比较多
-		List<FormModel> formModels = new ArrayList<>();
+		List<FormModel> formModels = new ArrayList<FormModel>();
 		
 	}
 }
