@@ -75,6 +75,17 @@
              }
 		});	  
 	  }
+	  
+	  $(document).ready(function() {
+	        // 指定websocket路径
+	        var websocket = new WebSocket('ws://localhost:8080/relation/ws.do');
+	        websocket.onmessage = function(event) {
+	            // 接收服务端的实时日志并添加到HTML页面中
+	            $("#tips").append(event.data + "<br/>");
+	            // 滚动条滚动到最低部
+	            $("#tips").scrollTop($("#tips").height());
+	        };
+	    });
   </script>
   
 </body>
