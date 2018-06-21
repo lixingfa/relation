@@ -18,11 +18,11 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
-import com.garlane.relation.analyze.model.AModel;
-import com.garlane.relation.analyze.model.BLModel;
-import com.garlane.relation.analyze.model.FormModel;
-import com.garlane.relation.analyze.model.HTMLModel;
-import com.garlane.relation.analyze.model.InputModel;
+import com.garlane.relation.analyze.model.page.AModel;
+import com.garlane.relation.analyze.model.page.BLModel;
+import com.garlane.relation.analyze.model.page.FormModel;
+import com.garlane.relation.analyze.model.page.HTMLModel;
+import com.garlane.relation.analyze.model.page.InputModel;
 import com.garlane.relation.analyze.service.FileAnalyzeService;
 import com.garlane.relation.common.constant.FileConstant;
 import com.garlane.relation.common.constant.PageConstant;
@@ -58,7 +58,7 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 				Map<String, String> htmlContents = FileUtils.getDirectoryContent(path + "/" + FileConstant.HTML + "/",FileConstant.HTML);
 				List<HTMLModel> htmlModels = htmlAnalyzes(htmlContents);			
 				log.info("解析" + path + "/" + FileConstant.JS + "/下的JS文件，非业务JS不要放在这里。" );
-				Map<String, String> jsContents = FileUtils.getDirectoryContent(path + "/" + FileConstant.JS + "/",FileConstant.JS);
+				Map<String, String> jsContents = FileUtils.getDirectoryContent(path + "/" + FileConstant.STATIC + "/" + FileConstant.JS + "/",FileConstant.JS);
 				List<BLModel> jsBLModels = new ArrayList<BLModel>();
 				for (String key : jsContents.keySet()) {
 					jsBLModels.addAll(jsAnalyze(jsContents.get(key)));

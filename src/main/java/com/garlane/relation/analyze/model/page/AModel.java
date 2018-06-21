@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.garlane.relation.analyze.model;
+package com.garlane.relation.analyze.model.page;
 
 /**网页的a标签
  * @author lixingfa

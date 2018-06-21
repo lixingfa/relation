@@ -1,4 +1,4 @@
-package com.garlane.relation.analyze.model;
+package com.garlane.relation.analyze.model.page;
 
 import java.util.ArrayList;
 import java.util.List;

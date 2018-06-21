@@ -76,7 +76,7 @@
 		});	  
 	  }
 	  
-	  $(document).ready(function() {
+	  /*$(document).ready(function() {
 	        // 指定websocket路径
 	        var websocket = new WebSocket('ws://localhost:8080/relation/ws.do');
 	        websocket.onmessage = function(event) {
@@ -85,7 +85,7 @@
 	            // 滚动条滚动到最低部
 	            $("#tips").scrollTop($("#tips").height());
 	        };
-	    });
+	    });*/
   </script>
   
 </body>

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.garlane.relation.analyze.model;
+package com.garlane.relation.analyze.model.page;
 
 /**
  * @author lixingfa
