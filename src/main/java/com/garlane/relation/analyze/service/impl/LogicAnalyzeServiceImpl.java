@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.garlane.relation.analyze.model.logic.PropertyModel;
 import com.garlane.relation.analyze.model.page.BLModel;
 import com.garlane.relation.analyze.model.page.FormModel;
 import com.garlane.relation.analyze.model.page.HTMLModel;
@@ -24,8 +25,25 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 	 * @throws SuperServiceException
 	 */
 	public void LogicAnalyze(List<HTMLModel> htmlModels,List<BLModel> jsBLModels)throws SuperServiceException{
+		log.info("处理BL语言");//BL语言里有很多属性，先获取它们
+		
+		
 		log.info("处理form");//同一个form表示一起完成一个事务，查询、修改比较多
 		List<FormModel> formModels = new ArrayList<FormModel>();
 		
+	}
+	
+	/**
+	 * 
+	 * @param htmlModels
+	 * @param jsBLModels
+	 * @return
+	 * @throws SuperServiceException
+	 */
+	private List<PropertyModel> getPropertyModels(List<HTMLModel> htmlModels,List<BLModel> jsBLModels) throws SuperServiceException{
+		List<PropertyModel> propertyModels = new ArrayList<PropertyModel>();
+		//从BL里获取属性，一起出现的亲密度+1
+		
+		return propertyModels;
 	}
 }
