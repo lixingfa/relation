@@ -16,6 +16,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.garlane.relation.analyze.model.page.AModel;
@@ -24,6 +25,8 @@ import com.garlane.relation.analyze.model.page.FormModel;
 import com.garlane.relation.analyze.model.page.HTMLModel;
 import com.garlane.relation.analyze.model.page.InputModel;
 import com.garlane.relation.analyze.service.FileAnalyzeService;
+import com.garlane.relation.analyze.service.LogicAnalyzeService;
+import com.garlane.relation.common.constant.ConfigConstant;
 import com.garlane.relation.common.constant.FileConstant;
 import com.garlane.relation.common.constant.PageConstant;
 import com.garlane.relation.common.utils.exception.SuperServiceException;
@@ -42,6 +45,8 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 	private static final String JSSRC = "<script [ \"/a-zA-Z=.]+ [ \"/a-zA-Z=.]+></script>";
 	private static final String HTMLBL = "<!---[^(-->)]+-->";
 	private static final String JSBL = "/\\*\\*\\*[^(\\*\\*/)]+\\*\\*/";
+	@Autowired
+	private LogicAnalyzeService logicAnalyzeService;
 	/**
 	 * getFileLogic:(获取项目业务逻辑)
 	 * @author lixingfa
@@ -55,16 +60,21 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 			try {
 				//TODO MVC实时查看日志
 				log.info("读取html数据");
-				Map<String, String> htmlContents = FileUtils.getDirectoryContent(path + "/" + FileConstant.HTML + "/",FileConstant.HTML);
-				List<HTMLModel> htmlModels = htmlAnalyzes(htmlContents);			
-				log.info("解析" + path + "/" + FileConstant.JS + "/下的JS文件，非业务JS不要放在这里。" );
-				Map<String, String> jsContents = FileUtils.getDirectoryContent(path + "/" + FileConstant.STATIC + "/" + FileConstant.JS + "/",FileConstant.JS);
+				Map<String, String> htmlContents = FileUtils.getDirectoryContent(path + File.separator + FileConstant.HTML + File.separator,FileConstant.HTML);
+				List<HTMLModel> htmlModels = htmlAnalyzes(htmlContents);
+				log.info("解析" + path + File.separator + FileConstant.JS + "/下的JS文件，非业务JS不要放在这里。" );
+				Map<String, String> jsContents = FileUtils.getDirectoryContent(path + File.separator + FileConstant.STATIC + File.separator + FileConstant.JS + File.separator,FileConstant.JS);
+				if (htmlContents.size() + jsContents.size() > ConfigConstant.ANALYZE_MAX_NUM) {
+					throw new SuperServiceException(path + File.separator + FileConstant.HTML + "/中的html文件  和 " 
+							+ path + File.separator + FileConstant.STATIC + File.separator + FileConstant.JS + "/中的js文件总数大于" + ConfigConstant.ANALYZE_MAX_NUM
+							+"<br/>请合理安排文件存放位置，不要把前端框架的文件放到js目录下。" );
+				}
 				List<BLModel> jsBLModels = new ArrayList<BLModel>();
 				for (String key : jsContents.keySet()) {
 					jsBLModels.addAll(jsAnalyze(jsContents.get(key)));
 				}
 				log.info("开始分析业务逻辑");
-				
+				logicAnalyzeService.LogicAnalyze(htmlModels, jsBLModels);
 			} catch (Exception e) {
 				throw new SuperServiceException("读取文件数据出现错误", e);
 			}
@@ -131,6 +141,7 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 				String bl = matcher.group();
 				BLs.put(bl,content.indexOf(bl));		
 			}
+			log.info("获取HTML里JS脚本的BL语言。");
 			blModels.addAll(jsAnalyze(content));
 			htmlModel.setBls(blModels);
 			log.info("a标签与业务语言关联");

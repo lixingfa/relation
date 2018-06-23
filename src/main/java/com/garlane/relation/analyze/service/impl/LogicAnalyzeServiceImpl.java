@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
 
 import com.garlane.relation.analyze.model.logic.PropertyModel;
 import com.garlane.relation.analyze.model.page.BLModel;
@@ -11,7 +12,7 @@ import com.garlane.relation.analyze.model.page.FormModel;
 import com.garlane.relation.analyze.model.page.HTMLModel;
 import com.garlane.relation.analyze.service.LogicAnalyzeService;
 import com.garlane.relation.common.utils.exception.SuperServiceException;
-
+@Service("logicAnalyzeService")
 public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 
 	private Logger log = Logger.getLogger(getClass());
