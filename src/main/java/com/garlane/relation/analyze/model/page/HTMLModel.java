@@ -49,4 +49,11 @@ public class HTMLModel {
 	public void setFormModels(List<FormModel> formModels) {
 		this.formModels = formModels;
 	}
+	public List<BLModel> getABLs(){
+		List<BLModel> blModels = new ArrayList<BLModel>();
+		for (AModel aModel : aModels) {
+			blModels.add(new BLModel(null, aModel.getBL()));
+		}
+		return blModels;
+	}
 }
