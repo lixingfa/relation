@@ -42,9 +42,17 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 	 * @throws SuperServiceException
 	 */
 	private List<PropertyModel> getPropertyModels(List<HTMLModel> htmlModels,List<BLModel> jsBLModels) throws SuperServiceException{
+		
 		List<PropertyModel> propertyModels = new ArrayList<PropertyModel>();
 		//从BL里获取属性，一起出现的亲密度+1
 		
+		//同一个页面里的属性,同一个表单里的属性，同一个BL的属性……
+		//大集合包含小集合
+		//要定义一个数据结构来装这个集合，然后再根据集合做成二维关系亲密度表
 		return propertyModels;
 	}
+	//从表单获取属性
+	//从datagrigd获取属性
+	//从BL获取属性
+	//把小集合放到页面集合里，把页面集合放到文件夹里。
 }
