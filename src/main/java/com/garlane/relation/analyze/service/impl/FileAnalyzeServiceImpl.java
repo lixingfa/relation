@@ -62,11 +62,15 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 				log.info("读取html数据");
 				Map<String, String> htmlContents = FileUtils.getDirectoryContent(path + File.separator + FileConstant.HTML + File.separator,FileConstant.HTML);
 				List<HTMLModel> htmlModels = htmlAnalyzes(htmlContents);
+				//TODO JSP也进行解析，老项目就只留JSP页面，把后台干掉，程序解析页面上的标签和动态，推测后台逻辑
+				//老项目也能通过原有JSP+BL+html实现项目拓展
+				
 				log.info("解析" + path + File.separator + FileConstant.JS + "/下的JS文件，非业务JS不要放在这里。" );
 				Map<String, String> jsContents = FileUtils.getDirectoryContent(path + File.separator + FileConstant.STATIC + File.separator + FileConstant.JS + File.separator,FileConstant.JS);
 				if (htmlContents.size() + jsContents.size() > ConfigConstant.ANALYZE_MAX_NUM) {
 					throw new SuperServiceException(path + File.separator + FileConstant.HTML + "/中的html文件  和 " 
-							+ path + File.separator + FileConstant.STATIC + File.separator + FileConstant.JS + "/中的js文件总数大于" + ConfigConstant.ANALYZE_MAX_NUM
+							+ path + File.separator + FileConstant.STATIC + File.separator + FileConstant.JS 
+							+ "/中的js文件总数大于" + ConfigConstant.ANALYZE_MAX_NUM
 							+"<br/>请合理安排文件存放位置，不要把前端框架的文件放到js目录下。" );
 				}
 				List<BLModel> jsBLModels = new ArrayList<BLModel>();

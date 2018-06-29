@@ -11,6 +11,7 @@ package com.garlane.relation.common.constant;
 public class FileConstant {
 
 	public static final String JS = "js";
+	public static final String JSP = "jsp";
 	public static final String HTML = "html";
 	public static final String STATIC = "static";
 }
