@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.UUID;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -1088,4 +1089,8 @@ public class StringUtil {
         } catch (Exception e) {}  
         return map;  
     }  
+	
+	public static String getUUID(){
+		return UUID.randomUUID().toString().replaceAll("-", "");
+	}
 }

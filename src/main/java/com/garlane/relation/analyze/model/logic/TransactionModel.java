@@ -6,7 +6,7 @@ package com.garlane.relation.analyze.model.logic;
 import java.util.ArrayList;
 import java.util.List;
 
-/**事务
+/**事务，属性分布树的二维图，便于分组与建表
  * @author lixingfa
  * @date 2018年6月21日下午7:10:29
  * 

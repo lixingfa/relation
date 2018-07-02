@@ -1,4 +1,4 @@
-package com.garlane.relation.common.utils;
+package com.garlane.relation.common.utils.file;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
