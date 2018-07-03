@@ -70,13 +70,15 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 					//老项目也能通过原有JSP+BL+html实现项目拓展，目前只支持maven格式的
 					htmlContents.putAll(FileUtils.getDirectoryContent(jspPath,FileConstant.JSP));
 					jspCount = htmlContents.size();
-					htmlPath = jspPath;
+					htmlPath = jspPath;//每次只读取一种文件类型，jsp里可能新加入html
 				}else {//新项目
 					htmlPath = path + File.separator + FileConstant.HTML + File.separator;
 				}
 				log.info("读取html数据:" + htmlPath);
 				htmlContents.putAll(FileUtils.getDirectoryContent(htmlPath,FileConstant.HTML));
 				htmlCount = htmlContents.size() - jspCount;					
+				
+				//TODO 敏感信息监控，报警，并记录上传人的ip、身份证等
 				
 				
 				String jsPath = path + File.separator + FileConstant.STATIC + File.separator + FileConstant.JS + File.separator;
@@ -128,6 +130,7 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 	private HTMLModel htmlAnalyze(String path,String content){
 		HTMLModel htmlModel = new HTMLModel(path);
 		try {
+			//Java ScriptEngine
 			Document doc = Jsoup.parse(content);
 			List<FormModel> formModels = new ArrayList<FormModel>();
 			List<AModel> aModels = new ArrayList<AModel>();
