@@ -58,25 +58,42 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 		File prototype = new File(path);
 		if (prototype.isDirectory()) {
 			try {
+				int htmlCount = 0;
+				int jspCount = 0;
+				int jsCount = 0;
 				//TODO MVC实时查看日志
-				log.info("读取html数据");
-				Map<String, String> htmlContents = FileUtils.getDirectoryContent(path + File.separator + FileConstant.HTML + File.separator,FileConstant.HTML);
-				List<HTMLModel> htmlModels = htmlAnalyzes(htmlContents);
-				//TODO JSP也进行解析，老项目就只留JSP页面，把后台干掉，程序解析页面上的标签和动态，推测后台逻辑
-				//老项目也能通过原有JSP+BL+html实现项目拓展
+				Map<String, String> htmlContents = new HashMap<String, String>();
+				String htmlPath;
+				if (path.endsWith(FileConstant.WEBAPP)) {//基于maven的老项目，把webapp目录拿过来
+					String jspPath = path + File.separator + FileConstant.WEBINF + File.separator + FileConstant.JSP + File.separator;
+					log.info("读取jsp数据：" + jspPath);
+					//老项目也能通过原有JSP+BL+html实现项目拓展，目前只支持maven格式的
+					htmlContents.putAll(FileUtils.getDirectoryContent(jspPath,FileConstant.JSP));
+					jspCount = htmlContents.size();
+					htmlPath = jspPath;
+				}else {//新项目
+					htmlPath = path + File.separator + FileConstant.HTML + File.separator;
+				}
+				log.info("读取html数据:" + htmlPath);
+				htmlContents.putAll(FileUtils.getDirectoryContent(htmlPath,FileConstant.HTML));
+				htmlCount = htmlContents.size() - jspCount;					
 				
-				log.info("解析" + path + File.separator + FileConstant.JS + "/下的JS文件，非业务JS不要放在这里。" );
-				Map<String, String> jsContents = FileUtils.getDirectoryContent(path + File.separator + FileConstant.STATIC + File.separator + FileConstant.JS + File.separator,FileConstant.JS);
-				if (htmlContents.size() + jsContents.size() > ConfigConstant.ANALYZE_MAX_NUM) {
-					throw new SuperServiceException(path + File.separator + FileConstant.HTML + "/中的html文件  和 " 
-							+ path + File.separator + FileConstant.STATIC + File.separator + FileConstant.JS 
-							+ "/中的js文件总数大于" + ConfigConstant.ANALYZE_MAX_NUM
+				
+				String jsPath = path + File.separator + FileConstant.STATIC + File.separator + FileConstant.JS + File.separator;
+				log.info("解析" + jsPath + "下的JS文件，非业务JS不要放在这里。" );
+				Map<String, String> jsContents = FileUtils.getDirectoryContent(jsPath,FileConstant.JS);
+				jsCount = jsContents.size();
+				if (htmlCount + jspCount + jsCount > ConfigConstant.ANALYZE_MAX_NUM) {
+					throw new SuperServiceException("html页面总数("+ htmlCount +")+jsp页面总数("+ jspCount
+							+")+js文件总数("+ jsCount +")  > " + ConfigConstant.ANALYZE_MAX_NUM
 							+"<br/>请合理安排文件存放位置，不要把前端框架的文件放到js目录下。" );
 				}
+				
 				List<BLModel> jsBLModels = new ArrayList<BLModel>();
 				for (String key : jsContents.keySet()) {
 					jsBLModels.addAll(jsAnalyze(jsContents.get(key)));
 				}
+				List<HTMLModel> htmlModels = htmlAnalyzes(htmlContents);
 				log.info("开始分析业务逻辑");
 				logicAnalyzeService.LogicAnalyze(htmlModels, jsBLModels);
 			} catch (Exception e) {

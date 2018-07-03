@@ -36,7 +36,7 @@ public class BLServiceImpl implements BLService{
 	 */
 	public List<PropertyModel> BLAnalyzes(List<HTMLModel> htmlModels,List<BLModel> jsBLModels)throws SuperServiceException{
 		List<PropertyModel> propertyModels = new ArrayList<PropertyModel>();
-		List<BLModel> blModels = new ArrayList<>();
+		List<BLModel> blModels = new ArrayList<BLModel>();
 		for (HTMLModel htmlModel : htmlModels) {
 			log.info("处理HTML和内嵌JS里的BL语言");
 			blModels.addAll(htmlModel.getBls());

@@ -431,16 +431,23 @@ public class FileUtils {
      * @return Map<String, String>
      */
     public static Map<String, String> getDirectoryContent(String dirPath,String suffix) throws IOException{
-    	Map<String, String> map = new HashMap<String, String>();
     	File file = new File(dirPath);
+    	Map<String, String> map = new HashMap<String, String>();
+    	if (!file.exists()) {
+    		return map;
+    	}
     	if (file.isDirectory()) {//是目录
 			File[] subFiles = file.listFiles();
 			for (int i = 0; i < subFiles.length; i++) {
 				String path = subFiles[i].getAbsolutePath();
-				if (StringUtils.isNotBlank(suffix) && path.lastIndexOf(suffix) == -1) {//没有这个后缀
-					continue;
+				if (subFiles[i].isDirectory()) {
+					map.putAll(getDirectoryContent(path, suffix));
+				}else {
+					if (StringUtils.isNotBlank(suffix) && path.lastIndexOf(suffix) == -1) {//没有这个后缀
+						continue;
+					}
+					map.put(path, getFileString(path));					
 				}
-				map.put(path, getFileString(path));
 			}
 		}else {
 			if (StringUtils.isNotBlank(suffix) && dirPath.lastIndexOf(suffix) == -1) {//没有这个后缀
