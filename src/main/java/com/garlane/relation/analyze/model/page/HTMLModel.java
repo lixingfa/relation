@@ -3,6 +3,8 @@ package com.garlane.relation.analyze.model.page;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.garlane.relation.analyze.model.easyui.EASYUIModel;
+
 public class HTMLModel {
 
 	private String path;
@@ -10,6 +12,8 @@ public class HTMLModel {
 	private List<AModel> aModels = new ArrayList<AModel>();
 	private List<FormModel> formModels = new ArrayList<FormModel>();
 	private List<BLModel> bls = new ArrayList<BLModel>();
+	
+	private EASYUIModel easyuiModel;
 	
 	public HTMLModel(String path){
 		this.path = path;
@@ -56,4 +60,13 @@ public class HTMLModel {
 		}
 		return blModels;
 	}
+
+	public EASYUIModel getEasyuiModel() {
+		return easyuiModel;
+	}
+
+	public void setEasyuiModel(EASYUIModel easyuiModel) {
+		this.easyuiModel = easyuiModel;
+	}
+	
 }

@@ -2,16 +2,32 @@
  * 
  */
 package com.garlane.relation.analyze.service.impl;
+import org.springframework.stereotype.Service;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.garlane.relation.analyze.model.easyui.EASYUIModel;
 import com.garlane.relation.analyze.service.EASYUIAnalyzeService;
+import com.garlane.relation.common.utils.exception.SuperServiceException;
 
 /**转成JSON，easyUI基本是用了JSON的思想
  * @author lixingfa
  * @date 2018年7月3日下午2:06:56
  * 
  */
+@Service("EASYUIAnalyzeService")
 public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
+	/**
+	 * 从内容中获取EASYUI的所有对象信息
+	 * @param content html\jsp\js文件内容
+	 * @return EASYUIModel
+	 * @throws SuperServiceException
+	 */
+	public EASYUIModel getEasyuiModel(String content) throws SuperServiceException{
+		EASYUIModel easyuiModel = new EASYUIModel();
+		
+		return easyuiModel;
+	}
 //
 	public static void main(String[] args) {
 		String content = "{    "+

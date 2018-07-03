@@ -130,10 +130,17 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 	private HTMLModel htmlAnalyze(String path,String content){
 		HTMLModel htmlModel = new HTMLModel(path);
 		try {
+			//TODO 处理EASYUI
+			
 			Document doc = Jsoup.parse(content);
+			log.info("处理表格");
+			//form里也会包含表格，不过不会是EASYUI的datagrid
+			//TODO EASYUI处理
+			
+			
 			List<FormModel> formModels = new ArrayList<FormModel>();
 			List<AModel> aModels = new ArrayList<AModel>();
-			List<BLModel> blModels = new ArrayList<BLModel>();
+			List<BLModel> blModels = new ArrayList<BLModel>();			
 			log.info("处理表单");
 			Elements forms = doc.select(PageConstant.FORM);
 			for (Element form : forms) {
@@ -150,6 +157,7 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 				}
 				formModels.add(formModel);
 			}
+			
 			htmlModel.setFormModels(formModels);
 			log.info("处理bl标签标注的动态内容");
 			Elements bls = doc.getElementsByAttribute("bl");

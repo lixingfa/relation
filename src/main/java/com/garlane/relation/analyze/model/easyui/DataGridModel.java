@@ -12,12 +12,12 @@ import java.util.Map;
  * @date 2018年7月3日下午2:09:49
  * 
  */
-public class DataGrid {
+public class DataGridModel {
 
 	/**数据获取url*/
 	protected String url;
 	/**列，包含frozenColumns，只收录与后台相关， checkbox不为true的列*/
-	protected List<Column> columns = new ArrayList<>();
+	protected List<ColumnModel> columns = new ArrayList<ColumnModel>();
 	/**标识字段，往往是数据表的主键*/
 	protected String idField;
 	/**动态系统中很少用到，静态demo中使用，可以获得返回的数据结果、初始数据*/
@@ -40,10 +40,10 @@ public class DataGrid {
 	public void setUrl(String url) {
 		this.url = url;
 	}
-	public List<Column> getColumns() {
+	public List<ColumnModel> getColumns() {
 		return columns;
 	}
-	public void setColumns(List<Column> columns) {
+	public void setColumns(List<ColumnModel> columns) {
 		this.columns = columns;
 	}
 	public String getIdField() {

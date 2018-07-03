@@ -8,12 +8,12 @@ package com.garlane.relation.analyze.model.easyui;
  * @date 2018年7月3日下午2:10:14
  * 
  */
-public class TreeGrid extends DataGrid{
+public class TreeGridModel extends DataGridModel{
 
 	/**定义树节点字段*/
 	private String treeField;
 	/**areaSeq,areaName*/
-	public TreeGrid(String idField,String treeField){
+	public TreeGridModel(String idField,String treeField){
 		this.idField = idField;
 		this.treeField = treeField;
 	}
