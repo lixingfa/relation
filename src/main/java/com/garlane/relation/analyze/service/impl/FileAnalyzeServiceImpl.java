@@ -130,7 +130,6 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 	private HTMLModel htmlAnalyze(String path,String content){
 		HTMLModel htmlModel = new HTMLModel(path);
 		try {
-			//Java ScriptEngine
 			Document doc = Jsoup.parse(content);
 			List<FormModel> formModels = new ArrayList<FormModel>();
 			List<AModel> aModels = new ArrayList<AModel>();
