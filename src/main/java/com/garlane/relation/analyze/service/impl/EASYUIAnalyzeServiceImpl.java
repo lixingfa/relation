@@ -49,6 +49,8 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 		if (index != -1) {
 			treeGridModels = new ArrayList<TreeGridModel>();
 			String grid = StringUtil.getSubStringByLR(index, '{', '}', content);//确保从第一个花括号开始
+			//处理onBeforeLoad之类的函数，因为无法转成json
+			
 			//转成JSON
 			JSONObject jsonObject = JSONObject.parseObject(grid);
 			
