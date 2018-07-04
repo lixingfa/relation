@@ -16,7 +16,15 @@ import com.garlane.relation.common.utils.exception.SuperServiceException;
 public class ELAnalyzeServiceImpl implements ELAnalyzeService{
 	private static final String EL = "${[ a-zA-Z.]+}";
 	
-	public void analyze(String content) throws SuperServiceException{
+	/**
+	 * analyze:(提取页面内容中的el属性)
+	 * @author lixingfa
+	 * @date 2018年7月4日下午6:20:41
+	 * @param content 页面内容
+	 * @return List<ELModel> 整理好层级关系的el属性
+	 * @throws SuperServiceException
+	 */
+	public List<ELModel> analyze(String content) throws SuperServiceException{
 		List<ELModel> elModels = new ArrayList<ELModel>();
 		Pattern pattern = Pattern.compile(EL);
 		Matcher matcher = pattern.matcher(content);
@@ -36,6 +44,7 @@ public class ELAnalyzeServiceImpl implements ELAnalyzeService{
 				}
 			}
 		}
+		return elModels;
 	}
 	
 	/**
@@ -71,8 +80,18 @@ public class ELAnalyzeServiceImpl implements ELAnalyzeService{
 		//TODO 需要完善
 		if (el.contains(ELConstant.EQ)) {
 			String[] temp = el.split(ELConstant.EQ);
-			//变量与常量比较，取变量，可以了解到常量的取值
-			//变量与变量，两个都取
+			String els = null;
+			for (String s : temp) {
+				s = s.trim();
+				if (!Pattern.matches(s, "\\d")) {//非数字，就是字符串或变量
+					if (s.contains("'")) {//字符串
+						
+					}else {//变量
+						els = els + "." + s;//可能两个都是变量
+					}
+				}
+			}
+			return els.split(".");
 		}
 		return el.split(".");
 	}

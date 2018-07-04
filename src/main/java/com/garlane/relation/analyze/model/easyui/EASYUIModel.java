@@ -1,4 +1,7 @@
 package com.garlane.relation.analyze.model.easyui;
+
+import java.util.List;
+
 /**
  * 页面上与逻辑有关的，EASYUI对象的集合
  * @author lingxingfa
@@ -6,21 +9,20 @@ package com.garlane.relation.analyze.model.easyui;
  */
 public class EASYUIModel {
 
-	private DataGridModel dataGridModel;
-	private TreeGridModel treeGridModel;
+	private List<DataGridModel> dataGridModels;
+	private List<TreeGridModel> treeGridModels;
 	
 	/******************************/
-	public DataGridModel getDataGridModel() {
-		return dataGridModel;
+	public List<DataGridModel> getDataGridModels() {
+		return dataGridModels;
 	}
-	public void setDataGridModel(DataGridModel dataGridModel) {
-		this.dataGridModel = dataGridModel;
+	public void setDataGridModels(List<DataGridModel> dataGridModels) {
+		this.dataGridModels = dataGridModels;
 	}
-	public TreeGridModel getTreeGridModel() {
-		return treeGridModel;
+	public List<TreeGridModel> getTreeGridModels() {
+		return treeGridModels;
 	}
-	public void setTreeGridModel(TreeGridModel treeGridModel) {
-		this.treeGridModel = treeGridModel;
-	}
-	
+	public void setTreeGridModels(List<TreeGridModel> treeGridModels) {
+		this.treeGridModels = treeGridModels;
+	}	
 }

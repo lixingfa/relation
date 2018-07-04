@@ -24,28 +24,8 @@ import java.util.UUID;
 
 import org.apache.commons.codec.binary.Base64;
 
-/**
- * <p>
- * Title: 网审系统
- * </p>
- * <p>
- * Description: 字符串常用操作类
- * </p>
- * <p>
- * Copyright: Copyright (c) 2004
- * </p>
- * <p>
- * Company: minstone
- * </p>
- *
- * @author xwt & helay
- * @version 1.0
- */
 
 public class StringUtil {
-
-	private StringUtil() {
-	}
 
 	/**
 	 *	判断是否为list是否为空或者长度为0
@@ -1090,7 +1070,42 @@ public class StringUtil {
         return map;  
     }  
 	
+	/***
+	 * getUUID:(获得uuid编号)
+	 * @author lixingfa
+	 * @date 2018年7月4日下午7:18:21
+	 * @return
+	 */
 	public static String getUUID(){
 		return UUID.randomUUID().toString().replaceAll("-", "");
 	}
+	
+	/**
+	 * getSubStringByLR:(根据成对原则，获取与当前位置成对的子串，用于提取代码片段)
+	 * @author lixingfa
+	 * @date 2018年7月4日下午7:39:56
+	 * @param begin 开始位置，不要求直接从left开始
+	 * @param left 左边，如{([
+	 * @param right 右边 如}])
+	 * @param content
+	 * @return 从left到right的内容
+	 */
+	public static String getSubStringByLR(int begin,char left,char right,String content){
+		StringBuffer s = new StringBuffer();
+		char[] c = content.substring(begin).toCharArray();
+		int flag = 0;
+		int i = 0;
+		do {
+			if (c[i] == left) {
+				flag++;
+			}else if (c[i] == right) {
+				flag--;
+			}
+			s.append(c[i]);
+			i++;
+		} while (flag != 0);
+		begin = s.indexOf(String.valueOf(left));
+		return s.substring(begin).toString();
+	}
+	
 }

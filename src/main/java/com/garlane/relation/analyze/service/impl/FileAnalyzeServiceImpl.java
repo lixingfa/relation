@@ -24,6 +24,8 @@ import com.garlane.relation.analyze.model.page.BLModel;
 import com.garlane.relation.analyze.model.page.FormModel;
 import com.garlane.relation.analyze.model.page.HTMLModel;
 import com.garlane.relation.analyze.model.page.InputModel;
+import com.garlane.relation.analyze.service.EASYUIAnalyzeService;
+import com.garlane.relation.analyze.service.ELAnalyzeService;
 import com.garlane.relation.analyze.service.FileAnalyzeService;
 import com.garlane.relation.analyze.service.LogicAnalyzeService;
 import com.garlane.relation.common.constant.ConfigConstant;
@@ -45,8 +47,13 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 	private static final String JSSRC = "<script [ \"/a-zA-Z=.]+ [ \"/a-zA-Z=.]+></script>";
 	private static final String HTMLBL = "<!---[^(-->)]+-->";
 	private static final String JSBL = "/\\*\\*\\*[^(\\*\\*/)]+\\*\\*/";
+	
 	@Autowired
 	private LogicAnalyzeService logicAnalyzeService;
+	@Autowired
+	private ELAnalyzeService elAnalyzeService;
+	@Autowired
+	private EASYUIAnalyzeService easyuiAnalyzeService;
 	/**
 	 * getFileLogic:(获取项目业务逻辑)
 	 * @author lixingfa
@@ -130,8 +137,10 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 	private HTMLModel htmlAnalyze(String path,String content){
 		HTMLModel htmlModel = new HTMLModel(path);
 		try {
+			log.info("处理el表达式");
+			htmlModel.setElModels(elAnalyzeService.analyze(content));
 			//TODO 处理EASYUI
-			
+			htmlModel.setEasyuiModel(easyuiAnalyzeService.getEasyuiModel(content));
 			Document doc = Jsoup.parse(content);
 			log.info("处理表格");
 			//form里也会包含表格，不过不会是EASYUI的datagrid
