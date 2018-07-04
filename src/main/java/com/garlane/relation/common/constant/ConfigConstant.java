@@ -18,7 +18,7 @@ public class ConfigConstant {
 	 * @date 2017年2月13日 下午2:55:52
 	 * 
 	 */
-	public static String DBNAME = PropConfigUtil.get("base.jdbc.name");
+	public static final String DBNAME = PropConfigUtil.get("base.jdbc.name");
 
 	/**默认允许上传单文件最大值(单位字节) 50MB*/
     public static final Long UPLOADFILE_MAX_SIZE = Long.parseLong(PropConfigUtil.get("UPLOADFILE_MAX_SIZE", "314572800"));
