@@ -1,9 +1,11 @@
 /**
  * 
  */
-package com.garlane.relation.analyze.model.easyui;
+package com.garlane.relation.analyze.model.js;
 
 import java.util.List;
+
+import com.garlane.relation.analyze.model.easyui.ActionModel;
 
 /**解析EASYUI内置函数时的装载实体
  * @author lixingfa

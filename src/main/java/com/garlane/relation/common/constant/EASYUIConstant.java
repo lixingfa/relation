@@ -14,4 +14,5 @@ public class EASYUIConstant {
 	public static final String ID_FIELD = "idField";
 	public static final String COLUMNS = "columns";
 	public static final String FIELD = "field";
+	public static final String AJAX_BEGIN = "$.ajax({";
 }

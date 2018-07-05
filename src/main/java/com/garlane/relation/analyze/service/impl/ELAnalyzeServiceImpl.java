@@ -24,24 +24,37 @@ public class ELAnalyzeServiceImpl implements ELAnalyzeService{
 	 * @return List<ELModel> 整理好层级关系的el属性
 	 * @throws SuperServiceException
 	 */
-	public List<ELModel> analyze(String content) throws SuperServiceException{
-		List<ELModel> elModels = new ArrayList<ELModel>();
+	public List<ELModel> analyze(String content) throws SuperServiceException{		
 		Pattern pattern = Pattern.compile(EL);
 		Matcher matcher = pattern.matcher(content);
 		while (matcher.find()) {
 			String el = matcher.group();
 			String[] propertys = extractProperty(el);
-			String parentId = null;
-			for (int i = 0; i < propertys.length; i++) {
-				String id = getELId(elModels, propertys[i]);
-				if (id != null) {
-					parentId = id;
-					continue;
-				}else {
-					ELModel elModel = new ELModel(propertys[i]);
-					elModel.setParentId(parentId);
-					elModels.add(elModel);
-				}
+			return getElModels(propertys);
+		}
+		return null;
+	}
+	
+	/**
+	 * getElModels:(从属性列表里组装EL集合)
+	 * @author lixingfa
+	 * @date 2018年7月5日下午7:30:12
+	 * @param propertys
+	 * @return
+	 * @throws SuperServiceException
+	 */
+	public List<ELModel> getElModels(String[] propertys) throws SuperServiceException{
+		List<ELModel> elModels = new ArrayList<ELModel>();
+		String parentId = null;
+		for (int i = 0; i < propertys.length; i++) {
+			String id = getELId(elModels, propertys[i]);
+			if (id != null) {
+				parentId = id;
+				continue;
+			}else {
+				ELModel elModel = new ELModel(propertys[i]);
+				elModel.setParentId(parentId);
+				elModels.add(elModel);
 			}
 		}
 		return elModels;

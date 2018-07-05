@@ -21,4 +21,14 @@ public interface ELAnalyzeService {
 	 * @throws SuperServiceException
 	 */
 	public List<ELModel> analyze(String content) throws SuperServiceException;
+	
+	/**
+	 * getElModels:(从属性列表里组装EL集合)
+	 * @author lixingfa
+	 * @date 2018年7月5日下午7:30:12
+	 * @param propertys
+	 * @return
+	 * @throws SuperServiceException
+	 */
+	public List<ELModel> getElModels(String[] propertys) throws SuperServiceException;
 }

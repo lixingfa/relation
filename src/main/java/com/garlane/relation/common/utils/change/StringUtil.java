@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -1017,11 +1019,6 @@ public class StringUtil {
 		}
 		return szRet;
 	}
-//	public static void main(String args[]) {
-//		java.sql.Timestamp t = new java.sql.Timestamp(
-//				System.currentTimeMillis());
-//		System.err.println(StringUtil.getString(t, 19, ""));
-//	}
 	
 	 /**
      * 读取管道中的流数据 
@@ -1128,170 +1125,52 @@ public class StringUtil {
 		return s.substring(begin).toString();
 	}
 	
-	public static void main(String[] args) {
-		String content = ".treegrid({//第一行就开始换行    "+
-					"fit: true,/**       某些注释而已       */  "+
-					"nowrap: true, "+
-					"autoRowHeight: true,"+
-					"animate:true,"+
-					"scrollbarSize: 0,"+
-					"striped: true,"+
-					"collapsible:true,"+
-					"singleSelect:false,"+
-					"rownumbers:true,"+
-					"url:'${root}/admin/system/area/loadListArea.do',"+
-					"idField:'areaSeq',"+
-					"treeField:'areaName',"+
-					"columns:[["+
-					"	{field:'ck', checkbox: true},"+
-					"	{field:'areaSeq', hidden:true},"+
-					"	{field:'areaName',title:'地区名称',width:'30%'},"+
-					"	{field:'jcAreaSeq',title:'行政区划代码',width:'40%'},"+
-					"	{field:'monitorPhone',title:'监督电话',width:'30%', align: 'center'}"+
-					"]],"+
-					"toolbar:[{"+
-					"	id:'addArea',"+
-					"	text:'添加顶级地区',"+
-					"	iconCls:'icon16-plus',"+
-					"	handler:function(){"+
-					"		//日志埋点"+
-					"		track(_maq.push(['_action', '基础数据管理_地区管理_新增顶级地区']));"+
-					"		var areaList = $(\".datagrid-btable\");"+
-					"		if(areaList.length > 1){"+
-					"			$.messager.alert(\"操作提示\", \"只能有一个顶级地区\",\"warning\");"+
-					"			return;"+
-					"		}else{"+
-					"			top.dialog({"+
-					"			    id: 'edit',"+
-					"			    url : '${root}/admin/system/area/toEditArea.do?saveOrUpdate=save',"+
-					"			    width: 540,"+
-					"				height:640,"+
-					"				title:'新增顶级地区',"+
-					"				onclose:function(){"+
-					"					if(typeof(this.returnValue[0]) == \"undefined\")return;"+
-				    "					$('#areaList').treegrid('reload');"+
-				    "				}"+
-					"			}).showModal();"+
-					"		}"+
-					"	}"+
-					"},{"+
-					"	id:'addSubArea',"+
-					"	text:'增加下属地区',"+
-					"	iconCls:'icon16-plus-small',"+
-					"	handler:function(){"+
-					"		//日志埋点"+
-					"		track(_maq.push(['_action', '基础数据管理_地区管理_新增下属地区']));"+
-					"		var selected = $(\"#areaList\").treegrid('getSelections');"+
-					"		if(selected.length!=1){"+
-					"			$.messager.alert(\"操作提示\", \"请选择一个地区\",\"warning\");"+
-					"			return;"+
-					"		}else{"+
-					"			top.dialog({"+
-					"			    id: 'edit',"+
-					"			    url : '${root}/admin/system/area/toEditArea.do?saveOrUpdate=save&parentAreaSeq='+selected[0].areaSeq+\"&parentAreaName=\"+encodeURIComponent(encodeURIComponent(selected[0].areaName)),"+
-					"			    width: 620,"+
-					"				height:640,"+
-					"				title:'新增下属地区',"+
-					"				onclose:function(){"+
-					"					if(typeof(this.returnValue[0]) == \"undefined\")return;"+
-				    "					$('#areaList').treegrid('reload');//根节点"+
-				    "				}"+
-					"			}).showModal();"+
-					"		}"+	
-					"	}"+
-					"},{"+
-					"	id:'editUnit',"+
-					"	text:'编辑地区',"+
-					"	iconCls:'icon-edit',"+
-					"	handler:function(){"+
-					"		//日志埋点"+
-					"		track(_maq.push(['_action', '基础数据管理_地区管理_编辑地区']));"+
-					"		var selected = $(\"#areaList\").treegrid('getSelections');"+
-					"		if(selected.length!=1){"+
-					"			$.messager.alert(\"操作提示\", \"请选择一个地区\",\"warning\");"+
-					"			return;"+
-					"		}else{"+
-					"			top.dialog({"+
-					"			    id: 'edit',"+
-					"			    url : '${root}/admin/system/area/toEditArea.do?saveOrUpdate=isUpdate'+'&areaSeq='+selected[0].areaSeq,"+
-					"			    width: 620,"+
-					"				height:640,"+
-					"				title:'编辑地区',"+
-					"				onclose:function(){"+
-					"					if(typeof(this.returnValue[0]) == \"undefined\")return;"+
-					"					$('#areaList').treegrid('reload');//根节点"+
-				    "				}"+
-					"			}).showModal();"+
-					"		}"+
-					"	}"+
-					"},{"+
-					"	id:'deleteUnit',"+
-					"	text:'删除地区',"+
-					"	iconCls:'icon16-minus',"+
-					"	handler:function(){"+
-					"		//日志埋点"+
-					"		track(_maq.push(['_action', '基础数据管理_地区管理_删除地区']));"+
-					"		var selected = $(\"#areaList\").treegrid('getSelections');"+
-					"		if(selected.length<1){"+
-					"			$.messager.alert(\"操作提示\", \"请选择地区\",\"warning\");"+
-					"			return;"+
-					"		}else{"+
-					"			var areaSeq = \"\";"+
-					"			for(var i = 0;i < selected.length; i++){"+
-					"				areaSeq += selected[i].areaSeq+\",\";"+
-					"			}"+
-					"			areaSeq = areaSeq.substring(0,areaSeq.length-1);"+
-					"			var areaName = \"\";"+
-					"			for(var i = 0;i <selected.length; i++){"+
-					"				areaName += selected[i].areaName+\",\";"+
-					"			}"+
-					"			areaName = areaName.substring(0,areaName.length-1);"+
-					"			$.messager.confirm('删除确认',areaName + \"的管理员及子地区都会被删除，确信要删除吗？\",function(r){   "+ 
-    				"				if (r){    "+
-					"					var url = '${root}/admin/system/area/deleteArea.do';"+
-					"					$.ajax({"+
-					"						url: url,"+
-					"						type: 'post',"+
-					"						data: {"+
-					"							'areaSeq': areaSeq,"+
-					"							'areaName': areaName"+
-					"						},"+
-					"						success: function(data) {"+
-					"							if(data.successful){"+
-					"								$.messager.alert(\"操作提示\", \"删除地区成功!\",\"info\",function(){"+
-					"									top.dialog({id:'edit'}).close([1]).remove();"+
-					"								});"+
-					"								$('#areaList').treegrid('clearSelections');//清除选择"+
-					"								$('#areaList').treegrid('reload');//根节点"+
-					"							}else{"+
-					"								$.messager.alert(\"操作提示\", \"删除地区失败!\" + data.message,\"error\");"+
-					"							}"+
-					"						},"+
-					"						error: function(error) {"+
-					"							$.messager.alert(\"操作提示\", \"系统错误！\",\"error\");"+
-					"						}"+
-					"					});"+	
-    				"				}"+    
-					"			});"+
-					"		}"+
-					"	}"+
-					"}],"+
-					"onBeforeLoad:function(row,param){//加载之前"+
-					"	if(row){"+
-					"		$(this).treegrid('options').url = '${root}/admin/system/area/loadListSubArea.do?parentAreaSeq=' + row.areaSeq;"+
-					"	}else{"+
-					"		$(this).treegrid('options').url = '${root}/admin/system/area/loadListArea.do';"+
-					"	}"+
-					"}"+
-				"});"+
-			"}"+	
-		"};"+
-		"/* 初始化加载完成后执行 */"+
-		"$(function(){"+
-		"	/* 初始化列表 */"+
-		 " 	datagridTable.init();"+
-		"});";
-		
-		System.out.println(getSubStringByLR(0, '{', '}', content));
+	/**
+	 * findTheVariate:(在指定内容中寻找变量的值)
+	 * @author lixingfa
+	 * @date 2018年7月5日下午4:41:04
+	 * @param variate 变量名称
+	 * @param subText 变量所在的内容区（适当的内容区容易定位）
+	 * @param content 查找区域
+	 * @return String 变量的值
+	 */
+	public static String findTheVariate(String variate,String subText,String content){
+		Pattern pattern = Pattern.compile("var[ ]+" + variate + "[ ]+=['\"\\w/.\\?=\\+&$\\{\\}\\[\\]]+;");
+		Matcher matcher = pattern.matcher(content);
+		int index = content.indexOf(subText);
+		int dist = Integer.MAX_VALUE;
+		String value = null;
+		while (matcher.find()) {
+			String s = matcher.group();
+			int flag = index - content.indexOf(s);
+			if (flag < dist && flag > 0) {//在变量使用之前
+				dist = flag;
+				value = s;
+			}
+		}
+		return value;
+	}
+	
+	/**
+	 * getSubString:(获取子字符串)
+	 * @author lixingfa
+	 * @date 2018年7月5日下午5:26:57
+	 * @param beginStr 开始子串
+	 * @param endStr 结束子串
+	 * @param s 父字符
+	 * @return String
+	 */
+	public static String getSubString(String beginStr,String endStr,String s){
+		int index = s.indexOf(beginStr);
+		if (index != -1) {
+			s = s.substring(index);
+			index = s.indexOf(endStr);
+			if (index != -1) {
+				return s.substring(0, index);				
+			}else {
+				return null;
+			}
+		}
+		return null;
 	}
 }

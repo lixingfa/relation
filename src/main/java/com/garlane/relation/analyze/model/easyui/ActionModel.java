@@ -1,6 +1,9 @@
 package com.garlane.relation.analyze.model.easyui;
 
+import java.util.List;
 import java.util.Map;
+
+import com.garlane.relation.analyze.model.el.ELModel;
 
 /**
  * 请求实体
@@ -11,13 +14,15 @@ public class ActionModel {
 	/**请求类型，0get，1post*/
 	private Integer reqType = REQ_TYPE_GET;
 	/**请求地址*/
-	private String url   ;
+	private String url;
 	/**参数,一般是字符串或数字，都可以统一转换成字符串*/
-	private Map<String, String> params   ;
+	private Map<String, String> params;
 	/**返回结果类型，0页面地址，代码里的路径，1JSON*/
-	private Integer resultType;
+	private Integer resultType = RESULT_TYPE_PAGE;
 	/**返回结果，代码里的路径或JSON结果的名称，没有值则表为外部链接*/
-	private String results   ;
+	private String results;
+	
+	private List<ELModel> elModels;
 	
 	public static Integer REQ_TYPE_GET = 0;
 	public static Integer REQ_TYPE_POST = 0;
@@ -56,6 +61,14 @@ public class ActionModel {
 	}
 	public void setResults(String results) {
 		this.results = results;
+	}
+
+	public List<ELModel> getElModels() {
+		return elModels;
+	}
+
+	public void setElModels(List<ELModel> elModels) {
+		this.elModels = elModels;
 	}
 	
 }
