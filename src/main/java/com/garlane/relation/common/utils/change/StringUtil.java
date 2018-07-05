@@ -1081,10 +1081,10 @@ public class StringUtil {
 	}
 	
 	/**
-	 * getSubStringByLR:(根据成对原则，获取与当前位置成对的子串，用于提取代码片段)
+	 * getSubStringByLR:(根据成对原则，获取与当前位置成对的子串，用于提取代码片段，会过滤掉注释)
 	 * @author lixingfa
 	 * @date 2018年7月4日下午7:39:56
-	 * @param begin 开始位置，不要求直接从left开始
+	 * @param begin 开始位置，不要求直接从left开始，程序会自动校准到最近的一个left
 	 * @param left 左边，如{([
 	 * @param right 右边 如}])
 	 * @param content
@@ -1092,20 +1092,206 @@ public class StringUtil {
 	 */
 	public static String getSubStringByLR(int begin,char left,char right,String content){
 		StringBuffer s = new StringBuffer();
-		char[] c = content.substring(begin).toCharArray();
-		int flag = 0;
+		//校准begin
+		begin = content.indexOf(left);
+		content = content.substring(begin);
+		char[] c = content.toCharArray();
+		boolean singleNote = false;//单行注释
+		int note = 0;//多行注释
+		int flag = 0;//left\right标志
 		int i = 0;
+		//校准begin
+		//逻辑开始，如果不需要去掉注释，另外起一个方法，去掉singleNote和note就行
 		do {
 			if (c[i] == left) {
 				flag++;
 			}else if (c[i] == right) {
 				flag--;
+			}else if (c[i] == '/' && (i + 1) < c.length) {
+				if (c[i + 1] == '/') {//单行注释
+					singleNote = true;
+				}else if (c[i + 1] == '*') {//多行注释
+					note++;
+				}
+			}else if(c[i] == '*'  && (i + 1) < c.length && c[i + 1] == '/'){
+				note--;
+			}else if (singleNote && c[i] == '\n') {//换行后单行注释失效
+				singleNote = false;
 			}
-			s.append(c[i]);
+			//非注释内部，不是空内容
+			if (note == 0 && c[i] != ' ' && !singleNote) {
+				s.append(c[i]);				
+			}
 			i++;
 		} while (flag != 0);
 		begin = s.indexOf(String.valueOf(left));
 		return s.substring(begin).toString();
 	}
 	
+	public static void main(String[] args) {
+		String content = ".treegrid({//第一行就开始换行    "+
+					"fit: true,/**       某些注释而已       */  "+
+					"nowrap: true, "+
+					"autoRowHeight: true,"+
+					"animate:true,"+
+					"scrollbarSize: 0,"+
+					"striped: true,"+
+					"collapsible:true,"+
+					"singleSelect:false,"+
+					"rownumbers:true,"+
+					"url:'${root}/admin/system/area/loadListArea.do',"+
+					"idField:'areaSeq',"+
+					"treeField:'areaName',"+
+					"columns:[["+
+					"	{field:'ck', checkbox: true},"+
+					"	{field:'areaSeq', hidden:true},"+
+					"	{field:'areaName',title:'地区名称',width:'30%'},"+
+					"	{field:'jcAreaSeq',title:'行政区划代码',width:'40%'},"+
+					"	{field:'monitorPhone',title:'监督电话',width:'30%', align: 'center'}"+
+					"]],"+
+					"toolbar:[{"+
+					"	id:'addArea',"+
+					"	text:'添加顶级地区',"+
+					"	iconCls:'icon16-plus',"+
+					"	handler:function(){"+
+					"		//日志埋点"+
+					"		track(_maq.push(['_action', '基础数据管理_地区管理_新增顶级地区']));"+
+					"		var areaList = $(\".datagrid-btable\");"+
+					"		if(areaList.length > 1){"+
+					"			$.messager.alert(\"操作提示\", \"只能有一个顶级地区\",\"warning\");"+
+					"			return;"+
+					"		}else{"+
+					"			top.dialog({"+
+					"			    id: 'edit',"+
+					"			    url : '${root}/admin/system/area/toEditArea.do?saveOrUpdate=save',"+
+					"			    width: 540,"+
+					"				height:640,"+
+					"				title:'新增顶级地区',"+
+					"				onclose:function(){"+
+					"					if(typeof(this.returnValue[0]) == \"undefined\")return;"+
+				    "					$('#areaList').treegrid('reload');"+
+				    "				}"+
+					"			}).showModal();"+
+					"		}"+
+					"	}"+
+					"},{"+
+					"	id:'addSubArea',"+
+					"	text:'增加下属地区',"+
+					"	iconCls:'icon16-plus-small',"+
+					"	handler:function(){"+
+					"		//日志埋点"+
+					"		track(_maq.push(['_action', '基础数据管理_地区管理_新增下属地区']));"+
+					"		var selected = $(\"#areaList\").treegrid('getSelections');"+
+					"		if(selected.length!=1){"+
+					"			$.messager.alert(\"操作提示\", \"请选择一个地区\",\"warning\");"+
+					"			return;"+
+					"		}else{"+
+					"			top.dialog({"+
+					"			    id: 'edit',"+
+					"			    url : '${root}/admin/system/area/toEditArea.do?saveOrUpdate=save&parentAreaSeq='+selected[0].areaSeq+\"&parentAreaName=\"+encodeURIComponent(encodeURIComponent(selected[0].areaName)),"+
+					"			    width: 620,"+
+					"				height:640,"+
+					"				title:'新增下属地区',"+
+					"				onclose:function(){"+
+					"					if(typeof(this.returnValue[0]) == \"undefined\")return;"+
+				    "					$('#areaList').treegrid('reload');//根节点"+
+				    "				}"+
+					"			}).showModal();"+
+					"		}"+	
+					"	}"+
+					"},{"+
+					"	id:'editUnit',"+
+					"	text:'编辑地区',"+
+					"	iconCls:'icon-edit',"+
+					"	handler:function(){"+
+					"		//日志埋点"+
+					"		track(_maq.push(['_action', '基础数据管理_地区管理_编辑地区']));"+
+					"		var selected = $(\"#areaList\").treegrid('getSelections');"+
+					"		if(selected.length!=1){"+
+					"			$.messager.alert(\"操作提示\", \"请选择一个地区\",\"warning\");"+
+					"			return;"+
+					"		}else{"+
+					"			top.dialog({"+
+					"			    id: 'edit',"+
+					"			    url : '${root}/admin/system/area/toEditArea.do?saveOrUpdate=isUpdate'+'&areaSeq='+selected[0].areaSeq,"+
+					"			    width: 620,"+
+					"				height:640,"+
+					"				title:'编辑地区',"+
+					"				onclose:function(){"+
+					"					if(typeof(this.returnValue[0]) == \"undefined\")return;"+
+					"					$('#areaList').treegrid('reload');//根节点"+
+				    "				}"+
+					"			}).showModal();"+
+					"		}"+
+					"	}"+
+					"},{"+
+					"	id:'deleteUnit',"+
+					"	text:'删除地区',"+
+					"	iconCls:'icon16-minus',"+
+					"	handler:function(){"+
+					"		//日志埋点"+
+					"		track(_maq.push(['_action', '基础数据管理_地区管理_删除地区']));"+
+					"		var selected = $(\"#areaList\").treegrid('getSelections');"+
+					"		if(selected.length<1){"+
+					"			$.messager.alert(\"操作提示\", \"请选择地区\",\"warning\");"+
+					"			return;"+
+					"		}else{"+
+					"			var areaSeq = \"\";"+
+					"			for(var i = 0;i < selected.length; i++){"+
+					"				areaSeq += selected[i].areaSeq+\",\";"+
+					"			}"+
+					"			areaSeq = areaSeq.substring(0,areaSeq.length-1);"+
+					"			var areaName = \"\";"+
+					"			for(var i = 0;i <selected.length; i++){"+
+					"				areaName += selected[i].areaName+\",\";"+
+					"			}"+
+					"			areaName = areaName.substring(0,areaName.length-1);"+
+					"			$.messager.confirm('删除确认',areaName + \"的管理员及子地区都会被删除，确信要删除吗？\",function(r){   "+ 
+    				"				if (r){    "+
+					"					var url = '${root}/admin/system/area/deleteArea.do';"+
+					"					$.ajax({"+
+					"						url: url,"+
+					"						type: 'post',"+
+					"						data: {"+
+					"							'areaSeq': areaSeq,"+
+					"							'areaName': areaName"+
+					"						},"+
+					"						success: function(data) {"+
+					"							if(data.successful){"+
+					"								$.messager.alert(\"操作提示\", \"删除地区成功!\",\"info\",function(){"+
+					"									top.dialog({id:'edit'}).close([1]).remove();"+
+					"								});"+
+					"								$('#areaList').treegrid('clearSelections');//清除选择"+
+					"								$('#areaList').treegrid('reload');//根节点"+
+					"							}else{"+
+					"								$.messager.alert(\"操作提示\", \"删除地区失败!\" + data.message,\"error\");"+
+					"							}"+
+					"						},"+
+					"						error: function(error) {"+
+					"							$.messager.alert(\"操作提示\", \"系统错误！\",\"error\");"+
+					"						}"+
+					"					});"+	
+    				"				}"+    
+					"			});"+
+					"		}"+
+					"	}"+
+					"}],"+
+					"onBeforeLoad:function(row,param){//加载之前"+
+					"	if(row){"+
+					"		$(this).treegrid('options').url = '${root}/admin/system/area/loadListSubArea.do?parentAreaSeq=' + row.areaSeq;"+
+					"	}else{"+
+					"		$(this).treegrid('options').url = '${root}/admin/system/area/loadListArea.do';"+
+					"	}"+
+					"}"+
+				"});"+
+			"}"+	
+		"};"+
+		"/* 初始化加载完成后执行 */"+
+		"$(function(){"+
+		"	/* 初始化列表 */"+
+		 " 	datagridTable.init();"+
+		"});";
+		
+		System.out.println(getSubStringByLR(0, '{', '}', content));
+	}
 }

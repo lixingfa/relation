@@ -14,8 +14,7 @@ import java.util.Map;
  */
 public class DataGridModel {
 
-	/**数据获取url*/
-	protected String url;
+	protected List<ActionModel> actionModels;
 	/**列，包含frozenColumns，只收录与后台相关， checkbox不为true的列*/
 	protected List<ColumnModel> columns = new ArrayList<ColumnModel>();
 	/**标识字段，往往是数据表的主键*/
@@ -30,16 +29,9 @@ public class DataGridModel {
 	//protected int pageNumber = 1;
 	/**初始化页面大小*/
 	//protected int pageSize = 10;
-	/**在请求远程数据的时候发送额外的参数，数据类型一般是字符或数字*/
-	protected Map<String, String> queryParams;
+	
 	
 	/*********************************/
-	public String getUrl() {
-		return url;
-	}
-	public void setUrl(String url) {
-		this.url = url;
-	}
 	public List<ColumnModel> getColumns() {
 		return columns;
 	}
@@ -70,10 +62,11 @@ public class DataGridModel {
 	public void setPagination(boolean pagination) {
 		this.pagination = pagination;
 	}
-	public Map<String, String> getQueryParams() {
-		return queryParams;
+	public List<ActionModel> getActionModels() {
+		return actionModels;
 	}
-	public void setQueryParams(Map<String, String> queryParams) {
-		this.queryParams = queryParams;
+	public void setActionModels(List<ActionModel> actionModels) {
+		this.actionModels = actionModels;
 	}
+	
 }
