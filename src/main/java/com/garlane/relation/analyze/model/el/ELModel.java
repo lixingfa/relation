@@ -1,5 +1,7 @@
 package com.garlane.relation.analyze.model.el;
 
+import java.io.Serializable;
+
 import com.garlane.relation.common.utils.change.StringUtil;
 
 /**
@@ -7,11 +9,15 @@ import com.garlane.relation.common.utils.change.StringUtil;
  * @author lingxingfa
  *
  */
-public class ELModel {
+public class ELModel implements Serializable{
+	private static final long serialVersionUID = 1L;
 
 	private String id;
 	private String parentId;
+	/**本身的名称*/
 	private String name;
+	/**中文名称*/
+	private String title;
 	
 	public ELModel(String name){
 		this.id = StringUtil.getUUID();
@@ -30,4 +36,10 @@ public class ELModel {
 	public String getName() {
 		return name;
 	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}	
 }

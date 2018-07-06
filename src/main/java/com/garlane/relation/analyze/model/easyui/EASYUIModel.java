@@ -1,5 +1,6 @@
 package com.garlane.relation.analyze.model.easyui;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -7,22 +8,28 @@ import java.util.List;
  * @author lingxingfa
  *
  */
-public class EASYUIModel {
+public class EASYUIModel implements Serializable{
+	private static final long serialVersionUID = 1L;
 
-	private List<DataGridModel> dataGridModels;
-	private List<TreeGridModel> treeGridModels;
+	private List<GridModel> gridModels;
+
+	private List<TreeModel> treeModels;
 	
 	/******************************/
-	public List<DataGridModel> getDataGridModels() {
-		return dataGridModels;
+	public List<GridModel> getGridModels() {
+		return gridModels;
 	}
-	public void setDataGridModels(List<DataGridModel> dataGridModels) {
-		this.dataGridModels = dataGridModels;
+	
+	public void setGridModels(List<GridModel> gridModels) {
+		this.gridModels = gridModels;
 	}
-	public List<TreeGridModel> getTreeGridModels() {
-		return treeGridModels;
+
+	public List<TreeModel> getTreeModels() {
+		return treeModels;
 	}
-	public void setTreeGridModels(List<TreeGridModel> treeGridModels) {
-		this.treeGridModels = treeGridModels;
-	}	
+
+	public void setTreeModels(List<TreeModel> treeModels) {
+		this.treeModels = treeModels;
+	}
+	
 }

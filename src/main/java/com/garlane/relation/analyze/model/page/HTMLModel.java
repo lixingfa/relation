@@ -1,12 +1,14 @@
 package com.garlane.relation.analyze.model.page;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.garlane.relation.analyze.model.easyui.EASYUIModel;
 import com.garlane.relation.analyze.model.el.ELModel;
 
-public class HTMLModel {
+public class HTMLModel implements Serializable{
+	private static final long serialVersionUID = 1L;
 
 	private String path;
 	private List<String> jsSrc;

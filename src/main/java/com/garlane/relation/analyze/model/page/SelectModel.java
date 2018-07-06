@@ -3,6 +3,7 @@
  */
 package com.garlane.relation.analyze.model.page;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,7 +12,9 @@ import java.util.Map;
  * @date 2018年6月21日下午5:42:57
  * 
  */
-public class SelectModel {
+public class SelectModel implements Serializable{
+	private static final long serialVersionUID = 1L;
+	
 	private String id;
 	private String name;
 	/**多选*/

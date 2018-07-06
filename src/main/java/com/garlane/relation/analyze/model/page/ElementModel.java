@@ -3,6 +3,8 @@
  */
 package com.garlane.relation.analyze.model.page;
 
+import java.io.Serializable;
+
 import com.garlane.relation.common.constant.DBConstant;
 
 /**页面上承载信息的元素
@@ -10,7 +12,8 @@ import com.garlane.relation.common.constant.DBConstant;
  * @date 2018年5月28日下午6:18:34
  * 
  */
-public class ElementModel {
+public class ElementModel implements Serializable{
+	private static final long serialVersionUID = 1L;
 
 	/**元素的id，最好每个元素都有一个*/
 	private String id;

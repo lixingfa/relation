@@ -3,12 +3,16 @@
  */
 package com.garlane.relation.analyze.model.page;
 
+import java.io.Serializable;
+
 /**网页的a标签
  * @author lixingfa
  * @date 2018年6月12日下午3:48:18
  * 
  */
-public class AModel {
+public class AModel implements Serializable{
+	private static final long serialVersionUID = 1L;
+	
 	public AModel(String href,String text){
 		this.href = href;
 		this.text = text;

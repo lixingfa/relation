@@ -1173,4 +1173,39 @@ public class StringUtil {
 		}
 		return null;
 	}
+	
+	/**
+	 * getMatchers:(这里用一句话描述这个方法的作用)
+	 * @author lixingfa
+	 * @date 2018年7月6日下午5:29:09
+	 * @param p 定义的正则表达式
+	 * @param content 要搜索的内容
+	 * @return 匹配的字符
+	 */
+	public static List<String> getMatchers(String p,String content){
+		List<String> list = new ArrayList<>();
+		Pattern pattern = Pattern.compile(p);
+		Matcher matcher = pattern.matcher(content);
+		while (matcher.find()) {
+			list.add(matcher.group());
+		}
+		return list;
+	}
+	
+	/**
+	 * getIdOfEASYUI:(获取easyui定义中的id)
+	 * @author lixingfa
+	 * @date 2018年7月6日下午5:03:46
+	 * @param p 定义的正则表达式
+	 * @param content 要搜索的内容
+	 * @return String id
+	 */
+	public static String getIdOfEASYUI(String matcher){
+		String id = matcher.substring(matcher.indexOf("#"));
+		if (id.contains("'")) {
+			return id.substring(0, id.indexOf("'"));
+		}else {
+			return id.substring(0, id.indexOf("\""));
+		}
+	}
 }

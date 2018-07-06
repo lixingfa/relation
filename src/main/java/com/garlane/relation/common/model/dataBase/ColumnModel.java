@@ -1,4 +1,6 @@
 package com.garlane.relation.common.model.dataBase;
+import java.io.Serializable;
+
 import com.garlane.relation.common.constant.DBConstant;
 
 /**
@@ -6,7 +8,9 @@ import com.garlane.relation.common.constant.DBConstant;
  * @author Lixingfa
  *
  */
-public class ColumnModel {
+public class ColumnModel implements Serializable{
+	private static final long serialVersionUID = 1L;
+	
 	/**名称*/
 	private String name;
 	/**标题*/

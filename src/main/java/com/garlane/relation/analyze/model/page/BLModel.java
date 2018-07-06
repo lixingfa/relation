@@ -3,12 +3,15 @@
  */
 package com.garlane.relation.analyze.model.page;
 
+import java.io.Serializable;
+
 /**
  * @author lixingfa
  * @date 2018年6月12日下午3:57:35
  * 
  */
-public class BLModel {
+public class BLModel implements Serializable{
+	private static final long serialVersionUID = 1L;
 
 	private String bl;
 	private String text;

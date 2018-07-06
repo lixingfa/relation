@@ -1,5 +1,6 @@
 package com.garlane.relation.common.model.dataBase;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -7,7 +8,9 @@ import java.util.ArrayList;
  * @author Lixingfa
  *
  */
-public class DataBaseModel {
+public class DataBaseModel implements Serializable{
+	private static final long serialVersionUID = 1L;
+	
 	/**数据库名*/
 	private String name;
 	/**表*/

@@ -3,6 +3,7 @@
  */
 package com.garlane.relation.analyze.model.js;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.garlane.relation.analyze.model.easyui.ActionModel;
@@ -12,7 +13,8 @@ import com.garlane.relation.analyze.model.easyui.ActionModel;
  * @date 2018年7月5日上午10:34:35
  * 
  */
-public class JSFunctionModel {
+public class JSFunctionModel implements Serializable{
+	private static final long serialVersionUID = 1L;
 
 	/**函数的内容，从function(开始*/
 	private String functionString;

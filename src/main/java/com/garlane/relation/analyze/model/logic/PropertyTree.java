@@ -3,6 +3,7 @@
  */
 package com.garlane.relation.analyze.model.logic;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,7 +14,9 @@ import com.garlane.relation.common.utils.change.StringUtil;
  * @date 2018年7月2日下午7:51:15
  * 
  */
-public class PropertyTree {
+public class PropertyTree implements Serializable{
+	private static final long serialVersionUID = 1L;
+	
 	private String id;
 	private String parentId;
 	/**零散的属性，一个页面里单独存在的属性，包含在表格、表单里的不在此列*/

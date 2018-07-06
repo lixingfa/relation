@@ -1,5 +1,6 @@
 package com.garlane.relation.analyze.model.easyui;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -10,7 +11,9 @@ import com.garlane.relation.analyze.model.el.ELModel;
  * @author lingxingfa
  *
  */
-public class ActionModel {
+public class ActionModel implements Serializable{
+	private static final long serialVersionUID = 1L;
+	
 	/**请求类型，0get，1post*/
 	private Integer reqType = REQ_TYPE_GET;
 	/**请求地址*/
@@ -22,6 +25,7 @@ public class ActionModel {
 	/**返回结果，代码里的路径或JSON结果的名称，没有值则表为外部链接*/
 	private String results;
 	
+	/**返回结果拆成el表达式之后*/
 	private List<ELModel> elModels;
 	
 	public static Integer REQ_TYPE_GET = 0;

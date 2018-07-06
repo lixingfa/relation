@@ -3,12 +3,15 @@
  */
 package com.garlane.relation.analyze.model.page;
 
+import java.io.Serializable;
+
 /**
  * @author lixingfa
  * @date 2018年6月11日下午5:28:50
  * 
  */
-public class InputModel {
+public class InputModel implements Serializable{
+	private static final long serialVersionUID = 1L;
 
 	private String id;
 	/**name属性与后台代码相关，进而与数据库相关*/

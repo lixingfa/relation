@@ -16,7 +16,9 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.garlane.relation.analyze.model.easyui.ActionModel;
 import com.garlane.relation.analyze.model.easyui.EASYUIModel;
-import com.garlane.relation.analyze.model.easyui.TreeGridModel;
+import com.garlane.relation.analyze.model.easyui.GridModel;
+import com.garlane.relation.analyze.model.easyui.TreeModel;
+import com.garlane.relation.analyze.model.el.ELModel;
 import com.garlane.relation.analyze.model.js.JSFunctionModel;
 import com.garlane.relation.analyze.service.EASYUIAnalyzeService;
 import com.garlane.relation.analyze.service.ELAnalyzeService;
@@ -44,9 +46,10 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 	 */
 	public EASYUIModel getEasyuiModel(String content) throws SuperServiceException{
 		EASYUIModel easyuiModel = new EASYUIModel();
-		//TreeGrid
-		easyuiModel.setTreeGridModels(getGridModels(content));
-		//
+		//Grid
+		easyuiModel.setGridModels(getGridModels(content));
+		//tree
+		easyuiModel.setTreeModels(getTreeModels(content));
 		
 		return easyuiModel;
 	}
@@ -56,38 +59,83 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 	 * @author lixingfa
 	 * @date 2018年7月4日下午7:48:03
 	 * @param content
-	 * @return List<TreeGridModel> or null
+	 * @return List<GridModel> or null
 	 */
-	private List<TreeGridModel> getGridModels(String content){
-		List<TreeGridModel> treeGridModels = new ArrayList<TreeGridModel>();
-		int index = content.indexOf(".treegrid({");
-		if (index != -1) {
-			List<ActionModel> actionModels = new ArrayList<ActionModel>();
-			String grid = StringUtil.getSubStringByLR(index, '{', '}', content);//确保从第一个花括号开始
-			//处理onBeforeLoad之类的属性，后面跟的是函数，因为无法转成json，需要处理
-			List<JSFunctionModel> jsFunctionModels = analyzeInserFunctions(grid);
-			//替换掉内置函数
-			for (JSFunctionModel jsFunctionModel : jsFunctionModels) {
-				grid = grid.replace(jsFunctionModel.getFunctionString(), "''");//替换成空值
-				actionModels.addAll(jsFunctionModel.getActionModels());//获取内置函数的action
-			}
-			//转成JSON
-			JSONObject jsonObject = JSONObject.parseObject(grid);
-			TreeGridModel treeGridModel = new TreeGridModel(jsonObject.getString(EASYUIConstant.ID_FIELD), jsonObject.getString(EASYUIConstant.TREE_FIELD));
-			treeGridModel.setActionModels(actionModels);
-			
-			JSONArray arrays = jsonObject.getJSONArray(EASYUIConstant.COLUMNS);处理这里，树形组件本身的action 和 el
-			for (int i = 0; i < arrays.size(); i++) {
-				JSONArray subArray = arrays.getJSONArray(i);//列属性是数组
-				for (int j = 0; j < subArray.size(); j++) {
-					JSONObject object = subArray.getJSONObject(j);
-					System.out.println(object.get(EASYUIConstant.FIELD));
+	private List<GridModel> getGridModels(String content){
+		if (content.contains(EASYUIConstant.TREEGRID_BEGIN) || content.contains(EASYUIConstant.DATAGRID_BEGIN)) {
+			List<GridModel> gridModels = new ArrayList<GridModel>();
+			int index = -1;
+			do {
+				index = content.indexOf("grid({");
+				if (index == -1) {
+					return null;
 				}
-			}
-			return treeGridModels;
+				String grid = StringUtil.getSubStringByLR(index, '{', '}', content);//确保从第一个花括号开始
+				gridModels.add(analyzeGridStr(grid));
+				content = content.substring(index + grid.length());			
+			} while (index != -1);
+			return gridModels;
 		}else {
 			return null;
 		}
+	}
+	
+	/**
+	 * analyzeGridStr:(解析grid字符串)
+	 * @author lixingfa
+	 * @date 2018年7月6日上午10:31:06
+	 * @param grid
+	 * @return GridModel
+	 */
+	private GridModel analyzeGridStr(String grid){
+		List<ActionModel> actionModels = new ArrayList<ActionModel>();
+		//处理onBeforeLoad之类的属性，后面跟的是函数，因为无法转成json，需要处理
+		List<JSFunctionModel> jsFunctionModels = analyzeInserFunctions(grid);
+		//替换掉内置函数，避免转换JSON出错
+		for (JSFunctionModel jsFunctionModel : jsFunctionModels) {
+			grid = grid.replace(jsFunctionModel.getFunctionString(), "''");//替换成空值
+			actionModels.addAll(jsFunctionModel.getActionModels());//获取内置函数的action
+		}
+		//grid转成JSON
+		JSONObject gridObj = JSONObject.parseObject(grid);
+		GridModel gridModel;
+		if (gridObj.containsKey(EASYUIConstant.TREE_FIELD)) {//treegrid里idField和treeField是必须的，代表节点流水号和名称
+			gridModel = new GridModel(gridObj.getString(EASYUIConstant.ID_FIELD), gridObj.getString(EASYUIConstant.TREE_FIELD));			
+		}else if(gridObj.containsKey(EASYUIConstant.ID_FIELD)){//datagrid
+			gridModel = new GridModel(gridObj.getString(EASYUIConstant.ID_FIELD));
+		}else {//datagrid不强制idField
+			gridModel = new GridModel();
+		}
+		gridModel.setActionModels(actionModels);
+		//树形组件本身的action 和结果 el
+		List<ELModel> columns = new ArrayList<ELModel>();
+		JSONArray columnObj = gridObj.getJSONArray(EASYUIConstant.COLUMNS);
+		for (int i = 0; i < columnObj.size(); i++) {
+			JSONArray subArray = columnObj.getJSONArray(i);//列属性是数组
+			for (int j = 0; j < subArray.size(); j++) {
+				JSONObject object = subArray.getJSONObject(j);
+				if (object.containsKey(EASYUIConstant.CHECKBOX) && object.getBooleanValue(EASYUIConstant.CHECKBOX)) {
+					continue;
+				}
+				ELModel elModel = new ELModel(object.getString(EASYUIConstant.FIELD));
+				elModel.setTitle(object.getString(EASYUIConstant.TITLE));
+				columns.add(elModel);						
+			}
+		}
+		String url = gridObj.getString(EASYUIConstant.URL);
+		ActionModel actionModel = new ActionModel(url);
+		actionModel.setElModels(columns);
+		gridModel.getActionModels().add(actionModel);
+		//JSONArray columnObj 与 data是对应的，可以获取数据及初始化脚本
+		if (gridObj.containsKey(EASYUIConstant.DATA)) {
+			JSONObject data = gridObj.getJSONObject(EASYUIConstant.DATA);
+			if (data.containsKey(EASYUIConstant.ROWS)) {
+				gridModel.setDataObject(data);
+			}else {
+				gridModel.setDataArray(gridObj.getJSONArray(EASYUIConstant.DATA));				
+			}
+		}
+		return gridModel;
 	}
 	
 	/**
@@ -101,7 +149,7 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 		List<JSFunctionModel> jsFunctionModels = new ArrayList<JSFunctionModel>();		
 		int index = 0;
 		while (true) {			
-			int begin = grid.indexOf("function(");//TODO 这里有坑，什么样的页面代码都可能存在，可以要求使用者按标准方式使用
+			int begin = grid.indexOf("function(");//TODO 这里有坑，什么样的页面代码都可能存在，在提取的时候把空格去掉，换行要保留
 			if (begin == -1) {
 				break;
 			}
@@ -131,11 +179,9 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 			String ajaxString = StringUtil.getSubStringByLR(0, '{', '}', func);
 			actionModels.add(analyzeAJAX(ajaxString,func));//TODO url变量会超出函数范围
 		}else {
-			Pattern pattern = Pattern.compile(URL);
-			Matcher matcher = pattern.matcher(func);
-			while (matcher.find()) {
+			List<String> urls = StringUtil.getMatchers(URL, func);
+			for (String s : urls) {
 				//找到链接
-				String s = matcher.group();
 				String url;
 				Map<String, String> params = null;
 				if (s.contains("?")) {
@@ -153,7 +199,7 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 				}
 				ActionModel actionModel = new ActionModel(url);
 				actionModel.setParams(params);
-				actionModels.add(actionModel);
+				actionModels.add(actionModel);				
 			}
 		}
 		return actionModels;
@@ -179,8 +225,12 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 			actionModel.setReqType(ActionModel.REQ_TYPE_POST);
 		}
 		//data
-		String data = StringUtil.getSubString("data:{", "}", ajaxString);
-		if (data != null) {
+		if (ajaxString.contains("data:")) {
+			String data = StringUtil.getSubString("data:{", "}", ajaxString);
+			if (data == null) {
+				data = StringUtil.getSubString("data:", ",", ajaxString);
+				data = StringUtil.findTheVariate(data, ajaxString, content);
+			}		
 			data = data.replace("'", "").replace("\"", "");
 			String[] paramStr = data.split(",");
 			Map<String, String> params = new HashMap<String,String>();
@@ -202,4 +252,39 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 		actionModel.setElModels(elAnalyzeService.getElModels(propertys));
 		return actionModel;
 	}
+	
+	/**
+	 * getTreeModels:(解析树控件)
+	 * @author lixingfa
+	 * @date 2018年7月6日下午4:25:28
+	 * @param content
+	 * @return
+	 */
+	private List<TreeModel> getTreeModels(String content){
+		List<String> trees = StringUtil.getMatchers(EASYUIConstant.TREE_DEF, content);
+		if (trees.size() > 0) {
+			List<TreeModel> treeModels = new ArrayList<TreeModel>();
+			for (String treeStr : trees) {
+				//将字符串不断往后移，还是先找相同
+			}
+			return treeModels;
+		}else {
+			return null;			
+		}
+		if (content.contains(EASYUIConstant.TREE_BEGIN)) {
+			int index = -1;
+			do {
+				index = content.indexOf(EASYUIConstant.TREE_BEGIN);
+				if (index == -1) {
+					return null;
+				}
+				String tree = StringUtil.getSubStringByLR(index, '{', '}', content);//确保从第一个花括号开始
+				treeModels.add(analyzeGridStr(tree));
+				content = content.substring(index + tree.length());			
+			} while (index != -1);
+		}else {
+		}
+	}
+	
+	
 }

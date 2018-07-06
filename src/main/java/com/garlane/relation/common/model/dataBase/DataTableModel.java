@@ -1,5 +1,6 @@
 package com.garlane.relation.common.model.dataBase;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -7,7 +8,10 @@ import java.util.ArrayList;
  * @author Lixingfa
  *
  */
-public class DataTableModel {
+public class DataTableModel implements Serializable{
+	
+	private static final long serialVersionUID = 1L;
+	
 	String tableName;
 	/**数据列*/
 	ArrayList<ColumnModel> columnModels = new ArrayList<ColumnModel>();

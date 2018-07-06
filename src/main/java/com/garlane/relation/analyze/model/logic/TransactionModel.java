@@ -3,6 +3,7 @@
  */
 package com.garlane.relation.analyze.model.logic;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +12,8 @@ import java.util.List;
  * @date 2018年6月21日下午7:10:29
  * 
  */
-public class TransactionModel {
+public class TransactionModel implements Serializable{
+	private static final long serialVersionUID = 1L;
 
 	/**可以确定的属性*/
 	private List<PropertyModel> propertyModels = new ArrayList<PropertyModel>();

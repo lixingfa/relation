@@ -1,10 +1,14 @@
 package com.garlane.relation.analyze.model.logic;
+
+import java.io.Serializable;
+
 /**
  * 属性
  * @author lingxingfa
  *
  */
-public class PropertyModel {
+public class PropertyModel implements Serializable{
+	private static final long serialVersionUID = 1L;
 
 	/**name属性与后台代码相关，进而与数据库相关*/
 	private String name;
