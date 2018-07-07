@@ -24,6 +24,8 @@ import com.garlane.relation.analyze.model.page.BLModel;
 import com.garlane.relation.analyze.model.page.FormModel;
 import com.garlane.relation.analyze.model.page.HTMLModel;
 import com.garlane.relation.analyze.model.page.InputModel;
+import com.garlane.relation.analyze.model.page.SelectModel;
+import com.garlane.relation.analyze.model.page.TableModel;
 import com.garlane.relation.analyze.service.EASYUIAnalyzeService;
 import com.garlane.relation.analyze.service.ELAnalyzeService;
 import com.garlane.relation.analyze.service.FileAnalyzeService;
@@ -31,6 +33,8 @@ import com.garlane.relation.analyze.service.LogicAnalyzeService;
 import com.garlane.relation.common.constant.ConfigConstant;
 import com.garlane.relation.common.constant.FileConstant;
 import com.garlane.relation.common.constant.PageConstant;
+import com.garlane.relation.common.constant.PageConstant.INPUTTYPE;
+import com.garlane.relation.common.utils.change.StringUtil;
 import com.garlane.relation.common.utils.exception.SuperServiceException;
 import com.garlane.relation.common.utils.file.FileUtils;
 
@@ -139,40 +143,57 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 		try {
 			log.info("处理el表达式");
 			htmlModel.setElModels(elAnalyzeService.analyze(content));
-			//TODO 处理EASYUI
+			//处理EASYUI
 			htmlModel.setEasyuiModel(easyuiAnalyzeService.getEasyuiModel(content));
 			Document doc = Jsoup.parse(content);
 			log.info("处理表格");
-			//form里也会包含表格，不过不会是EASYUI的datagrid
-			//TODO EASYUI处理
-			
-			
-			List<FormModel> formModels = new ArrayList<FormModel>();
-			List<AModel> aModels = new ArrayList<AModel>();
-			List<BLModel> blModels = new ArrayList<BLModel>();			
+			Elements tables = doc.select(PageConstant.TABLE);
+			if (tables.size() > 0) {
+				List<TableModel> tableModels = new ArrayList<TableModel>();
+				for (Element table : tables) {
+					Elements pElements = table.parents();
+					for (Element p : pElements) {
+						if (p.tagName().equals("FORM")) {
+							continue;//不处理包含在表单内的
+						}					
+					}
+					//处理table
+					TableModel tableModel = new TableModel();
+					tableModel.setInputs(getInputModels(table));
+					tableModel.setSelectModels(getSelectModels(table));
+					tableModels.add(tableModel);
+				}
+			}			
+			//TODO 本质就是action
 			log.info("处理表单");
 			Elements forms = doc.select(PageConstant.FORM);
-			for (Element form : forms) {
-				FormModel formModel = new FormModel();
-				Elements inputs = form.select(PageConstant.INPUT);
-				for (Element input : inputs) {
-					InputModel inputModel = new InputModel();
-					inputModel.setId(input.attr(PageConstant.ID));
-					inputModel.setMaxlength(input.attr(PageConstant.MAXLENGTH));
-					inputModel.setName(input.attr(PageConstant.NAME));
-					inputModel.setPlaceholder(input.attr(PageConstant.PLACEHOLDER));
-					inputModel.setValue(input.attr(PageConstant.VALUE));
-					formModel.getInputs().add(inputModel);
+			if (forms.size() > 0) {
+				List<FormModel> formModels = new ArrayList<FormModel>();
+				
+				for (Element form : forms) {
+					String url = form.attr(PageConstant.ACTION);
+					if (url == null) {
+						//本体没有就只能去ajaxSubmit之类的找了
+						String id = form.attr(PageConstant.ID);
+						//$("#submitForm").ajaxSubmit({和easyui的两种需要考虑
+						url = getFormUrl(id, content);
+						//如果连这个都没有，就是走了AJAX，后面会处理
+					}
+					FormModel formModel = new FormModel();
+					formModel.setUrl(url);
+					formModel.setInputs(getInputModels(form));
+					formModel.setSelectModels(getSelectModels(form));
+					formModels.add(formModel);
 				}
-				formModels.add(formModel);
+				htmlModel.setFormModels(formModels);
 			}
 			
-			htmlModel.setFormModels(formModels);
 			log.info("处理bl标签标注的动态内容");
 			Elements bls = doc.getElementsByAttribute("bl");
+			List<BLModel> blModels = new ArrayList<BLModel>();
 			for (Element bl : bls) {
 				blModels.add(new BLModel(bl.attr("bl"), bl.text()));
-			}			
+			}
 			log.info("获取html里的业务语言");
 			Map<String, Integer> BLs = new HashMap<String, Integer>();
 			Pattern pattern = Pattern.compile(HTMLBL);
@@ -186,20 +207,23 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 			htmlModel.setBls(blModels);
 			log.info("a标签与业务语言关联");
 			Elements as = doc.select("a");
-			for (Element a : as) {
-				AModel aModel = new AModel(a.attr(PageConstant.HREF),a.text());
-				String outerHtml = a.outerHtml();
-				int i = content.indexOf(outerHtml);
-				for (String key : BLs.keySet()) {
-					if (BLs.get(key) - (i + outerHtml.length()) <= 2) {
-						aModel.setBL(key);//业务语言与链接关联
-						BLs.remove(key);
-						break;
+			if (as.size() > 0) {
+				List<AModel> aModels = new ArrayList<AModel>();
+				for (Element a : as) {
+					AModel aModel = new AModel(a.attr(PageConstant.HREF),a.text());
+					String outerHtml = a.outerHtml();
+					int i = content.indexOf(outerHtml);
+					for (String key : BLs.keySet()) {
+						if (BLs.get(key) - (i + outerHtml.length()) <= 2) {
+							aModel.setBL(key);//业务语言与链接关联
+							BLs.remove(key);
+							break;
+						}
 					}
+					aModels.add(aModel);
 				}
-				aModels.add(aModel);
+				htmlModel.setaModels(aModels);				
 			}
-			htmlModel.setaModels(aModels);
 			log.info("获取js引用");
 			pattern = Pattern.compile(JSSRC);
 			matcher = pattern.matcher(content);
@@ -231,5 +255,106 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 			blModels.add(new BLModel(null, string));
 		}
 		return blModels;
+	}
+	
+	/**
+	 * getValueType:(获取输入的类型，主要是对EASYUI的处理)
+	 * @author lixingfa
+	 * @date 2018年7月7日下午3:31:24
+	 * @param input
+	 * @return
+	 */
+	private PageConstant.VALUETYPE getValueType(Element input){
+		String inputStr = input.toString();
+		if (inputStr.contains("number")) {
+			return PageConstant.VALUETYPE.number;
+		}else if (inputStr.contains("date")) {
+			if (inputStr.contains("datetime")) {
+				return PageConstant.VALUETYPE.datatime;
+			}else {
+				return PageConstant.VALUETYPE.data;
+			}
+		}
+		return PageConstant.VALUETYPE.string;
+	}
+	
+	/**
+	 * getInputModels:(获取输入)
+	 * @author lixingfa
+	 * @date 2018年7月7日下午4:11:37
+	 * @param inputs
+	 * @return List<InputModel>
+	 */
+	private List<InputModel> getInputModels(Element element){
+		Elements inputs = element.select(PageConstant.INPUT);
+		if (inputs.size() > 0) {
+			List<InputModel> inputModels = new ArrayList<InputModel>();
+			for (Element input : inputs) {
+				InputModel inputModel = new InputModel();
+				inputModel.setId(input.attr(PageConstant.ID));
+				inputModel.setMaxlength(input.attr(PageConstant.MAXLENGTH));
+				inputModel.setName(input.attr(PageConstant.NAME));
+				inputModel.setPlaceholder(input.attr(PageConstant.PLACEHOLDER));
+				inputModel.setValue(input.attr(PageConstant.VALUE));
+				inputModel.setType(INPUTTYPE.valueOf(input.attr(PageConstant.TYPE)));//TODO 没有值会怎样？
+				inputModel.setValueType(getValueType(input));
+				inputModels.add(inputModel);
+			}
+			return inputModels;			
+		}else {
+			return null;
+		}
+	}
+	
+	/**
+	 * getSelectModels:()
+	 * @author lixingfa
+	 * @date 2018年7月7日下午4:27:15
+	 * @param element
+	 * @return List<SelectModel>
+	 */
+	private List<SelectModel> getSelectModels(Element element){
+		Elements selects = element.select(PageConstant.SELECT);
+		if (selects.size() > 0) {
+			List<SelectModel> selectModels = new ArrayList<SelectModel>();
+			for (Element select : selects) {
+				SelectModel selectModel = new SelectModel(select.attr(PageConstant.ID),select.attr(PageConstant.NAME));
+				selectModel.setMultiple(select.attr(PageConstant.MULTIPLE));
+				Elements options = select.select(PageConstant.OPTION);
+				Map<String, String> map = new HashMap<String, String>();
+				for (Element option : options) {
+					map.put(option.text(), option.attr(PageConstant.VALUE));
+				}
+				selectModel.setOption(map);
+				selectModels.add(selectModel);
+			}
+			return selectModels;
+		}else {
+			return null;
+		}
+	}
+	
+	/**
+	 * getFormUrl:(获取表单的请求链接)
+	 * @author lixingfa
+	 * @date 2018年7月7日下午4:54:43
+	 * @param formId
+	 * @param content
+	 * @return
+	 */
+	private String getFormUrl(String formId,String content){
+		//该表单的定义，ajaxSubmit\easyui……
+		String url = null;
+		List<String> formDefs = StringUtil.getMatchers("$\\([ ]?[\"']{1}#" + formId + "[\"']{1}[ ]?\\).", content);
+		for (String formDef : formDefs) {
+			int begin = content.indexOf(formDef);
+			String string = StringUtil.getSubStringByLR(begin, '{', '}', content);
+			List<String> urls = StringUtil.getMatchers("url[ ]?:[ ]?['\"]{1}[$\\w./?=&]+['\"]{1},", string);
+			for (String temp : urls) {
+				temp = temp.substring(temp.indexOf(":"));
+				url = temp.replace("'", "").replace("\"", "");
+			}
+		}
+		return url;
 	}
 }

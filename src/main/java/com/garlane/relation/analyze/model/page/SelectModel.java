@@ -22,6 +22,10 @@ public class SelectModel implements Serializable{
 	/**key就是text**/
 	private Map<String, String> option = new HashMap<String, String>();
 	
+	public SelectModel(String id,String name){
+		this.id = id;
+		this.name = name;
+	}
 	/**********************************/
 	public String getId() {
 		return id;

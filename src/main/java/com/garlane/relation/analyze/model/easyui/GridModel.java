@@ -20,8 +20,6 @@ public class GridModel extends TreeModel implements Serializable{
 	private String idField;
 	/**定义树节点字段*/
 	private String treeField;
-	/**动态系统中很少用到，静态demo中使用，可以获得返回的数据结果、初始数据*/
-	private List<Object> data;
 	/**单选，如果可以多选，需要留心传给后台的值如何处理*/
 	private boolean singleSelect = false;
 	/**是否分页，影响后台方法*/
@@ -53,12 +51,6 @@ public class GridModel extends TreeModel implements Serializable{
 	}
 	public void setIdField(String idField) {
 		this.idField = idField;
-	}
-	public List<Object> getData() {
-		return data;
-	}
-	public void setData(List<Object> data) {
-		this.data = data;
 	}
 	public boolean isSingleSelect() {
 		return singleSelect;

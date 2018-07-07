@@ -5,6 +5,8 @@ package com.garlane.relation.analyze.model.page;
 
 import java.io.Serializable;
 
+import com.garlane.relation.common.constant.PageConstant;
+
 /**
  * @author lixingfa
  * @date 2018年6月11日下午5:28:50
@@ -24,6 +26,10 @@ public class InputModel implements Serializable{
 	private String maxlength;
 	/**值*/
 	private String value;
+	/**值的类型*/
+	private PageConstant.VALUETYPE valueType;
+	/**数据类型*/
+	private PageConstant.INPUTTYPE type;
 	
 	/*****************************/
 	public String getId() {
@@ -61,5 +67,18 @@ public class InputModel implements Serializable{
 	}
 	public void setValue(String value) {
 		this.value = value;
-	}	
+	}
+	public PageConstant.INPUTTYPE getType() {
+		return type;
+	}
+	public void setType(PageConstant.INPUTTYPE type) {
+		this.type = type;
+	}
+	public PageConstant.VALUETYPE getValueType() {
+		return valueType;
+	}
+	public void setValueType(PageConstant.VALUETYPE valueType) {
+		this.valueType = valueType;
+	}
+	
 }

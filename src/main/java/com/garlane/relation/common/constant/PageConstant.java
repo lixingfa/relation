@@ -20,6 +20,12 @@ public class PageConstant {
 	public static final String VALUE = "value";
 	public static final String HREF = "href";
 	public static final String SRC = "src";
+	public static final String TYPE = "type";
+	public static final String TABLE = "table";
+	public static final String SELECT = "select";
+	public static final String MULTIPLE = "multiple";
+	public static final String OPTION = "option";
+	public static final String ACTION = "action";
 	
 	/**输入类型*/
 	public static enum INPUTTYPE{
@@ -35,5 +41,11 @@ public class PageConstant {
 		text
 	}
 	
+	public static enum VALUETYPE{
+		string,
+		number,
+		data,
+		datatime
+	}
 	
 }
