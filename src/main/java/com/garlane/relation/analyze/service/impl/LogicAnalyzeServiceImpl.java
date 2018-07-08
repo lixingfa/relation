@@ -26,6 +26,7 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 	 * @throws SuperServiceException
 	 */
 	public void LogicAnalyze(List<HTMLModel> htmlModels,List<BLModel> jsBLModels)throws SuperServiceException{
+		//1、将html里的元素都归纳简化
 		log.info("处理BL语言");//BL语言里有很多属性，先获取它们
 		
 		

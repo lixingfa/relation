@@ -59,7 +59,7 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 	@Autowired
 	private EASYUIAnalyzeService easyuiAnalyzeService;
 	/**
-	 * getFileLogic:(获取项目业务逻辑)
+	 * getFileLogic:(解析项目)
 	 * @author lixingfa
 	 * @date 2018年5月28日下午7:19:41
 	 * @param path 项目静态页面路径
@@ -163,8 +163,8 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 					tableModel.setSelectModels(getSelectModels(table));
 					tableModels.add(tableModel);
 				}
-			}			
-			//TODO 本质就是action
+				htmlModel.setTableModels(tableModels);
+			}
 			log.info("处理表单");
 			Elements forms = doc.select(PageConstant.FORM);
 			if (forms.size() > 0) {
@@ -196,11 +196,11 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 			}
 			log.info("获取html里的业务语言");
 			Map<String, Integer> BLs = new HashMap<String, Integer>();
-			Pattern pattern = Pattern.compile(HTMLBL);
-			Matcher matcher = pattern.matcher(content);
-			while (matcher.find()) {
-				String bl = matcher.group();
-				BLs.put(bl,content.indexOf(bl));		
+			List<String> htmlBLs = StringUtil.getMatchers(HTMLBL, content);
+			if(htmlBLs.size() > 0){
+				for (String bl : htmlBLs) {
+					BLs.put(bl,content.indexOf(bl));				
+				}				
 			}
 			log.info("获取HTML里JS脚本的BL语言。");
 			blModels.addAll(jsAnalyze(content));
@@ -225,13 +225,13 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 				htmlModel.setaModels(aModels);				
 			}
 			log.info("获取js引用");
-			pattern = Pattern.compile(JSSRC);
-			matcher = pattern.matcher(content);
-			while (matcher.find()) {
-				String s = matcher.group();
-				s = s.substring(s.indexOf(PageConstant.SRC));
-				s = s.substring(0, s.indexOf("\""));
-				htmlModel.getJsSrc().add(s);
+			List<String> jsSrcs = StringUtil.getMatchers(JSSRC, content);
+			if (jsSrcs.size() > 0) {
+				for (String s : jsSrcs) {
+					s = s.substring(s.indexOf(PageConstant.SRC));
+					s = s.substring(0, s.indexOf("\""));
+					htmlModel.getJsSrc().add(s);				
+				}				
 			}
 			return htmlModel;
 		} catch (Exception e) {
@@ -247,12 +247,10 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 	 * @return
 	 */
 	private List<BLModel> jsAnalyze(String content){
+		List<String> jsBLs = StringUtil.getMatchers(JSBL, content);
 		List<BLModel> blModels = new ArrayList<BLModel>();
-		Pattern pattern = Pattern.compile(JSBL);
-		Matcher matcher = pattern.matcher(content);
-		while (matcher.find()) {
-			String string = matcher.group();
-			blModels.add(new BLModel(null, string));
+		for (String string : jsBLs) {
+			blModels.add(new BLModel(null, string));			
 		}
 		return blModels;
 	}

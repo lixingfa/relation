@@ -46,10 +46,10 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 	 */
 	public EASYUIModel getEasyuiModel(String content) throws SuperServiceException{
 		EASYUIModel easyuiModel = new EASYUIModel();
-		//Grid、combogrid
-		easyuiModel.setGridModels(getGridModels(content));
 		//tree、combotree
 		easyuiModel.setTreeModels(getTreeModels(content));
+		//Grid、combogrid
+		easyuiModel.setGridModels(getGridModels(content));
 		//combobox 都是静态写死的下拉
 		
 		

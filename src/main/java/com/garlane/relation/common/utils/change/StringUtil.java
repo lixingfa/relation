@@ -1183,7 +1183,7 @@ public class StringUtil {
 	 * @return 匹配的字符
 	 */
 	public static List<String> getMatchers(String p,String content){
-		List<String> list = new ArrayList<>();
+		List<String> list = new ArrayList<String>();
 		Pattern pattern = Pattern.compile(p);
 		Matcher matcher = pattern.matcher(content);
 		while (matcher.find()) {

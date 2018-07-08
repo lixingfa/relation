@@ -14,7 +14,7 @@ import com.garlane.relation.common.utils.exception.SuperServiceException;
 
 @Service("elAnalyzeService")
 public class ELAnalyzeServiceImpl implements ELAnalyzeService{
-	private static final String EL = "${[ a-zA-Z.]+}";
+	private static final String EL = "\\${[ a-zA-Z.]+}";
 	
 	/**
 	 * analyze:(提取页面内容中的el属性)

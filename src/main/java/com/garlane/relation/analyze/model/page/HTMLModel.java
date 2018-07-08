@@ -13,6 +13,7 @@ public class HTMLModel implements Serializable{
 	private String path;
 	private List<String> jsSrc;
 	private List<AModel> aModels;
+	private List<TableModel> tableModels;
 	private List<FormModel> formModels;
 	private List<BLModel> bls;
 	
@@ -78,6 +79,14 @@ public class HTMLModel implements Serializable{
 
 	public void setElModels(List<ELModel> elModels) {
 		this.elModels = elModels;
+	}
+
+	public List<TableModel> getTableModels() {
+		return tableModels;
+	}
+
+	public void setTableModels(List<TableModel> tableModels) {
+		this.tableModels = tableModels;
 	}
 	
 }
