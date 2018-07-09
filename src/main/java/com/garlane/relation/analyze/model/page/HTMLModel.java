@@ -29,7 +29,7 @@ public class HTMLModel implements Serializable{
 	private EASYUIModel easyuiModel;
 	
 	/**EL表达式进入这个页面时就已经组装好的数据。一个EL就代表一个后台传过来的属性，有子属性的表示一个集合类。EL经常与table和form混在一起*/
-	private List<ELModel> elModels;
+	private List<ELModel> elModels = null;
 	
 	public HTMLModel(String path){
 		this.path = path;
