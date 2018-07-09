@@ -10,10 +10,10 @@ import java.util.List;
  */
 public class EASYUIModel implements Serializable{
 	private static final long serialVersionUID = 1L;
+	/**包含请求，参数，结果*/
+	private List<TreeModel> treeModels;
 
 	private List<GridModel> gridModels;
-
-	private List<TreeModel> treeModels;
 	
 	/******************************/
 	public List<GridModel> getGridModels() {

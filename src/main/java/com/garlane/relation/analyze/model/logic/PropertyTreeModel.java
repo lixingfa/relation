@@ -14,15 +14,15 @@ import com.garlane.relation.common.utils.change.StringUtil;
  * @date 2018年7月2日下午7:51:15
  * 
  */
-public class PropertyTree implements Serializable{
+public class PropertyTreeModel implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	private String id;
 	private String parentId;
-	/**零散的属性，一个页面里单独存在的属性，包含在表格、表单里的不在此列*/
+	/**叶子，零散的属性，一个页面里单独存在的属性，包含在表格、表单里的不在此列*/
 	private Set<PropertyModel> scatteredPropertys = new HashSet<PropertyModel>();
 	
-	public PropertyTree(String parentId){
+	public PropertyTreeModel(String parentId){
 		this.parentId = parentId;
 		id = StringUtil.getUUID();
 	}

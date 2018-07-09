@@ -6,7 +6,9 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
+import com.garlane.relation.analyze.model.el.ELModel;
 import com.garlane.relation.analyze.model.logic.PropertyModel;
+import com.garlane.relation.analyze.model.logic.PropertyTreeModel;
 import com.garlane.relation.analyze.model.page.BLModel;
 import com.garlane.relation.analyze.model.page.FormModel;
 import com.garlane.relation.analyze.model.page.HTMLModel;
@@ -17,8 +19,7 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 
 	private Logger log = Logger.getLogger(getClass());
 	/**
-	 * 获取业务逻辑
-	 * LogicAnalyze:(这里用一句话描述这个方法的作用)
+	 * LogicAnalyze:(web系统里，所有的行为都会被简化成请求-获取)
 	 * @author lixingfa
 	 * @date 2018年6月21日下午5:55:34
 	 * @param htmlModels 页面元素集合
@@ -26,9 +27,13 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 	 * @throws SuperServiceException
 	 */
 	public void LogicAnalyze(List<HTMLModel> htmlModels,List<BLModel> jsBLModels)throws SuperServiceException{
-		//1、将html里的元素都归纳简化
+		//1、先将结果归类
 		log.info("处理BL语言");//BL语言里有很多属性，先获取它们
 		
+		getPropertyModels(htmlModels, jsBLModels);
+		//2、将这些归类好的结果转成action，确定各action之间的关系
+		
+		//3、构建请求逻辑网络
 		
 		log.info("处理form");//同一个form表示一起完成一个事务，查询、修改比较多
 		List<FormModel> formModels = new ArrayList<FormModel>();
@@ -36,24 +41,34 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 	}
 	
 	/**
-	 * 
+	 * getPropertyModels:(把零散的信息组装成有层次的信息)
+	 * @author lixingfa
+	 * @date 2018年7月9日下午4:32:58
 	 * @param htmlModels
 	 * @param jsBLModels
 	 * @return
 	 * @throws SuperServiceException
 	 */
 	private List<PropertyModel> getPropertyModels(List<HTMLModel> htmlModels,List<BLModel> jsBLModels) throws SuperServiceException{
+		List<PropertyTreeModel> propertyTreeModels = new ArrayList<PropertyTreeModel>(htmlModels.size());
+		for (HTMLModel htmlModel : htmlModels) {
+			PropertyTreeModel propertyTreeModel = new PropertyTreeModel(null);
+			//1、处理EL表达式
+			PropertyTreeModel elPropertyTree = new PropertyTreeModel(propertyTreeModel.getParentId());
+			List<ELModel> elModels = htmlModel.getElModels();
+			for (ELModel elModel : elModels) {
+				if (condition) {//这算是好办法吗？
+					
+				}
+			}
+			
+			propertyTreeModels.add(propertyTreeModel);
+		}
 		
 		List<PropertyModel> propertyModels = new ArrayList<PropertyModel>();
-		//从BL里获取属性，一起出现的亲密度+1
-		
-		//同一个页面里的属性,同一个表单里的属性，同一个BL的属性……
-		//大集合包含小集合
-		//要定义一个数据结构来装这个集合，然后再根据集合做成二维关系亲密度表
 		return propertyModels;
 	}
-	//从表单获取属性
-	//从datagrigd获取属性
-	//从BL获取属性
-	//把小集合放到页面集合里，把页面集合放到文件夹里。
+	
+	
+	
 }

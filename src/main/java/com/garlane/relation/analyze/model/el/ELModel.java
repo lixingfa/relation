@@ -23,6 +23,7 @@ public class ELModel implements Serializable{
 		this.id = StringUtil.getUUID();
 		this.name = name;
 	}
+	
 	/****************************/
 	public String getId() {
 		return id;

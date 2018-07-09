@@ -13,15 +13,14 @@ import java.io.Serializable;
 public class AModel implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
-	public AModel(String href,String text){
-		this.href = href;
-		this.text = text;
-	}
-	
 	private String href;
 	private String text;
 	private String BL;
 	
+	public AModel(String href,String text){
+		this.href = href;
+		this.text = text;
+	}
 	/**********************/
 	public String getHref() {
 		return href;

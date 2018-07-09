@@ -107,6 +107,7 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 					jsBLModels.addAll(jsAnalyze(jsContents.get(key)));
 				}
 				List<HTMLModel> htmlModels = htmlAnalyzes(htmlContents);
+				//获取完页面所有信息后，开始对信息进行逻辑处理
 				log.info("开始分析业务逻辑");
 				logicAnalyzeService.LogicAnalyze(htmlModels, jsBLModels);
 			} catch (Exception e) {

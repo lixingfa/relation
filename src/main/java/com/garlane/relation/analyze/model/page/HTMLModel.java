@@ -12,13 +12,25 @@ public class HTMLModel implements Serializable{
 
 	private String path;
 	private List<String> jsSrc;
+	
+	/**页面的a标签，后面往往会跟随BL，表示该锚点跳转的页面里希望实现的功能*/
 	private List<AModel> aModels;
+	
+	/**表格，input和select元素的集合，被form包围的table不在此列*/
 	private List<TableModel> tableModels;
+	
+	/**表单，input和select元素的集合，有一个提交地址，可以推测一个请求*/
 	private List<FormModel> formModels;
+	
+	/**BL语言的占位符，表示希望实现的功能*/
 	private List<BLModel> bls;
 	
+	/**easyui相关的有用信息*/
 	private EASYUIModel easyuiModel;
+	
+	/**EL表达式进入这个页面时就已经组装好的数据。一个EL就代表一个后台传过来的属性，有子属性的表示一个集合类。EL经常与table和form混在一起*/
 	private List<ELModel> elModels;
+	
 	public HTMLModel(String path){
 		this.path = path;
 	}
