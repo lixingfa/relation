@@ -35,6 +35,9 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 	 * @throws SuperServiceException
 	 */
 	public void LogicAnalyze(List<HTMLModel> htmlModels,List<BLModel> jsBLModels)throws SuperServiceException{
+		//获取属性关系
+		List<PropertyModel> propertyModels = getPropertyModels(htmlModels, jsBLModels);
+		
 		//1、先将结果归类
 		log.info("处理BL语言");//BL语言里有很多属性，先获取它们
 		
@@ -64,7 +67,7 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 			getPropertyModelsOfEL(htmlModel.getElModels());
 			//2、easyuiModel
 			getPropertyModelsOfEASYUI(htmlModel.getEasyuiModel());
-			//3、BL
+			//3、BL，汉语转拼音作为属性名称
 			
 		}
 		
