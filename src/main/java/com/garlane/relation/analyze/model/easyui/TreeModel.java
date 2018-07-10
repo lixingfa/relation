@@ -18,7 +18,7 @@ public class TreeModel implements Serializable{
 	/**元素id*/
 	protected String id;
 	/**抽离action*/
-	protected List<ActionModel> actionModels;
+	protected List<ActionModel> actionModels = null;
 	/**数组形式的数据，用于没有分页和treegrid，treegrid有children的子列*/
 	protected JSONArray dataArray = null;
 	

@@ -16,17 +16,21 @@ public class ActionModel implements Serializable{
 	
 	/**请求类型，0get，1post*/
 	private Integer reqType = REQ_TYPE_GET;
+	
 	/**请求地址*/
 	private String url;
+	
 	/**参数,一般是字符串或数字，都可以统一转换成字符串*/
-	private Map<String, String> params;
+	private Map<String, String> params = null;
+	
 	/**返回结果类型，0页面地址，代码里的路径，1JSON*/
 	private Integer resultType = RESULT_TYPE_PAGE;
+	
 	/**返回结果，代码里的路径或JSON结果的名称，没有值则表为外部链接*/
 	private String results;
 	
 	/**返回结果拆成el表达式之后*/
-	private List<ELModel> elModels;
+	private List<ELModel> elModels = null;
 	
 	public static Integer REQ_TYPE_GET = 0;
 	public static Integer REQ_TYPE_POST = 0;

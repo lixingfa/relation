@@ -6,13 +6,21 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.garlane.relation.analyze.model.easyui.ActionModel;
+import com.garlane.relation.analyze.model.easyui.EASYUIModel;
+import com.garlane.relation.analyze.model.easyui.GridModel;
+import com.garlane.relation.analyze.model.easyui.TreeModel;
 import com.garlane.relation.analyze.model.el.ELModel;
+import com.garlane.relation.analyze.model.logic.PropertyIntimacyModel;
 import com.garlane.relation.analyze.model.logic.PropertyModel;
 import com.garlane.relation.analyze.model.logic.PropertyTreeModel;
 import com.garlane.relation.analyze.model.page.BLModel;
 import com.garlane.relation.analyze.model.page.FormModel;
 import com.garlane.relation.analyze.model.page.HTMLModel;
 import com.garlane.relation.analyze.service.LogicAnalyzeService;
+import com.garlane.relation.common.constant.EASYUIConstant;
 import com.garlane.relation.common.utils.exception.SuperServiceException;
 @Service("logicAnalyzeService")
 public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
@@ -50,25 +58,112 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 	 * @throws SuperServiceException
 	 */
 	private List<PropertyModel> getPropertyModels(List<HTMLModel> htmlModels,List<BLModel> jsBLModels) throws SuperServiceException{
-		List<PropertyTreeModel> propertyTreeModels = new ArrayList<PropertyTreeModel>(htmlModels.size());
+
 		for (HTMLModel htmlModel : htmlModels) {
-			PropertyTreeModel propertyTreeModel = new PropertyTreeModel(null);
 			//1、处理EL表达式
-			PropertyTreeModel elPropertyTree = new PropertyTreeModel(propertyTreeModel.getParentId());
-			List<ELModel> elModels = htmlModel.getElModels();
-			for (ELModel elModel : elModels) {
-				if (condition) {//这算是好办法吗？
-					
-				}
-			}
+			getPropertyModelsOfEL(htmlModel.getElModels());
+			//2、easyuiModel
+			getPropertyModelsOfEASYUI(htmlModel.getEasyuiModel());
+			//3、BL
 			
-			propertyTreeModels.add(propertyTreeModel);
 		}
 		
 		List<PropertyModel> propertyModels = new ArrayList<PropertyModel>();
 		return propertyModels;
 	}
 	
+	/**
+	 * getPropertyModelsOfEL:(这里用一句话描述这个方法的作用)
+	 * @author lixingfa
+	 * @date 2018年7月10日上午11:27:20
+	 * @param elModels
+	 */
+	private void getPropertyModelsOfEL(List<ELModel> elModels){
+		if (elModels != null) {
+			List<String> propertyList = new ArrayList<String>();
+			for (ELModel elModel : elModels) {
+				propertyList.add(elModel.getName());
+			}
+			PropertyIntimacyModel.getInstance().addImpeachs(propertyList);
+		}
+	}
 	
+	/**
+	 * getPropertyModelsOfEASYUI:(从easyui中获取属性)
+	 * @author lixingfa
+	 * @date 2018年7月10日上午11:40:58
+	 * @param easyuiModel
+	 */
+	private void getPropertyModelsOfEASYUI(EASYUIModel easyuiModel){
+		List<String> propertyList = new ArrayList<String>();
+		List<TreeModel> treeModels = easyuiModel.getTreeModels();
+		if (treeModels != null) {
+			for (TreeModel treeModel : treeModels) {
+				getPropertyModelsOfTreeModel(treeModel, propertyList);
+			}
+		}
+		List<GridModel> gridModels = easyuiModel.getGridModels();
+		if (gridModels != null) {
+			for (GridModel gridModel : gridModels) {
+				getPropertyModelsOfTreeModel(gridModel, propertyList);
+				//处理datagrid特有的dataObject
+				JSONObject dataObject = gridModel.getDataObject();
+				if (dataObject != null) {
+					JSONArray array = dataObject.getJSONArray(EASYUIConstant.ROWS);
+					if (array.size() > 0) {
+						JSONObject object = array.getJSONObject(0);
+						propertyList.addAll(object.keySet());
+					}
+				}
+			}
+		}
+	}
 	
+	/**
+	 * getPropertyModelsOfTreeModel:(从TreeModel中获取属性)
+	 * @author lixingfa
+	 * @date 2018年7月10日上午11:40:39
+	 * @param treeModel
+	 * @param propertyList
+	 */
+	private void getPropertyModelsOfTreeModel(TreeModel treeModel,List<String> propertyList){
+		JSONArray dataArray = treeModel.getDataArray();
+		if (dataArray != null) {
+			//每一条数据的格式都是一样的，分析一条即可
+			JSONObject object = dataArray.getJSONObject(0);
+			propertyList.addAll(object.keySet());
+		}
+		getPropertyModelsOfActionModel(treeModel, propertyList);
+	}
+	
+	/**
+	 * getPropertyModelsOfActionModel:(从ActionModel中获取属性)
+	 * @author lixingfa
+	 * @date 2018年7月10日下午12:00:18
+	 * @param treeModel
+	 * @param propertyList
+	 */
+	private void getPropertyModelsOfActionModel(TreeModel treeModel,List<String> propertyList){
+		List<ActionModel> actionModels = treeModel.getActionModels();
+		if (actionModels != null) {
+			for (ActionModel actionModel : actionModels) {
+				if (actionModel.getParams() != null) {
+					propertyList.addAll(actionModel.getParams().keySet());
+				}
+				//处理action的结果
+				getPropertyModelsOfEL(actionModel.getElModels());
+			}
+		}
+	}
+	
+	/**
+	 * getPropertyModelsOfBL:(从业务语言中获取属性)
+	 * @author lixingfa
+	 * @date 2018年7月10日下午2:05:45
+	 * @param treeModel
+	 * @param propertyList
+	 */
+	private void getPropertyModelsOfBL(List<BLModel> htmlBls,List<BLModel> jsBls){
+		
+	}
 }

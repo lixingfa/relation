@@ -20,6 +20,23 @@ public class PropertyIntimacyModel {
 	/**存疑的属性*/
 	private List<String> impeachs = new ArrayList<String>();
 	
+	/**双重检验的单例模式*/
+	private static volatile PropertyIntimacyModel propertyIntimacyModel;
+	/**私有化构建函数*/
+    private PropertyIntimacyModel() {}
+    /**双重检查的单例*/
+    public static PropertyIntimacyModel getInstance() {
+        if (propertyIntimacyModel == null) {
+            synchronized (PropertyIntimacyModel.class) {
+                if (propertyIntimacyModel == null) {
+                	propertyIntimacyModel = new PropertyIntimacyModel();
+                }
+            }
+        }
+        return propertyIntimacyModel;
+    }
+
+	
 	/**
 	 * addImpeachs:(设定一组属性的亲密度)
 	 * @author lixingfa
