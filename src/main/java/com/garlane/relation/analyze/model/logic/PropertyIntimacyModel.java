@@ -86,7 +86,7 @@ public class PropertyIntimacyModel {
 	
 	public static void main(String[] args) {
 		PropertyIntimacyModel propertyIntimacyModel = new PropertyIntimacyModel();
-		List<String> propertys = new ArrayList<>();
+		List<String> propertys = new ArrayList<String>();
 		propertys.add("a");
 		propertys.add("b");
 		

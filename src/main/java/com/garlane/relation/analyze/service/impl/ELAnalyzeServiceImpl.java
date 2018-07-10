@@ -2,7 +2,6 @@ package com.garlane.relation.analyze.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Service;
@@ -10,11 +9,12 @@ import org.springframework.stereotype.Service;
 import com.garlane.relation.analyze.model.el.ELModel;
 import com.garlane.relation.analyze.service.ELAnalyzeService;
 import com.garlane.relation.common.constant.ELConstant;
+import com.garlane.relation.common.utils.change.StringUtil;
 import com.garlane.relation.common.utils.exception.SuperServiceException;
 
 @Service("elAnalyzeService")
 public class ELAnalyzeServiceImpl implements ELAnalyzeService{
-	private static final String EL = "\\${[ a-zA-Z.]+}";
+	private static final String EL = "\\$\\{[ a-zA-Z.]+\\}";
 	
 	/**
 	 * analyze:(提取页面内容中的el属性)
@@ -24,13 +24,11 @@ public class ELAnalyzeServiceImpl implements ELAnalyzeService{
 	 * @return List<ELModel> 整理好层级关系的el属性
 	 * @throws SuperServiceException
 	 */
-	public List<ELModel> analyze(String content) throws SuperServiceException{		
-		Pattern pattern = Pattern.compile(EL);
-		Matcher matcher = pattern.matcher(content);
-		while (matcher.find()) {
-			String el = matcher.group();
+	public List<ELModel> analyze(String content) throws SuperServiceException{
+		List<String> els = StringUtil.getMatchers(EL, content);
+		for (String el : els) {
 			String[] propertys = extractProperty(el);
-			return getElModels(propertys);
+			return getElModels(propertys);			
 		}
 		return null;
 	}

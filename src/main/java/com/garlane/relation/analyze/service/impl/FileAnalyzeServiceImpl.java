@@ -295,7 +295,12 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 				inputModel.setName(input.attr(PageConstant.NAME));
 				inputModel.setPlaceholder(input.attr(PageConstant.PLACEHOLDER));
 				inputModel.setValue(input.attr(PageConstant.VALUE));
-				inputModel.setType(INPUTTYPE.valueOf(input.attr(PageConstant.TYPE)));//TODO 没有值会怎样？
+				String type = input.attr(PageConstant.TYPE);
+				if ("".equals(type)) {
+					inputModel.setType(INPUTTYPE.text);
+				}else {
+					inputModel.setType(INPUTTYPE.valueOf(type));					
+				}
 				inputModel.setValueType(getValueType(input));
 				inputModels.add(inputModel);
 			}
