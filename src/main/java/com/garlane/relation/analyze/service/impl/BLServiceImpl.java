@@ -31,6 +31,47 @@ import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombi
 public class BLServiceImpl implements BLService{
 
 	private Logger log = Logger.getLogger(getClass());
+	
+	/**
+	 * getPropertyModelsOfBL:(从BL中获取属性)
+	 * @author lixingfa
+	 * @date 2018年7月11日下午3:44:52
+	 * @param htmlModels
+	 * @param jsBLModels
+	 * @throws SuperServiceException
+	 */
+	public void getPropertyModelsOfBL(List<HTMLModel> htmlModels,List<BLModel> jsBLModels)throws SuperServiceException{
+		List<BLModel> blModels = new ArrayList<BLModel>();
+		for (HTMLModel htmlModel : htmlModels) {
+			//加载HTML和内嵌JS里的BL语言
+			blModels.addAll(htmlModel.getBls());			
+			//加载A标签携带的BL语言
+			blModels.addAll(htmlModel.getABLs());
+		}
+		//加载A标签携带的BL语言
+		blModels.addAll(jsBLModels);
+		//对整个项目的bl进行处理
+		getPropertyModelsOfBL(blModels);
+	}
+	
+	/**
+	 * BLAnalyze:(从BL语言中获取属性)
+	 * @author lixingfa
+	 * @date 2018年7月11日下午3:10:47
+	 * @param blModels
+	 * @throws SuperServiceException
+	 */
+	private void getPropertyModelsOfBL(List<BLModel> blModels) throws SuperServiceException{
+		for (BLModel blModel : blModels) {
+			String text = blModel.getText();
+			
+			//TODO 一条语句就添加一次，但中文和英文要联系起来
+			if (text.indexOf("/***") == 0) {
+				
+			}
+		}
+	}
+	
 	/**
 	 * BLAnalyze:(分析BL语言，转换成逻辑语言)
 	 * @author lixingfa
@@ -40,35 +81,10 @@ public class BLServiceImpl implements BLService{
 	 * @return List<PropertyModel>
 	 * @throws SuperServiceException
 	 */
-	public List<PropertyModel> BLAnalyzes(List<HTMLModel> htmlModels,List<BLModel> jsBLModels)throws SuperServiceException{
-		List<PropertyModel> propertyModels = new ArrayList<PropertyModel>();
-		List<BLModel> blModels = new ArrayList<BLModel>();
-		for (HTMLModel htmlModel : htmlModels) {
-			log.info("处理HTML和内嵌JS里的BL语言");
-			blModels.addAll(htmlModel.getBls());
-			BLAnalyze(htmlModel.getBls());
-			
-			log.info("处理A标签携带的BL语言");
-			blModels.addAll(htmlModel.getABLs());
-			ABLAnalyze(htmlModel.getaModels());
-		}
-		blModels.addAll(jsBLModels);
-		return null;
-	}
-	
-	private void BLAnalyze(List<BLModel> blModels) throws SuperServiceException{
-		for (BLModel blModel : blModels) {
-			if (blModel.getText().indexOf("/***") == 0) {
-				//TODO
-			}else {
-				new PropertyModel(blModel.getBl(), blModel.getText());
-			}
-		}
-	}
-	
-	private void ABLAnalyze(List<AModel> aModels) throws SuperServiceException{
+	public void BLAnalyzes(List<HTMLModel> htmlModels,List<BLModel> jsBLModels)throws SuperServiceException{		
 		
 	}
+	
 	
 	public static void main(String[] args) {
 		

@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
@@ -200,7 +198,7 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 			List<String> htmlBLs = StringUtil.getMatchers(HTMLBL, content);
 			if(htmlBLs.size() > 0){
 				for (String bl : htmlBLs) {
-					BLs.put(bl,content.indexOf(bl));				
+					BLs.put(bl,content.indexOf(bl));//TODO ？
 				}				
 			}
 			log.info("获取HTML里JS脚本的BL语言。");

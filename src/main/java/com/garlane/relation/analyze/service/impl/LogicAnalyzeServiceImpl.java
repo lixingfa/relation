@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONArray;
@@ -15,10 +16,13 @@ import com.garlane.relation.analyze.model.easyui.TreeModel;
 import com.garlane.relation.analyze.model.el.ELModel;
 import com.garlane.relation.analyze.model.logic.PropertyIntimacyModel;
 import com.garlane.relation.analyze.model.logic.PropertyModel;
-import com.garlane.relation.analyze.model.logic.PropertyTreeModel;
 import com.garlane.relation.analyze.model.page.BLModel;
 import com.garlane.relation.analyze.model.page.FormModel;
 import com.garlane.relation.analyze.model.page.HTMLModel;
+import com.garlane.relation.analyze.model.page.InputModel;
+import com.garlane.relation.analyze.model.page.SelectModel;
+import com.garlane.relation.analyze.model.page.TableModel;
+import com.garlane.relation.analyze.service.BLService;
 import com.garlane.relation.analyze.service.LogicAnalyzeService;
 import com.garlane.relation.common.constant.EASYUIConstant;
 import com.garlane.relation.common.utils.exception.SuperServiceException;
@@ -26,6 +30,9 @@ import com.garlane.relation.common.utils.exception.SuperServiceException;
 public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 
 	private Logger log = Logger.getLogger(getClass());
+	
+	@Autowired
+	private BLService blService;
 	/**
 	 * LogicAnalyze:(web系统里，所有的行为都会被简化成请求-获取)
 	 * @author lixingfa
@@ -67,7 +74,18 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 			getPropertyModelsOfEL(htmlModel.getElModels());
 			//2、easyuiModel
 			getPropertyModelsOfEASYUI(htmlModel.getEasyuiModel());
-			//3、BL，汉语转拼音作为属性名称
+			//3、BL
+			//blService.getPropertyModelsOfBL(htmlModels, jsBLModels);
+			//4、forms
+			for (FormModel formModel : htmlModel.getFormModels()) {
+				getPropertyModelsOfTable(formModel);
+			}
+			//5、table
+			for (TableModel tableModel : htmlModel.getTableModels()) {
+				getPropertyModelsOfTable(tableModel);
+			}
+			//6、aModel
+			
 			
 		}
 		
@@ -153,6 +171,7 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 				if (actionModel.getParams() != null) {
 					propertyList.addAll(actionModel.getParams().keySet());
 				}
+				PropertyIntimacyModel.getInstance().addImpeachs(propertyList);
 				//处理action的结果
 				getPropertyModelsOfEL(actionModel.getElModels());
 			}
@@ -160,13 +179,20 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 	}
 	
 	/**
-	 * getPropertyModelsOfBL:(从业务语言中获取属性)
+	 * getPropertyModelsOfTable:(从表格中获取属性)
 	 * @author lixingfa
-	 * @date 2018年7月10日下午2:05:45
-	 * @param treeModel
-	 * @param propertyList
+	 * @date 2018年7月11日下午4:10:50
+	 * @param formModels
 	 */
-	private void getPropertyModelsOfBL(List<BLModel> htmlBls,List<BLModel> jsBls){
-		
+	private void getPropertyModelsOfTable(TableModel tableModel){
+		List<String> names = new ArrayList<String>();
+		for (InputModel inputModel : tableModel.getInputs()) {
+			names.add(inputModel.getName());
+		}
+		for (SelectModel selectModel : tableModel.getSelectModels()) {
+			names.add(selectModel.getName());
+		}
+		PropertyIntimacyModel.getInstance().addImpeachs(names);
 	}
+	
 }

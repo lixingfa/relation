@@ -23,8 +23,17 @@ public interface BLService {
 	 * @date 2018年6月23日上午10:20:37
 	 * @param htmlModels
 	 * @param jsBLModels
-	 * @return List<PropertyModel>
 	 * @throws SuperServiceException
 	 */
-	public List<PropertyModel> BLAnalyzes(List<HTMLModel> htmlModels,List<BLModel> jsBLModels)throws SuperServiceException;
+	public void BLAnalyzes(List<HTMLModel> htmlModels,List<BLModel> jsBLModels)throws SuperServiceException;
+	
+	/**
+	 * getPropertyModelsOfBL:(从BL中获取属性)
+	 * @author lixingfa
+	 * @date 2018年7月11日下午3:44:52
+	 * @param htmlModels
+	 * @param jsBLModels
+	 * @throws SuperServiceException
+	 */
+	public void getPropertyModelsOfBL(List<HTMLModel> htmlModels,List<BLModel> jsBLModels)throws SuperServiceException;
 }
