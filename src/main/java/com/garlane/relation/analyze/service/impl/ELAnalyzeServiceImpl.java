@@ -25,25 +25,28 @@ public class ELAnalyzeServiceImpl implements ELAnalyzeService{
 	 * @throws SuperServiceException
 	 */
 	public List<ELModel> analyze(String content) throws SuperServiceException{
+		List<ELModel> elModels = new ArrayList<ELModel>();
 		List<String> els = StringUtil.getMatchers(EL, content);
 		for (String el : els) {
 			String[] propertys = extractProperty(el);
-			return getElModels(propertys);			
+			getElModels(elModels,propertys);
 		}
-		return null;
+		return elModels;
 	}
 	
 	/**
 	 * getElModels:(从属性列表里组装EL集合)
 	 * @author lixingfa
 	 * @date 2018年7月5日下午7:30:12
-	 * @param propertys
+	 * @param propertys EL表达式以.切割后的数组，前面的是后面的父属性
 	 * @return
 	 * @throws SuperServiceException
 	 */
-	public List<ELModel> getElModels(String[] propertys) throws SuperServiceException{
-		List<ELModel> elModels = new ArrayList<ELModel>();
+	public List<ELModel> getElModels(List<ELModel> elModels,String[] propertys) throws SuperServiceException{
 		String parentId = null;
+		if (elModels == null) {
+			elModels = new ArrayList<ELModel>();
+		}
 		for (int i = 0; i < propertys.length; i++) {
 			String id = getELId(elModels, propertys[i]);
 			if (id != null) {
@@ -53,9 +56,16 @@ public class ELAnalyzeServiceImpl implements ELAnalyzeService{
 				ELModel elModel = new ELModel(propertys[i]);
 				elModel.setParentId(parentId);
 				elModels.add(elModel);
+				//第一个才是空的
+				parentId = elModel.getId();
 			}
 		}
 		return elModels;
+	}
+	
+	@Override
+	public List<ELModel> getElModels(String[] propertys) throws SuperServiceException {
+		return getElModels(null, propertys);
 	}
 	
 	/**
@@ -104,6 +114,6 @@ public class ELAnalyzeServiceImpl implements ELAnalyzeService{
 			}
 			return els.split(".");
 		}
-		return el.split(".");
+		return el.split("\\.");
 	}
 }

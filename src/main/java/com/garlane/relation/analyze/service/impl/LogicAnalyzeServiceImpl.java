@@ -84,9 +84,6 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 			for (TableModel tableModel : htmlModel.getTableModels()) {
 				getPropertyModelsOfTable(tableModel);
 			}
-			//6、aModel
-			
-			
 		}
 		
 		List<PropertyModel> propertyModels = new ArrayList<PropertyModel>();
