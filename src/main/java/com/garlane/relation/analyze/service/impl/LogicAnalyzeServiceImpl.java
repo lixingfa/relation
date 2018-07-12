@@ -77,12 +77,16 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 			//3、BL
 			//blService.getPropertyModelsOfBL(htmlModels, jsBLModels);
 			//4、forms
-			for (FormModel formModel : htmlModel.getFormModels()) {
-				getPropertyModelsOfTable(formModel);
+			if (htmlModel.getFormModels() != null) {
+				for (FormModel formModel : htmlModel.getFormModels()) {
+					getPropertyModelsOfTable(formModel);
+				}				
 			}
 			//5、table
-			for (TableModel tableModel : htmlModel.getTableModels()) {
-				getPropertyModelsOfTable(tableModel);
+			if (htmlModel.getTableModels() != null) {
+				for (TableModel tableModel : htmlModel.getTableModels()) {
+					getPropertyModelsOfTable(tableModel);
+				}				
 			}
 		}
 		
@@ -183,13 +187,19 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 	 */
 	private void getPropertyModelsOfTable(TableModel tableModel){
 		List<String> names = new ArrayList<String>();
-		for (InputModel inputModel : tableModel.getInputs()) {
-			names.add(inputModel.getName());
+		if (tableModel.getInputs() != null) {
+			for (InputModel inputModel : tableModel.getInputs()) {
+				names.add(inputModel.getName());
+			}			
 		}
-		for (SelectModel selectModel : tableModel.getSelectModels()) {
-			names.add(selectModel.getName());
+		if (tableModel.getSelectModels() != null) {
+			for (SelectModel selectModel : tableModel.getSelectModels()) {
+				names.add(selectModel.getName());
+			}			
 		}
-		PropertyIntimacyModel.getInstance().addImpeachs(names);
+		if (names.size() > 0) {
+			PropertyIntimacyModel.getInstance().addImpeachs(names);
+		}
 	}
 	
 }

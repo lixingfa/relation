@@ -226,10 +226,11 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 			log.info("获取js引用");
 			List<String> jsSrcs = StringUtil.getMatchers(JSSRC, content);
 			if (jsSrcs.size() > 0) {
+				htmlModel.setJsSrc(new ArrayList<String>());
 				for (String s : jsSrcs) {
 					s = s.substring(s.indexOf(PageConstant.SRC));
 					s = s.substring(0, s.indexOf("\""));
-					htmlModel.getJsSrc().add(s);				
+					htmlModel.getJsSrc().add(s);
 				}				
 			}
 			return htmlModel;

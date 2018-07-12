@@ -24,10 +24,10 @@ public class ConfigConstant {
     public static final Long UPLOADFILE_MAX_SIZE = Long.parseLong(PropConfigUtil.get("UPLOADFILE_MAX_SIZE", "314572800"));
 	
     /**上传的最大文件数量**/
-    public static final Long UPLOADFILE_MAX_NUM = Long.parseLong(PropConfigUtil.get("UPLOADFILE_MAX_NUM","100"));
+    public static final Long UPLOADFILE_MAX_NUM = Long.parseLong(PropConfigUtil.get("UPLOADFILE_MAX_NUM","200"));
     
     /**解析的最大文件数量，即html和js文件的总数**/
-    public static final Long ANALYZE_MAX_NUM = Long.parseLong(PropConfigUtil.get("ANALYZE_MAX_NUM","100"));
+    public static final Long ANALYZE_MAX_NUM = Long.parseLong(PropConfigUtil.get("ANALYZE_MAX_NUM","150"));
     
 	/** 附件上传默认物理路径 uploadFilestUserFilesh **/
 	private static final String DEFAULT_ROOT_PATH_ATTACHMENT = File.separator + "uploadFiles" + File.separator + "UserFile" + File.separator;
