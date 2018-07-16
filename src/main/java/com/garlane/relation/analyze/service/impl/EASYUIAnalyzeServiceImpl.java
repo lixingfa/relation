@@ -69,9 +69,9 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 		if (grids.size() > 0) {
 			List<GridModel> gridModels = new ArrayList<GridModel>();
 			for (String gridStr : grids) {
-				String id = StringUtil.getIdOfEASYUI(gridStr);
-				int index = content.indexOf(gridStr);
+				int index = content.indexOf(gridStr) + gridStr.length();
 				String grid = StringUtil.getSubStringByLR(index, '{', '}', content);//确保从第一个花括号开始
+				String id = StringUtil.getSubStringByLR('#', content, grid);
 				//检查id是否存在了
 				GridModel gridModel = null;
 				for (GridModel model : gridModels) {
@@ -290,7 +290,7 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 		if (trees.size() > 0) {
 			List<TreeModel> treeModels = new ArrayList<TreeModel>();			
 			for (String treeStr : trees) {
-				String id = StringUtil.getIdOfEASYUI(treeStr);
+				String id = StringUtil.getSubStringByLR('#', content, treeStr);
 				int index = content.indexOf(treeStr);
 				String tree = StringUtil.getSubStringByLR(index, '{', '}', content);//确保从第一个花括号开始
 				//检查id是否存在了

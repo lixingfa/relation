@@ -1090,8 +1090,8 @@ public class StringUtil {
 	public static String getSubStringByLR(int begin,char left,char right,String content){
 		StringBuffer s = new StringBuffer();
 		//校准begin
-		begin = content.indexOf(left);
-		content = content.substring(begin);
+		//begin = content.indexOf(left);
+		content = content.substring(begin - 1);
 		char[] c = content.toCharArray();
 		boolean singleNote = false;//单行注释
 		int note = 0;//多行注释
@@ -1193,19 +1193,15 @@ public class StringUtil {
 	}
 	
 	/**
-	 * getIdOfEASYUI:(获取easyui定义中的id)
-	 * @author lixingfa
-	 * @date 2018年7月6日下午5:03:46
-	 * @param p 定义的正则表达式
-	 * @param content 要搜索的内容
-	 * @return String id
+	 * 根据结尾子串和开头字符获取子字符串，一般用于寻找EASYUI的id
+	 * @param c 起始字符
+	 * @param content 整体内容
+	 * @param matcher 结尾子串
+	 * @return 特定的子串
 	 */
-	public static String getIdOfEASYUI(String matcher){
-		String id = matcher.substring(matcher.indexOf("#"));
-		if (id.contains("'")) {
-			return id.substring(0, id.indexOf("'"));
-		}else {
-			return id.substring(0, id.indexOf("\""));
-		}
+	public static String getSubStringByLR(char c,String content,String matcher){
+		content = content.substring(0,content.indexOf(matcher));
+		content = content.substring(content.lastIndexOf(c));
+		return content;
 	}
 }

@@ -20,7 +20,7 @@ public class EASYUIConstant {
 	public static final String AJAX_BEGIN = "\\$\\.ajax\\(\\{";
 	
 	//grid
-	public static final String GRID_DEF = "\\$\\([ ]?['\"]{1}[ ]?#\\w[ ]?['\"]{1}[ ]?\\)\\.[tree|data|combo]{1}grid\\([ ]?\\{";
+	public static final String GRID_DEF = "[tree|data|combo]{1}grid\\([ ]?\\{";
 	public static final String TREE_FIELD = "treeField";
 	public static final String ID_FIELD = "idField";
 	public static final String COLUMNS = "columns";
