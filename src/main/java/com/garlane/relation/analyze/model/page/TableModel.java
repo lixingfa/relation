@@ -18,6 +18,8 @@ public class TableModel implements Serializable{
 	List<InputModel> inputs;
 
 	List<SelectModel> selectModels;
+	
+	List<TextareaModel> textareaModels;
 	/*********************************/
 	public List<InputModel> getInputs() {
 		return inputs;
@@ -34,4 +36,13 @@ public class TableModel implements Serializable{
 	public void setSelectModels(List<SelectModel> selectModels) {
 		this.selectModels = selectModels;
 	}
+
+	public List<TextareaModel> getTextareaModels() {
+		return textareaModels;
+	}
+
+	public void setTextareaModels(List<TextareaModel> textareaModels) {
+		this.textareaModels = textareaModels;
+	}
+	
 }

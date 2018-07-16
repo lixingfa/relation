@@ -96,7 +96,8 @@ public class ELAnalyzeServiceImpl implements ELAnalyzeService{
 		//去除两边引号
 		el = el.replace(ELConstant.CLOSE_BRACE, "")
 				.replace(ELConstant.DOLLAR_MARK, "")
-				.replace(ELConstant.OPEN_BRACE, "");
+				.replace(ELConstant.OPEN_BRACE, "")
+				.trim();
 		//去除表达式等
 		//TODO 需要完善
 		if (el.contains(ELConstant.EQ)) {

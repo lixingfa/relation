@@ -3,6 +3,10 @@
  */
 package com.garlane.relation.common.constant;
 
+import java.util.List;
+
+import com.garlane.relation.common.utils.change.StringUtil;
+
 /**
  * @author lixingfa
  * @date 2018年7月5日上午10:57:56
@@ -30,4 +34,10 @@ public class EASYUIConstant {
 	public static final String TREE_DEF = "\\$\\([ ]?['\"]{1}[ ]?#\\w[ ]?['\"]{1}[ ]?\\)\\.[combo]?tree\\([ ]?\\{";//完全是为了预防奇葩写法
 	public static final String QUERYPARAMS = "queryParams";
 	
+	public static void main(String[] args) {
+		String GRID_DEF = "\\)\\.[tree|data|combo]grid\\([ ]?\\{";
+		String content = "init:function(){				$(\"#columnList\").datagrid({11";
+		List<String> grids = StringUtil.getMatchers(GRID_DEF, content);
+		System.out.println(grids.size());
+	}
 }

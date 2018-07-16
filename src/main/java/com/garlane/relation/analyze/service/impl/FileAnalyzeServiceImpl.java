@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -24,6 +25,7 @@ import com.garlane.relation.analyze.model.page.HTMLModel;
 import com.garlane.relation.analyze.model.page.InputModel;
 import com.garlane.relation.analyze.model.page.SelectModel;
 import com.garlane.relation.analyze.model.page.TableModel;
+import com.garlane.relation.analyze.model.page.TextareaModel;
 import com.garlane.relation.analyze.service.EASYUIAnalyzeService;
 import com.garlane.relation.analyze.service.ELAnalyzeService;
 import com.garlane.relation.analyze.service.FileAnalyzeService;
@@ -126,6 +128,7 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 		List<HTMLModel> htmlModels = new ArrayList<HTMLModel>();
 		for (String path : htmlContents.keySet()) {
 			String content = htmlContents.get(path);
+			log.info("解析页面：" + path);
 			htmlModels.add(htmlAnalyze(path,content));
 		}
 		return htmlModels;
@@ -152,7 +155,7 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 				for (Element table : tables) {
 					Elements pElements = table.parents();
 					for (Element p : pElements) {
-						if (p.tagName().equals("FORM")) {
+						if (p.tagName().equals(PageConstant.FORM)) {
 							continue;//不处理包含在表单内的
 						}					
 					}
@@ -160,6 +163,7 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 					TableModel tableModel = new TableModel();
 					tableModel.setInputs(getInputModels(table));
 					tableModel.setSelectModels(getSelectModels(table));
+					tableModel.setTextareaModels(getTextareaModels(table));
 					tableModels.add(tableModel);
 				}
 				htmlModel.setTableModels(tableModels);
@@ -182,6 +186,7 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 					formModel.setUrl(url);
 					formModel.setInputs(getInputModels(form));
 					formModel.setSelectModels(getSelectModels(form));
+					formModel.setTextareaModels(getTextareaModels(form));
 					formModels.add(formModel);
 				}
 				htmlModel.setFormModels(formModels);
@@ -293,17 +298,43 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 				inputModel.setMaxlength(input.attr(PageConstant.MAXLENGTH));
 				inputModel.setName(input.attr(PageConstant.NAME));
 				inputModel.setPlaceholder(input.attr(PageConstant.PLACEHOLDER));
+				if (StringUtils.isBlank(inputModel.getPlaceholder())) {
+					inputModel.setPlaceholder(input);
+				}
 				inputModel.setValue(input.attr(PageConstant.VALUE));
 				String type = input.attr(PageConstant.TYPE);
 				if ("".equals(type)) {
 					inputModel.setType(INPUTTYPE.text);
 				}else {
-					inputModel.setType(INPUTTYPE.valueOf(type));					
+					inputModel.setType(INPUTTYPE.valueOf(type));
 				}
 				inputModel.setValueType(getValueType(input));
 				inputModels.add(inputModel);
 			}
 			return inputModels;			
+		}else {
+			return null;
+		}
+	}
+	
+	private List<TextareaModel> getTextareaModels(Element element){
+		Elements textareas = element.select(PageConstant.TEXTAREA);
+		if (textareas.size() > 0) {
+			List<TextareaModel> textareaList = new ArrayList<TextareaModel>();
+			for (Element textarea : textareas) {
+				TextareaModel textareaModel  = new TextareaModel();
+				textareaModel.setId(textarea.attr(PageConstant.ID));
+				textareaModel.setName(textarea.attr(PageConstant.NAME));
+				textareaModel.setPlaceholder(textarea.attr(PageConstant.PLACEHOLDER));
+				if (StringUtils.isBlank(textareaModel.getPlaceholder())) {
+					textareaModel.setPlaceholder(textarea);
+				}
+				textareaModel.setValue(textarea.html());//值不一样
+				textareaModel.setType(INPUTTYPE.text);
+				textareaModel.setValueType(PageConstant.VALUETYPE.string);
+				textareaList.add(textareaModel);
+			}
+			return textareaList;			
 		}else {
 			return null;
 		}
@@ -323,6 +354,7 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 			for (Element select : selects) {
 				SelectModel selectModel = new SelectModel(select.attr(PageConstant.ID),select.attr(PageConstant.NAME));
 				selectModel.setMultiple(select.attr(PageConstant.MULTIPLE));
+				selectModel.setPlaceholder(select);
 				Elements options = select.select(PageConstant.OPTION);
 				Map<String, String> map = new HashMap<String, String>();
 				for (Element option : options) {

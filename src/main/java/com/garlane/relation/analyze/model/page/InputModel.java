@@ -5,6 +5,8 @@ package com.garlane.relation.analyze.model.page;
 
 import java.io.Serializable;
 
+import org.jsoup.nodes.Element;
+
 import com.garlane.relation.common.constant.PageConstant;
 
 /**
@@ -43,6 +45,14 @@ public class InputModel implements Serializable{
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public void setPlaceholder(Element element){
+		Element td = element.parent();//父节点
+		Element preBrother = td.previousElementSibling();//前一个兄弟对象
+		if (preBrother != null) {
+			//前一个也是td且没有任何内容
+			this.placeholder = preBrother.text().replace("：", "").replace(":", "");			
+		}
 	}
 	public String getPlaceholder() {
 		return placeholder;

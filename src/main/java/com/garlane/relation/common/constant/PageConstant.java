@@ -26,6 +26,8 @@ public class PageConstant {
 	public static final String MULTIPLE = "multiple";
 	public static final String OPTION = "option";
 	public static final String ACTION = "action";
+	public static final String TEXTAREA = "textarea";
+	public static final String TD = "td";
 	
 	/**输入类型*/
 	public static enum INPUTTYPE{
