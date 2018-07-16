@@ -35,7 +35,7 @@ public class EASYUIConstant {
 	public static final String QUERYPARAMS = "queryParams";
 	
 	public static void main(String[] args) {
-		String GRID_DEF = "\\)\\.[tree|data|combo]grid\\([ ]?\\{";
+		String GRID_DEF = "[tree|data|combo]{1}grid\\([ ]?\\{";//TODO 或许只能到这一层了，id通过字符串往前找
 		String content = "init:function(){				$(\"#columnList\").datagrid({11";
 		List<String> grids = StringUtil.getMatchers(GRID_DEF, content);
 		System.out.println(grids.size());
