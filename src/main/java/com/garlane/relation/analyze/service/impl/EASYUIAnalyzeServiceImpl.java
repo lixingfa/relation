@@ -33,9 +33,9 @@ import com.garlane.relation.common.utils.exception.SuperServiceException;
  */
 @Service("easyuiAnalyzeService")
 public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
-	private static final String URL = "url[ ]?[=:]{1}[ ]?['\"]{1}[${}\\w/.'\"?=+&]+";//后面一段没有逗号，可以避免越界
-	private static final String FUNCTION = "function\\([\\w, ]?\\)";
-	private static final String PLUS_SIGN = "['\" ]?[\\+]{1}['\" ]?";
+	private static final String URL = "url[ ]*[=:]{1}[ ]*['\"]{1}[${}\\w/.'\"?=+&]+";//后面一段没有逗号，可以避免越界
+	private static final String FUNCTION = "function\\([\\w, ]*\\)";
+	private static final String PLUS_SIGN = "['\"]?[ ]*[\\+]{1}[ ]*['\"]?";
 	
 	@Autowired
 	private ELAnalyzeService elAnalyzeService;
@@ -330,7 +330,7 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 	}
 	
 	public static void main(String[] args) {
-		String FUNCTION = "function\\([\\w, ]?\\)";
+		String FUNCTION = "function\\([\\w, ]*\\)";
 		String content = "onBeforeLoad:function(row,param){					},";
 		List<String> functions = StringUtil.getMatchers(FUNCTION, content);
 		System.out.println(functions.size());

@@ -20,7 +20,7 @@ public class EASYUIConstant {
 	public static final String AJAX_BEGIN = "\\$\\.ajax\\(\\{";
 	
 	//grid
-	public static final String GRID_DEF = "[tree|data|combo]{1}grid\\([ ]?\\{";
+	public static final String GRID_DEF = "[tree|data|combo]{1}grid\\([ ]*\\{";
 	public static final String TREE_FIELD = "treeField";
 	public static final String ID_FIELD = "idField";
 	public static final String COLUMNS = "columns";
@@ -31,7 +31,7 @@ public class EASYUIConstant {
 	public static final String ROWS = "rows";
 	
 	//tree 在请求远程数据的时候增加查询参数
-	public static final String TREE_DEF = "\\$\\([ ]?['\"]{1}[ ]?#\\w[ ]?['\"]{1}[ ]?\\)\\.[combo]?tree\\([ ]?\\{";//完全是为了预防奇葩写法
+	public static final String TREE_DEF = "\\$\\([ ]?['\"]{1}[ ]?#\\w[ ]?['\"]{1}[ ]?\\)\\.[combo]?tree\\([ ]?\\{";//?变*
 	public static final String QUERYPARAMS = "queryParams";
 	
 	public static void main(String[] args) {
