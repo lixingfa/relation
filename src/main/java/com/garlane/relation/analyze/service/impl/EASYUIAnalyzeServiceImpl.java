@@ -33,7 +33,9 @@ import com.garlane.relation.common.utils.exception.SuperServiceException;
  */
 @Service("easyuiAnalyzeService")
 public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
-	private static final String URL = "\\w[ =:]+['\"\\w/.\\?=\\+&$\\{\\}\\[\\]]+;";//TODO 不一定是这样
+	private static final String URL = "url[ ]?[=:]{1}[ ]?['\"]{1}[${}\\w/.'\"?=+&]+";//后面一段没有逗号，可以避免越界
+	private static final String FUNCTION = "function\\([\\w, ]?\\)";
+	private static final String PLUS_SIGN = "['\" ]?[\\+]{1}['\" ]?";
 	
 	@Autowired
 	private ELAnalyzeService elAnalyzeService;
@@ -45,6 +47,8 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 	 * @throws SuperServiceException
 	 */
 	public EASYUIModel getEasyuiModel(String content) throws SuperServiceException{
+		content = StringUtil.replaceMatchers(PLUS_SIGN, "", content);
+		
 		EASYUIModel easyuiModel = new EASYUIModel();
 		//tree、combotree
 		easyuiModel.setTreeModels(getTreeModels(content));
@@ -70,8 +74,8 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 			List<GridModel> gridModels = new ArrayList<GridModel>();
 			for (String gridStr : grids) {
 				int index = content.indexOf(gridStr) + gridStr.length();
-				String grid = StringUtil.getSubStringByLR(index, '{', '}', content);//确保从第一个花括号开始
-				String id = StringUtil.getSubStringByLR('#', content, grid);
+				String grid = StringUtil.getSubStringByLR(index - 1, '{', '}', content);//确保从第一个花括号开始
+				String id = getIdBySubString(StringUtil.getSubStringForward('#',index, content));
 				//检查id是否存在了
 				GridModel gridModel = null;
 				for (GridModel model : gridModels) {
@@ -80,7 +84,7 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 						break;
 					}
 				}
-				gridModels.add(analyzeGridStr(gridStr,id,gridModel));
+				gridModels.add(analyzeGridStr(grid,id,gridModel));
 				content = content.substring(index + grid.length());
 			}
 			return gridModels;
@@ -106,6 +110,7 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 			grid = grid.replace(jsFunctionModel.getFunctionString(), "''");//替换成空值
 			actionModels.addAll(jsFunctionModel.getActionModels());//获取内置函数的action
 		}
+		grid = StringUtil.replaceMatchers(FUNCTION, "", grid);
 		//grid转成JSON
 		JSONObject gridObj = JSONObject.parseObject(grid);
 		if (gridModel == null) {
@@ -206,6 +211,9 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 		}else {
 			List<String> urls = StringUtil.getMatchers(URL, func);
 			for (String s : urls) {
+				if (s.contains(":")) {
+					s = s.substring(s.indexOf(":") + 1).replace("'", "").replace("\"", "");
+				}
 				//找到链接
 				String url;
 				Map<String, String> params = null;
@@ -214,9 +222,9 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 					params = new HashMap<String, String>();
 					int index = s.indexOf("?");
 					url = s.substring(0,index);
-					String paramString[] = s.substring(index).split("&");
+					String paramString[] = s.substring(index + 1).split("&");
 					for (String string : paramString) {
-						String[] param = string.split("=");
+						String[] param = string.replace("+", "").split("=");
 						params.put(param[0].trim(), param[1].trim());//TODO value是否需要处理？
 					}
 				}else {
@@ -290,8 +298,8 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 		if (trees.size() > 0) {
 			List<TreeModel> treeModels = new ArrayList<TreeModel>();			
 			for (String treeStr : trees) {
-				String id = StringUtil.getSubStringByLR('#', content, treeStr);
 				int index = content.indexOf(treeStr);
+				String id = getIdBySubString(StringUtil.getSubStringForward('#', index, content));
 				String tree = StringUtil.getSubStringByLR(index, '{', '}', content);//确保从第一个花括号开始
 				//检查id是否存在了
 				TreeModel treeModel = null;
@@ -308,5 +316,23 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 		}else {
 			return null;			
 		}
+	}
+	
+	/**
+	 * getIdBySubString:(从子串里提前EASYUI的声明id)
+	 * @author lixingfa
+	 * @date 2018年7月17日上午9:25:30
+	 * @param s
+	 * @return id
+	 */
+	private String getIdBySubString(String s){
+		return s.substring(1,s.indexOf(")")).replace("'", "").replace("\"", "");
+	}
+	
+	public static void main(String[] args) {
+		String FUNCTION = "function\\([\\w, ]?\\)";
+		String content = "onBeforeLoad:function(row,param){					},";
+		List<String> functions = StringUtil.getMatchers(FUNCTION, content);
+		System.out.println(functions.size());
 	}
 }

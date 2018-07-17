@@ -1089,9 +1089,12 @@ public class StringUtil {
 	 */
 	public static String getSubStringByLR(int begin,char left,char right,String content){
 		StringBuffer s = new StringBuffer();
+		content = content.substring(begin);
 		//校准begin
-		//begin = content.indexOf(left);
-		content = content.substring(begin - 1);
+		begin = content.indexOf(left);//确保字符串从left开始
+		if (begin > 0) {
+			content = content.substring(begin);			
+		}
 		char[] c = content.toCharArray();
 		boolean singleNote = false;//单行注释
 		int note = 0;//多行注释
@@ -1112,7 +1115,7 @@ public class StringUtil {
 				}
 			}else if(c[i] == '*'  && (i + 1) < c.length && c[i + 1] == '/'){
 				note--;
-			}else if (singleNote && c[i] == '\n') {//换行后单行注释失效
+			}else if (singleNote && (c[i] == '\n' || c[i] == '\t')) {//换行后单行注释失效
 				singleNote = false;
 			}
 			//非注释内部，不是空内容
@@ -1193,15 +1196,34 @@ public class StringUtil {
 	}
 	
 	/**
-	 * 根据结尾子串和开头字符获取子字符串，一般用于寻找EASYUI的id
-	 * @param c 起始字符
-	 * @param content 整体内容
-	 * @param matcher 结尾子串
-	 * @return 特定的子串
+	 * getSubStringForward:(给出截止位置和开始字符，寻找字符串)
+	 * @author lixingfa
+	 * @date 2018年7月17日上午9:17:24
+	 * @param forWardChar 开始字符
+	 * @param endIndex 截止位置
+	 * @param content 被寻找的内容
+	 * @return String
 	 */
-	public static String getSubStringByLR(char c,String content,String matcher){
-		content = content.substring(0,content.indexOf(matcher));
-		content = content.substring(content.lastIndexOf(c));
+	public static String getSubStringForward(char forWardChar,int endIndex,String content){
+		content = content.substring(0,endIndex);
+		content = content.substring(content.lastIndexOf(forWardChar));
+		return content;
+	}
+	
+	/**
+	 * replaceMatchers:(替换字符串中与正则表达式匹配的内容)
+	 * @author lixingfa
+	 * @date 2018年7月17日下午8:17:20
+	 * @param p 正则表达式
+	 * @param replace 用于替换的字符串
+	 * @param content 被操作的字符串
+	 * @return String
+	 */
+	public static String replaceMatchers(String p,String replace,String content){
+		List<String> matchers = getMatchers(p, content);
+		for (String matcher : matchers) {
+			content = content.replace(matcher, replace);
+		}
 		return content;
 	}
 }

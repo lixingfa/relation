@@ -73,6 +73,7 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 				int jspCount = 0;
 				int jsCount = 0;
 				//TODO MVC实时查看日志
+				//TODO 兼容小程序，这是一个风口，以人为维度的个性化，就从小程序开始，是入口，也是风口，要快
 				Map<String, String> htmlContents = new HashMap<String, String>();
 				String htmlPath;
 				if (path.endsWith(FileConstant.WEBAPP)) {//基于maven的老项目，把webapp目录拿过来
