@@ -15,10 +15,13 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -1133,25 +1136,22 @@ public class StringUtil {
 	 * @author lixingfa
 	 * @date 2018年7月5日下午4:41:04
 	 * @param variate 变量名称
-	 * @param subText 变量所在的内容区（适当的内容区容易定位）
+	 * @param index 变量所在的内容区（适当的内容区容易定位）
 	 * @param content 查找区域
 	 * @return String 变量的值
 	 */
-	public static String findTheVariate(String variate,String subText,String content){
-		Pattern pattern = Pattern.compile("var[ ]+" + variate + "[ ]+=['\"\\w/.\\?=\\+&$\\{\\}\\[\\]]+;");
-		Matcher matcher = pattern.matcher(content);
-		int index = content.indexOf(subText);
+	public static String findTheVariate(String variate,int index,String content){
 		int dist = Integer.MAX_VALUE;
 		String value = null;
-		while (matcher.find()) {
-			String s = matcher.group();
+		List<String> matchers = getMatchers("var[ ]+" + variate + "[ ]*=['\"\\w/.?=\\+&${}\\[\\] ]+[;]{1}", content);
+		for (String s : matchers) {
 			int flag = index - content.indexOf(s);
 			if (flag < dist && flag > 0) {//在变量使用之前
 				dist = flag;
 				value = s;
 			}
 		}
-		return value;
+		return value.substring(value.indexOf("=") + 1).replace(";", "").trim();
 	}
 	
 	/**
@@ -1221,9 +1221,23 @@ public class StringUtil {
 	 */
 	public static String replaceMatchers(String p,String replace,String content){
 		List<String> matchers = getMatchers(p, content);
-		for (String matcher : matchers) {
-			content = content.replace(matcher, replace);
+		//数字的比较容易排序，字符串会跟期望不一样。这里是希望按长度排前面，避免'+先替换了，导致'+'只剩右边的'了
+		Collections.sort(matchers);
+		for (int i = 0; i < matchers.size(); i++) {
+			for (int j = i + 1; j < matchers.size(); j++) {
+				if(matchers.get(j).length() > matchers.get(i).length()){
+					String index = matchers.get(j);
+					matchers.set(j, matchers.get(i));
+					matchers.set(i, index);
+				}
+			}
+			content = content.replace(matchers.get(i), replace);
 		}
 		return content;
+	}
+	
+	public static void main(String[] args) {
+		String content = "var url = '${root}/admin/system/user/loadUserByUnit.do?unitSubCode='+unitCode+'&userRole='+'${userModel.userRole}';";
+		System.out.println(replaceMatchers("['\"]?[ ]*[\\+]{1}[ ]*['\"]?", "", content));
 	}
 }

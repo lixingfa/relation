@@ -34,6 +34,7 @@ import com.garlane.relation.common.utils.exception.SuperServiceException;
 @Service("easyuiAnalyzeService")
 public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 	private static final String URL = "url[ ]*[=:]{1}[ ]*['\"]{1}[${}\\w/.'\"?=+&]+";//后面一段没有逗号，可以避免越界
+	private static final String URL_VARIABLE = "url[ ]*:[ ]*[\\w]+[ ]*[,]?";//url变量
 	private static final String FUNCTION = "function\\([\\w, ]*\\)";
 	private static final String PLUS_SIGN = "['\"]?[ ]*[\\+]{1}[ ]*['\"]?";
 	
@@ -83,6 +84,18 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 						gridModel = model;
 						break;
 					}
+				}
+				//先将grid里的url变量替换，否则转JSON会报错
+				List<String> urls = StringUtil.getMatchers(URL_VARIABLE, grid);
+				for (String url : urls) {
+					String d = "";
+					String urlVariable = url.substring(url.indexOf(":") + 1).trim();
+					if (urlVariable.contains(",")) {
+						urlVariable = urlVariable.replace(",", "").trim();
+						d = ",";
+					}
+					urlVariable = StringUtil.findTheVariate(urlVariable, index, content);
+					grid = grid.replace(url, "url:" + urlVariable + d);
 				}
 				gridModels.add(analyzeGridStr(grid,id,gridModel));
 				content = content.substring(index + grid.length());
@@ -249,7 +262,7 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 		//url
 		String url = StringUtil.getSubString("url:", ",", ajaxString);
 		if (url.contains("'") || url.contains("\"")) {
-			url = StringUtil.findTheVariate(url, ajaxString, content);
+			url = StringUtil.findTheVariate(url, content.indexOf(ajaxString), content);
 		}
 		ActionModel actionModel = new ActionModel(url);
 		//type
@@ -262,7 +275,7 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 			String data = StringUtil.getSubString("data:{", "}", ajaxString);
 			if (data == null) {
 				data = StringUtil.getSubString("data:", ",", ajaxString);
-				data = StringUtil.findTheVariate(data, ajaxString, content);
+				data = StringUtil.findTheVariate(data, content.indexOf(ajaxString), content);
 			}		
 			data = data.replace("'", "").replace("\"", "");
 			String[] paramStr = data.split(",");
@@ -275,7 +288,7 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 		//success
 		String funcParam = StringUtil.getSubStringByLR(ajaxString.indexOf("success:"), '(', ')', ajaxString);
 		String succFunc = StringUtil.getSubStringByLR(ajaxString.indexOf("success:"), '(', ')', ajaxString);
-		Pattern pattern = Pattern.compile(funcParam + ".\\w");
+		Pattern pattern = Pattern.compile(funcParam + ".\\w");//TODO
 		Matcher matcher = pattern.matcher(succFunc);
 		StringBuffer kv = new StringBuffer();
 		while (matcher.find()) {
@@ -330,9 +343,7 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 	}
 	
 	public static void main(String[] args) {
-		String FUNCTION = "function\\([\\w, ]*\\)";
-		String content = "onBeforeLoad:function(row,param){					},";
-		List<String> functions = StringUtil.getMatchers(FUNCTION, content);
-		System.out.println(functions.size());
+		List<String> urls = StringUtil.getMatchers("url[ ]*:[ ]*[\\w]+[ ]*[,]?", "pageList: [15,20,25],//可以设置每页记录条数的列表							url:url,							columns");
+		System.out.println(urls.size());
 	}
 }

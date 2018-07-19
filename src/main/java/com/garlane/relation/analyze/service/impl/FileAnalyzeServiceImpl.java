@@ -4,6 +4,8 @@
 package com.garlane.relation.analyze.service.impl;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -111,6 +113,13 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 				//获取完页面所有信息后，开始对信息进行逻辑处理
 				log.info("开始分析业务逻辑");
 				logicAnalyzeService.LogicAnalyze(htmlModels, jsBLModels);
+				
+				ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(
+				new File("E:/htmlModels.txt")));
+				oo.writeObject(htmlModels);
+				System.out.println("Person对象序列化成功！");
+				oo.close();
+				
 			} catch (Exception e) {
 				throw new SuperServiceException("读取文件数据出现错误", e);
 			}
@@ -130,6 +139,9 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 		for (String path : htmlContents.keySet()) {
 			String content = htmlContents.get(path);
 			log.info("解析页面：" + path);
+			if (path.endsWith("setUserSelect.jsp")) {
+				System.out.println();
+			}
 			htmlModels.add(htmlAnalyze(path,content));
 		}
 		return htmlModels;
@@ -381,11 +393,11 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 	private String getFormUrl(String formId,String content){
 		//该表单的定义，ajaxSubmit\easyui……
 		String url = null;
-		List<String> formDefs = StringUtil.getMatchers("$\\([ ]?[\"']{1}#" + formId + "[\"']{1}[ ]?\\).", content);
+		List<String> formDefs = StringUtil.getMatchers("$\\([ ]*[\"']{1}#" + formId + "[\"']{1}[ ]*\\).", content);
 		for (String formDef : formDefs) {
 			int begin = content.indexOf(formDef);
 			String string = StringUtil.getSubStringByLR(begin, '{', '}', content);
-			List<String> urls = StringUtil.getMatchers("url[ ]?:[ ]?['\"]{1}[$\\w./?=&]+['\"]{1},", string);
+			List<String> urls = StringUtil.getMatchers("url[ ]*:[ ]*['\"]{1}[$\\w./?=&]+['\"]{1},", string);
 			for (String temp : urls) {
 				temp = temp.substring(temp.indexOf(":"));
 				url = temp.replace("'", "").replace("\"", "");
