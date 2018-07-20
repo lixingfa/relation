@@ -16,11 +16,7 @@ public class EASYUIConstant {
 
 	//EASYUI 用到的常量字符，每个Constant各司其职，只关注自身，避免使用的时候混用
 	public static final String URL = "url";
-	//通用
-	public static final String AJAX_BEGIN = "\\$\\.ajax\\(\\{";
-	
 	//grid
-	public static final String GRID_DEF = "[tree|data|combo]{1}grid\\([ ]*\\{";
 	public static final String TREE_FIELD = "treeField";
 	public static final String ID_FIELD = "idField";
 	public static final String COLUMNS = "columns";
@@ -31,13 +27,5 @@ public class EASYUIConstant {
 	public static final String ROWS = "rows";
 	
 	//tree 在请求远程数据的时候增加查询参数
-	public static final String TREE_DEF = "\\$\\([ ]?['\"]{1}[ ]?#\\w[ ]?['\"]{1}[ ]?\\)\\.[combo]?tree\\([ ]?\\{";//?变*
 	public static final String QUERYPARAMS = "queryParams";
-	
-	public static void main(String[] args) {
-		String GRID_DEF = "[tree|data|combo]{1}grid\\([ ]?\\{";//TODO 或许只能到这一层了，id通过字符串往前找
-		String content = "init:function(){				$(\"#columnList\").datagrid({11";
-		List<String> grids = StringUtil.getMatchers(GRID_DEF, content);
-		System.out.println(grids.size());
-	}
 }

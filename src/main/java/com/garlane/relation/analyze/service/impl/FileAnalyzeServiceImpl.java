@@ -110,10 +110,12 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 					jsBLModels.addAll(jsAnalyze(jsContents.get(key)));
 				}
 				List<HTMLModel> htmlModels = htmlAnalyzes(htmlContents);
+				
 				//获取完页面所有信息后，开始对信息进行逻辑处理
 				log.info("开始分析业务逻辑");
 				logicAnalyzeService.LogicAnalyze(htmlModels, jsBLModels);
 				
+				//TODO 将htmlModels序列化到文件里，检查数据提取结果
 				ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(
 				new File("E:/htmlModels.txt")));
 				oo.writeObject(htmlModels);
@@ -139,7 +141,7 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 		for (String path : htmlContents.keySet()) {
 			String content = htmlContents.get(path);
 			log.info("解析页面：" + path);
-			if (path.endsWith("setUserSelect.jsp")) {
+			if (path.endsWith("emsList.jsp")) {
 				System.out.println();
 			}
 			htmlModels.add(htmlAnalyze(path,content));

@@ -23,6 +23,7 @@ import com.garlane.relation.analyze.model.js.JSFunctionModel;
 import com.garlane.relation.analyze.service.EASYUIAnalyzeService;
 import com.garlane.relation.analyze.service.ELAnalyzeService;
 import com.garlane.relation.common.constant.EASYUIConstant;
+import com.garlane.relation.common.constant.RegularConstant;
 import com.garlane.relation.common.utils.change.StringUtil;
 import com.garlane.relation.common.utils.exception.SuperServiceException;
 
@@ -33,10 +34,6 @@ import com.garlane.relation.common.utils.exception.SuperServiceException;
  */
 @Service("easyuiAnalyzeService")
 public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
-	private static final String URL = "url[ ]*[=:]{1}[ ]*['\"]{1}[${}\\w/.'\"?=+&]+";//后面一段没有逗号，可以避免越界
-	private static final String URL_VARIABLE = "url[ ]*:[ ]*[\\w]+[ ]*[,]?";//url变量
-	private static final String FUNCTION = "function\\([\\w, ]*\\)";
-	private static final String PLUS_SIGN = "['\"]?[ ]*[\\+]{1}[ ]*['\"]?";
 	
 	@Autowired
 	private ELAnalyzeService elAnalyzeService;
@@ -48,7 +45,7 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 	 * @throws SuperServiceException
 	 */
 	public EASYUIModel getEasyuiModel(String content) throws SuperServiceException{
-		content = StringUtil.replaceMatchers(PLUS_SIGN, "", content);
+		content = StringUtil.replaceMatchers(RegularConstant.PLUS_SIGN, "", content);
 		
 		EASYUIModel easyuiModel = new EASYUIModel();
 		//tree、combotree
@@ -70,13 +67,13 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 	 * @return List<GridModel> or null
 	 */
 	private List<GridModel> getGridModels(String content){
-		List<String> grids = StringUtil.getMatchers(EASYUIConstant.GRID_DEF, content);
+		List<String> grids = StringUtil.getMatchers(RegularConstant.GRID_DEF, content);
 		if (grids.size() > 0) {
 			List<GridModel> gridModels = new ArrayList<GridModel>();
 			for (String gridStr : grids) {
 				int index = content.indexOf(gridStr) + gridStr.length();
 				String grid = StringUtil.getSubStringByLR(index - 1, '{', '}', content);//确保从第一个花括号开始
-				String id = getIdBySubString(StringUtil.getSubStringForward('#',index, content));
+				String id = getIdBySubString(gridStr);
 				//检查id是否存在了
 				GridModel gridModel = null;
 				for (GridModel model : gridModels) {
@@ -86,7 +83,7 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 					}
 				}
 				//先将grid里的url变量替换，否则转JSON会报错
-				List<String> urls = StringUtil.getMatchers(URL_VARIABLE, grid);
+				List<String> urls = StringUtil.getMatchers(RegularConstant.URL_VARIABLE, grid);
 				for (String url : urls) {
 					String d = "";
 					String urlVariable = url.substring(url.indexOf(":") + 1).trim();
@@ -123,7 +120,7 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 			grid = grid.replace(jsFunctionModel.getFunctionString(), "''");//替换成空值
 			actionModels.addAll(jsFunctionModel.getActionModels());//获取内置函数的action
 		}
-		grid = StringUtil.replaceMatchers(FUNCTION, "", grid);
+		grid = StringUtil.replaceMatchers(RegularConstant.JS_FUNCTION_DEF, "", grid);
 		//grid转成JSON
 		JSONObject gridObj = JSONObject.parseObject(grid);
 		if (gridModel == null) {
@@ -144,16 +141,18 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 		if (url != null) {
 			List<ELModel> columns = new ArrayList<ELModel>();
 			JSONArray columnObj = gridObj.getJSONArray(EASYUIConstant.COLUMNS);
-			for (int i = 0; i < columnObj.size(); i++) {
-				JSONArray subArray = columnObj.getJSONArray(i);//列属性是数组
-				for (int j = 0; j < subArray.size(); j++) {
-					JSONObject object = subArray.getJSONObject(j);
-					if (object.containsKey(EASYUIConstant.CHECKBOX) && object.getBooleanValue(EASYUIConstant.CHECKBOX)) {
-						continue;
+			if (columnObj != null) {
+				for (int i = 0; i < columnObj.size(); i++) {
+					JSONArray subArray = columnObj.getJSONArray(i);//列属性是数组
+					for (int j = 0; j < subArray.size(); j++) {
+						JSONObject object = subArray.getJSONObject(j);
+						if (object.containsKey(EASYUIConstant.CHECKBOX) && object.getBooleanValue(EASYUIConstant.CHECKBOX)) {
+							continue;
+						}
+						ELModel elModel = new ELModel(object.getString(EASYUIConstant.FIELD));
+						elModel.setTitle(object.getString(EASYUIConstant.TITLE));
+						columns.add(elModel);						
 					}
-					ELModel elModel = new ELModel(object.getString(EASYUIConstant.FIELD));
-					elModel.setTitle(object.getString(EASYUIConstant.TITLE));
-					columns.add(elModel);						
 				}
 			}
 			ActionModel actionModel = new ActionModel(url);
@@ -189,13 +188,11 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 	 * @return
 	 */
 	private List<JSFunctionModel> analyzeInserFunctions(String grid){
-		List<JSFunctionModel> jsFunctionModels = new ArrayList<JSFunctionModel>();		
+		List<JSFunctionModel> jsFunctionModels = new ArrayList<JSFunctionModel>();
+		List<String> functions = StringUtil.getMatchers(RegularConstant.JS_FUNCTION_DEF, grid);
 		int index = 0;
-		while (true) {			
-			int begin = grid.indexOf("function(");//TODO 这里有坑，什么样的页面代码都可能存在，在提取的时候把空格去掉，换行要保留
-			if (begin == -1) {
-				break;
-			}
+		for (String function : functions) {
+			int begin = grid.indexOf(function);
 			String func = StringUtil.getSubStringByLR(begin, '{', '}', grid);
 			JSFunctionModel jsFunctionModel = new JSFunctionModel(func);
 			//抽取url
@@ -217,16 +214,24 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 	 */
 	private List<ActionModel> getActionModels(String func){
 		List<ActionModel> actionModels = new ArrayList<ActionModel>();
+		List<String> ajaxMatchers = StringUtil.getMatchers(RegularConstant.AJAX_DEF, func);
 		//优先处理ajax类型
-		if (func.contains(EASYUIConstant.AJAX_BEGIN)) {
-			String ajaxString = StringUtil.getSubStringByLR(0, '{', '}', func);
-			actionModels.add(analyzeAJAX(ajaxString,func));//TODO url变量会超出函数范围
+		if (ajaxMatchers.size() > 0) {
+			for (String ajaxMatcher : ajaxMatchers) {
+				int beginIndex = func.indexOf(ajaxMatcher);
+				String ajaxString = StringUtil.getSubStringByLR(beginIndex, '{', '}', func);
+				actionModels.add(analyzeAJAX(ajaxString,func));//TODO url变量会超出函数范围
+				func = func.substring(beginIndex);
+			}
 		}else {
-			List<String> urls = StringUtil.getMatchers(URL, func);
+			List<String> urls = StringUtil.getMatchers(RegularConstant.URL_DEF, func);
 			for (String s : urls) {
 				if (s.contains(":")) {
-					s = s.substring(s.indexOf(":") + 1).replace("'", "").replace("\"", "");
+					s = s.substring(s.indexOf(":") + 1);
+				}else if(s.indexOf("=") < s.indexOf("?")){//=号在问号之前，否则会直接截取参数的，EASYUI的回调方法会出现这种情况
+					s = s.substring(s.indexOf("=") + 1);
 				}
+				s = s.replace("'", "").replace("\"", "");
 				//找到链接
 				String url;
 				Map<String, String> params = null;
@@ -307,12 +312,12 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 	 * @return
 	 */
 	private List<TreeModel> getTreeModels(String content){
-		List<String> trees = StringUtil.getMatchers(EASYUIConstant.TREE_DEF, content);
+		List<String> trees = StringUtil.getMatchers(RegularConstant.TREE_DEF, content);
 		if (trees.size() > 0) {
-			List<TreeModel> treeModels = new ArrayList<TreeModel>();			
+			List<TreeModel> treeModels = new ArrayList<TreeModel>();
 			for (String treeStr : trees) {
 				int index = content.indexOf(treeStr);
-				String id = getIdBySubString(StringUtil.getSubStringForward('#', index, content));
+				String id = getIdBySubString(treeStr);
 				String tree = StringUtil.getSubStringByLR(index, '{', '}', content);//确保从第一个花括号开始
 				//检查id是否存在了
 				TreeModel treeModel = null;
@@ -339,11 +344,6 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 	 * @return id
 	 */
 	private String getIdBySubString(String s){
-		return s.substring(1,s.indexOf(")")).replace("'", "").replace("\"", "");
-	}
-	
-	public static void main(String[] args) {
-		List<String> urls = StringUtil.getMatchers("url[ ]*:[ ]*[\\w]+[ ]*[,]?", "pageList: [15,20,25],//可以设置每页记录条数的列表							url:url,							columns");
-		System.out.println(urls.size());
+		return s.substring(s.indexOf("#") + 1,s.indexOf(")")).replace("'", "").replace("\"", "");
 	}
 }
