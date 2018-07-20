@@ -191,9 +191,17 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 		List<JSFunctionModel> jsFunctionModels = new ArrayList<JSFunctionModel>();
 		List<String> functions = StringUtil.getMatchers(RegularConstant.JS_FUNCTION_DEF, grid);
 		int index = 0;
-		for (String function : functions) {
+		for (int i = 0;i < functions.size(); i++) {
+			String function = functions.get(i);
 			int begin = grid.indexOf(function);
 			String func = StringUtil.getSubStringByLR(begin, '{', '}', grid);
+			//func 里还包含func,EASYUI 的组件里再来个top.dialog之类的。需要嵌套处理
+			List<JSFunctionModel> subFunctionModels = analyzeInserFunctions(func);
+			if (subFunctionModels.size() > 0) {
+				jsFunctionModels.addAll(subFunctionModels);
+				i = i + subFunctionModels.size();//有几个函数声明，就会有几个model
+			}
+			//处理自己
 			JSFunctionModel jsFunctionModel = new JSFunctionModel(func);
 			//抽取url
 			jsFunctionModel.setActionModels(getActionModels(func));

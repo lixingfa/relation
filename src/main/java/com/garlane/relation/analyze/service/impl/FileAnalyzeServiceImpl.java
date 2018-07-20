@@ -255,7 +255,6 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 			}
 			return htmlModel;
 		} catch (Exception e) {
-			e.printStackTrace();
 			log.error("处理文件出错。", e);
 			throw new SuperServiceException("处理文件出错。", e);
 		}
