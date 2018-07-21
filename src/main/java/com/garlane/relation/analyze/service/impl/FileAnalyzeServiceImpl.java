@@ -141,7 +141,7 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 		for (String path : htmlContents.keySet()) {
 			String content = htmlContents.get(path);
 			log.info("解析页面：" + path);
-			if (path.endsWith("emsList.jsp")) {
+			if (path.endsWith("setUserSelect.jsp")) {
 				System.out.println();
 			}
 			htmlModels.add(htmlAnalyze(path,content));

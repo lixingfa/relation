@@ -3,6 +3,7 @@
  */
 package com.garlane.relation.analyze.service.impl;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +46,7 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 	 * @throws SuperServiceException
 	 */
 	public EASYUIModel getEasyuiModel(String content) throws SuperServiceException{
+		//去掉+以后要补引号${root}/admin/system/user/loadUserByUnit.do?unitSubCode='+unitCode,
 		content = StringUtil.replaceMatchers(RegularConstant.PLUS_SIGN, "", content);
 		
 		EASYUIModel easyuiModel = new EASYUIModel();
@@ -115,12 +117,16 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 		List<ActionModel> actionModels = new ArrayList<ActionModel>();
 		//处理onBeforeLoad之类的属性，后面跟的是函数，因为无法转成json，需要处理
 		List<JSFunctionModel> jsFunctionModels = analyzeInserFunctions(grid);
+		//需要把长的放在前面，否则短的会破坏长的
+		Collections.sort(jsFunctionModels);
 		//替换掉内置函数，避免转换JSON出错
 		for (JSFunctionModel jsFunctionModel : jsFunctionModels) {
 			grid = grid.replace(jsFunctionModel.getFunctionString(), "''");//替换成空值
 			actionModels.addAll(jsFunctionModel.getActionModels());//获取内置函数的action
 		}
 		grid = StringUtil.replaceMatchers(RegularConstant.JS_FUNCTION_DEF, "", grid);
+		//JSTL表达式会影响JSON生成，通常是if-else去掉并不影响判断
+		grid = StringUtil.replaceMatchers(RegularConstant.JSTL, "", grid);
 		//grid转成JSON
 		JSONObject gridObj = JSONObject.parseObject(grid);
 		if (gridModel == null) {

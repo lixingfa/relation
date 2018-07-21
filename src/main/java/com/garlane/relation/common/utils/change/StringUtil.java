@@ -1222,7 +1222,7 @@ public class StringUtil {
 	public static String replaceMatchers(String p,String replace,String content){
 		List<String> matchers = getMatchers(p, content);
 		//数字的比较容易排序，字符串会跟期望不一样。这里是希望按长度排前面，避免'+先替换了，导致'+'只剩右边的'了
-		Collections.sort(matchers);
+		Collections.sort(matchers);//String不好重新定义，只好用本办法实现
 		for (int i = 0; i < matchers.size(); i++) {
 			for (int j = i + 1; j < matchers.size(); j++) {
 				if(matchers.get(j).length() > matchers.get(i).length()){

@@ -9,12 +9,12 @@ import org.springframework.stereotype.Service;
 import com.garlane.relation.analyze.model.el.ELModel;
 import com.garlane.relation.analyze.service.ELAnalyzeService;
 import com.garlane.relation.common.constant.ELConstant;
+import com.garlane.relation.common.constant.RegularConstant;
 import com.garlane.relation.common.utils.change.StringUtil;
 import com.garlane.relation.common.utils.exception.SuperServiceException;
 
 @Service("elAnalyzeService")
 public class ELAnalyzeServiceImpl implements ELAnalyzeService{
-	private static final String EL = "\\$\\{[ a-zA-Z.]+\\}";
 	
 	/**
 	 * analyze:(提取页面内容中的el属性)
@@ -26,7 +26,7 @@ public class ELAnalyzeServiceImpl implements ELAnalyzeService{
 	 */
 	public List<ELModel> analyze(String content) throws SuperServiceException{
 		List<ELModel> elModels = new ArrayList<ELModel>();
-		List<String> els = StringUtil.getMatchers(EL, content);
+		List<String> els = StringUtil.getMatchers(RegularConstant.EL, content);
 		for (String el : els) {
 			String[] propertys = extractProperty(el);
 			getElModels(elModels,propertys);

@@ -4,6 +4,7 @@
 package com.garlane.relation.analyze.model.js;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 
 import com.garlane.relation.analyze.model.easyui.ActionModel;
@@ -13,7 +14,7 @@ import com.garlane.relation.analyze.model.easyui.ActionModel;
  * @date 2018年7月5日上午10:34:35
  * 
  */
-public class JSFunctionModel implements Serializable{
+public class JSFunctionModel implements Serializable,Comparable<JSFunctionModel>{
 	private static final long serialVersionUID = 1L;
 
 	/**函数的内容，从function(开始*/
@@ -34,5 +35,11 @@ public class JSFunctionModel implements Serializable{
 	}
 	public void setActionModels(List<ActionModel> actionModels) {
 		this.actionModels = actionModels;
+	}
+	
+	//实现Collections.sort()排序
+	@Override
+	public int compareTo(JSFunctionModel jsFunctionModel) {
+		return jsFunctionModel.getFunctionString().length() - functionString.length();//降序，反过来就是升序
 	}
 }
