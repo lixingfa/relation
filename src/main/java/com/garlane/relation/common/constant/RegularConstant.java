@@ -17,9 +17,6 @@ public class RegularConstant {
 	public static final String EL = "\\$\\{[ a-zA-Z.]+\\}";
 	/**JSTL*/
 	public static final String JSTL = "<c:[\\w =\"${}.>=<]+>|</c:[\\w]+>";
-	/**js*/
-	public static final String AJAX_DEF = "\\$\\.ajax\\([ ]*\\{";
-	public static final String JS_FUNCTION_DEF = "function\\([\\w, ]*\\)";
 	/**url定义*/
 	public static final String URL_DEF = "[url]?[ ]*[=:]?[ ]*['\"]{1}([${}\\w]+/)+[\\w]+[.]?[\\w]*['\"?=+&${}\\w.]*";//后面一段没有逗号，可以避免越界
 	/**url用变量赋值*/
@@ -29,10 +26,15 @@ public class RegularConstant {
 	/**EASYUI js方式定义*/
 	public static final String EASYUI_JS_DEF = "\\$\\([ ]*['\"]{1}#[\\w]+['\"]{1}[ ]*\\)\\.";
 	public static final String GRID_DEF = EASYUI_JS_DEF + "(tree|data|combo){1}grid\\([ ]*\\{";
-	public static final String TREE_DEF = EASYUI_JS_DEF + "(combo)?tree\\([ ]*\\{";//?变*
+	public static final String TREE_DEF = EASYUI_JS_DEF + "(combo)?tree\\([ ]*\\{";//$(\"#areaSeq\").combobox('getValue')
+	public static final String EASYUI_GETVALUE = EASYUI_JS_DEF + "[\\w]+\\([ ]*['\"]{1}getValue['\"]{1}[ ]*\\)";
+	/**js*/
+	public static final String AJAX_DEF = "\\$\\.ajax\\([ ]*\\{";
+	public static final String JS_FUNCTION_DEF = "function\\([\\w, ]*\\)";
+	public static final String JQ_VALUE = EASYUI_JS_DEF + "val\\([ ]*\\)";
 
 	public static void main(String[] args) {
-		String content = "'userRole':'${userModel.userRole}',						<c:if test=\"${showSelectAreaBtn}\">							'areaSeq': $(\"#areaSeq\").combobox('getValue')						</c:if>					}				});			},			/* 清空 */			doClean:function(){				$('#userCode').val(\"\");				$('#userName').val(\"\");				<c:if test=\"${showSelectAreaBtn}\">					$(\"#areaSeq\").combotree(\"setValue\",\"\");				</c:if>				if (isSelectUnit) {				    if (unitName != 'null' &&  unitName != '') {";
-		System.out.println(StringUtil.replaceMatchers(JSTL, "", content));
+		String content = "queryParams:{						'userCode':'',						'fullName':'',						'isSearch':true,						'userRole':'${userModel.userRole}',													'areaSeq':$(\"#areaSeq\").combobox('getValue')											}				}";
+		System.out.println(StringUtil.replaceMatchers(EASYUI_GETVALUE, "''", content));
 	}
 }

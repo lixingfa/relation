@@ -123,12 +123,9 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 		for (JSFunctionModel jsFunctionModel : jsFunctionModels) {
 			grid = grid.replace(jsFunctionModel.getFunctionString(), "''");//替换成空值
 			actionModels.addAll(jsFunctionModel.getActionModels());//获取内置函数的action
-		}
-		grid = StringUtil.replaceMatchers(RegularConstant.JS_FUNCTION_DEF, "", grid);
-		//JSTL表达式会影响JSON生成，通常是if-else去掉并不影响判断
-		grid = StringUtil.replaceMatchers(RegularConstant.JSTL, "", grid);
+		}		
 		//grid转成JSON
-		JSONObject gridObj = JSONObject.parseObject(grid);
+		JSONObject gridObj = getJsonObject(grid);
 		if (gridModel == null) {
 			if (gridObj.containsKey(EASYUIConstant.TREE_FIELD)) {//treegrid里idField和treeField是必须的，代表节点流水号和名称
 				gridModel = new GridModel(gridObj.getString(EASYUIConstant.ID_FIELD), gridObj.getString(EASYUIConstant.TREE_FIELD));			
@@ -279,9 +276,14 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 	 */
 	private ActionModel analyzeAJAX(String ajaxString,String content){
 		//url
+		String url;
+		List<String> matchers = StringUtil.getMatchers(RegularConstant.URL_VARIABLE, ajaxString);
+		if (matchers.size() > 0) {
+			url = StringUtil.findTheVariate(url, content.indexOf(ajaxString), content);
+			
+		}
 		String url = StringUtil.getSubString("url:", ",", ajaxString);
 		if (url.contains("'") || url.contains("\"")) {
-			url = StringUtil.findTheVariate(url, content.indexOf(ajaxString), content);
 		}
 		ActionModel actionModel = new ActionModel(url);
 		//type
@@ -359,5 +361,30 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 	 */
 	private String getIdBySubString(String s){
 		return s.substring(s.indexOf("#") + 1,s.indexOf(")")).replace("'", "").replace("\"", "");
+	}
+	
+	private JSONObject getJsonObject(String grid){
+		grid = StringUtil.replaceMatchers(RegularConstant.JS_FUNCTION_DEF, "", grid);
+		//JSTL表达式会影响JSON生成，通常是if-else去掉并不影响判断
+		grid = StringUtil.replaceMatchers(RegularConstant.JSTL, "", grid);
+		grid = StringUtil.replaceMatchers(RegularConstant.JQ_VALUE, "''", grid);
+		grid = StringUtil.replaceMatchers(RegularConstant.EASYUI_GETVALUE, "''", grid);
+		try {			
+			//将参数组装到action里			
+			return JSONObject.parseObject(grid);			
+		} catch (Exception e) {
+			//有问题处理问题，别想着通用化
+			if (grid.contains("url")) {
+				//url字符串未闭合
+				String url = StringUtil.getSubStringByLR(grid.indexOf("url"), ':', ',', grid).replace(":", "");
+				char[] c = url.toCharArray();
+				//以，和}结尾的url，未闭合
+				if (c[c.length - 2] != c[0] && (c[c.length - 1] == '}' || c[c.length - 1] == ',')) {
+					String replace = url.replace(c[c.length - 1] + "", "") + c[0] + c[c.length - 1];
+					grid = grid.replace(url, replace);
+				}
+			}
+			return JSONObject.parseObject(grid);
+		}
 	}
 }
