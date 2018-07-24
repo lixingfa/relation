@@ -276,28 +276,20 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 	 */
 	private ActionModel analyzeAJAX(String ajaxString,String content){
 		//url
-		String url;
+		String url = null;
 		List<String> matchers = StringUtil.getMatchers(RegularConstant.URL_VARIABLE, ajaxString);
 		if (matchers.size() > 0) {
 			url = StringUtil.findTheVariate(url, content.indexOf(ajaxString), content);
-			
-		}
-		String url = StringUtil.getSubString("url:", ",", ajaxString);
-		if (url.contains("'") || url.contains("\"")) {
 		}
 		ActionModel actionModel = new ActionModel(url);
-		//type
-		String type = StringUtil.getSubString("type:", ",", ajaxString);
+		//TODO 有大问题 ……type
+		String type = StringUtil.getSubString("type[ ]*:", ",", ajaxString);
 		if (type != null && type.toLowerCase().contains("post")) {
 			actionModel.setReqType(ActionModel.REQ_TYPE_POST);
 		}
 		//data
 		if (ajaxString.contains("data:")) {
-			String data = StringUtil.getSubString("data:{", "}", ajaxString);
-			if (data == null) {
-				data = StringUtil.getSubString("data:", ",", ajaxString);
-				data = StringUtil.findTheVariate(data, content.indexOf(ajaxString), content);
-			}		
+			String data = StringUtil.getSubString("data[ ]*:[ ]*\\{", "\\}", ajaxString);//冒号后面有个空格，就死了，什么乱七八糟的写法都有		
 			data = data.replace("'", "").replace("\"", "");
 			String[] paramStr = data.split(",");
 			Map<String, String> params = new HashMap<String,String>();

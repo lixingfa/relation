@@ -16,7 +16,7 @@ public class RegularConstant {
 	/**EL*/
 	public static final String EL = "\\$\\{[ a-zA-Z.]+\\}";
 	/**JSTL*/
-	public static final String JSTL = "<c:[\\w =\"${}.>=<]+>|</c:[\\w]+>";
+	public static final String JSTL = "<c:[\\w ='\"${}.>=<]+>|</c:[\\w]+>";
 	/**url定义*/
 	public static final String URL_DEF = "[url]?[ ]*[=:]?[ ]*['\"]{1}([${}\\w]+/)+[\\w]+[.]?[\\w]*['\"?=+&${}\\w.]*";//后面一段没有逗号，可以避免越界
 	/**url用变量赋值*/
@@ -30,7 +30,7 @@ public class RegularConstant {
 	public static final String EASYUI_GETVALUE = EASYUI_JS_DEF + "[\\w]+\\([ ]*['\"]{1}getValue['\"]{1}[ ]*\\)";
 	/**js*/
 	public static final String AJAX_DEF = "\\$\\.ajax\\([ ]*\\{";
-	public static final String JS_FUNCTION_DEF = "function\\([\\w, ]*\\)";
+	public static final String JS_FUNCTION_DEF = "function[ ]*\\([\\w, ]*\\)";
 	public static final String JQ_VALUE = EASYUI_JS_DEF + "val\\([ ]*\\)";
 
 	public static void main(String[] args) {
