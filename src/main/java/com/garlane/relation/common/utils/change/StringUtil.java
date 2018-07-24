@@ -1155,42 +1155,6 @@ public class StringUtil {
 	}
 	
 	/**
-	 * getSubString:(获取子字符串)
-	 * @author lixingfa
-	 * @date 2018年7月5日下午5:26:57
-	 * @param beginStr 开始子串正则式
-	 * @param endStr 结束子串正则式
-	 * @param s 父字符
-	 * @return String
-	 */
-	public static String getSubString(String beginStr,String endStr,String s){
-		List<String> beginStrs = getMatchers(beginStr, s);
-		if (beginStrs.size() == 0) {
-			return null;
-		}
-		List<String> endStrs = getMatchers(endStr, s);
-		if (endStrs.size() == 0) {
-			return null;
-		}
-		//找出差距最近的一对
-		int minSize = Integer.MAX_VALUE;
-		String sub = null;
-		for (String bString : beginStrs) {
-			int begin = s.indexOf(bString);
-			String s2 = s.substring(begin);
-			for (String eString : endStrs) {
-				int end = s2.indexOf(eString);
-				int size = end - begin;				
-				if (size > 0 && size < minSize) {
-					minSize = size;
-					sub = s.substring(begin, end);
-				}
-			}
-		}
-		return sub;
-	}
-	
-	/**
 	 * getMatchers:(这里用一句话描述这个方法的作用)
 	 * @author lixingfa
 	 * @date 2018年7月6日下午5:29:09

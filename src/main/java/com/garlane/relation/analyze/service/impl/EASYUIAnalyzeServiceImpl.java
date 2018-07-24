@@ -277,37 +277,46 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 	private ActionModel analyzeAJAX(String ajaxString,String content){
 		//url
 		String url = null;
-		List<String> matchers = StringUtil.getMatchers(RegularConstant.URL_VARIABLE, ajaxString);
+		List<String> matchers = StringUtil.getMatchers(RegularConstant.URL_DEF, ajaxString);
 		if (matchers.size() > 0) {
-			url = StringUtil.findTheVariate(url, content.indexOf(ajaxString), content);
+			url = matchers.get(0);
+			url = url.substring(url.indexOf(":") + 1).trim().replace("'", "").replace("\"", "");
+		}else {
+			matchers = StringUtil.getMatchers(RegularConstant.URL_VARIABLE, ajaxString);
+			url = StringUtil.findTheVariate(matchers.get(0), content.indexOf(ajaxString), content);			
 		}
 		ActionModel actionModel = new ActionModel(url);
-		//TODO 有大问题 ……type
-		String type = StringUtil.getSubString("type[ ]*:", ",", ajaxString);
-		if (type != null && type.toLowerCase().contains("post")) {
-			actionModel.setReqType(ActionModel.REQ_TYPE_POST);
+		//type
+		List<String> types = StringUtil.getMatchers(RegularConstant.TYPE, content);
+		if (types.size() > 0) {
+			String type = StringUtil.getSubStringByLR(content.indexOf(types.get(0)), ':', ',', content);
+			if (type != null && type.toLowerCase().contains("post")) {
+				actionModel.setReqType(ActionModel.REQ_TYPE_POST);
+			}
 		}
 		//data
-		if (ajaxString.contains("data:")) {
-			String data = StringUtil.getSubString("data[ ]*:[ ]*\\{", "\\}", ajaxString);//冒号后面有个空格，就死了，什么乱七八糟的写法都有		
-			data = data.replace("'", "").replace("\"", "");
-			String[] paramStr = data.split(",");
+		List<String> datas = StringUtil.getMatchers(RegularConstant.DATA, content);
+		if (datas.size() > 0) {
+			String data = StringUtil.getSubStringByLR(content.indexOf(datas.get(0)), '{', '}', content);
+			String[] paramStr = data.replace("{", "").replace("}", "").trim().split(",");
 			Map<String, String> params = new HashMap<String,String>();
 			for (String string : paramStr) {
 				String[] kv = string.split(":");
-				params.put(kv[0].trim(), kv[1].trim());
+				params.put(kv[0].replace("'", "").replace("\"", "").trim(), kv[1].trim());
 			}
 		}
 		//success
+		//回调参数
 		String funcParam = StringUtil.getSubStringByLR(ajaxString.indexOf("success:"), '(', ')', ajaxString);
-		String succFunc = StringUtil.getSubStringByLR(ajaxString.indexOf("success:"), '(', ')', ajaxString);
-		Pattern pattern = Pattern.compile(funcParam + ".\\w");//TODO
-		Matcher matcher = pattern.matcher(succFunc);
+		funcParam = funcParam.replace("(", "").replace(")", "");
+		String succFunc = StringUtil.getSubStringByLR(ajaxString.indexOf("success:"), '{', '}', ajaxString);
+		//函数里用到回调参数的属性
+		List<String> ks = StringUtil.getMatchers(funcParam + "[.]{1}[\\w]+", succFunc);
 		StringBuffer kv = new StringBuffer();
-		while (matcher.find()) {
-			kv.append(matcher.group()).append(".");
+		for (String k : ks) {
+			kv.append(k).append(".");			
 		}
-		String[] propertys = kv.toString().split(".");
+		String[] propertys = kv.toString().split("\\.");
 		actionModel.setElModels(elAnalyzeService.getElModels(propertys));
 		return actionModel;
 	}
@@ -358,6 +367,7 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 	private JSONObject getJsonObject(String grid){
 		grid = StringUtil.replaceMatchers(RegularConstant.JS_FUNCTION_DEF, "", grid);
 		//JSTL表达式会影响JSON生成，通常是if-else去掉并不影响判断
+		//TODO 去掉以后还要检查是否有逗号缺失、重复之类的
 		grid = StringUtil.replaceMatchers(RegularConstant.JSTL, "", grid);
 		grid = StringUtil.replaceMatchers(RegularConstant.JQ_VALUE, "''", grid);
 		grid = StringUtil.replaceMatchers(RegularConstant.EASYUI_GETVALUE, "''", grid);

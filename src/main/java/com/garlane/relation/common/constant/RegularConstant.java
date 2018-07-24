@@ -18,7 +18,7 @@ public class RegularConstant {
 	/**JSTL*/
 	public static final String JSTL = "<c:[\\w ='\"${}.>=<]+>|</c:[\\w]+>";
 	/**url定义*/
-	public static final String URL_DEF = "[url]?[ ]*[=:]?[ ]*['\"]{1}([${}\\w]+/)+[\\w]+[.]?[\\w]*['\"?=+&${}\\w.]*";//后面一段没有逗号，可以避免越界
+	public static final String URL_DEF = "(url)?[ ]*[=:]?[ ]*['\"]{1}([${}\\w]+/)+[\\w]+[.]?[\\w]*['\"?=+&${}\\w.]*";//后面一段没有逗号，可以避免越界
 	/**url用变量赋值*/
 	public static final String URL_VARIABLE = "url[ ]*:[ ]*[\\w]+[ ]*[,]?";//url变量
 	/**+号，用于字符串链接*/
@@ -32,7 +32,9 @@ public class RegularConstant {
 	public static final String AJAX_DEF = "\\$\\.ajax\\([ ]*\\{";
 	public static final String JS_FUNCTION_DEF = "function[ ]*\\([\\w, ]*\\)";
 	public static final String JQ_VALUE = EASYUI_JS_DEF + "val\\([ ]*\\)";
-
+	public static final String TYPE = "type[ ]*:";
+	public static final String DATA = "data[ ]*:[ ]*\\{";
+	
 	public static void main(String[] args) {
 		String content = "queryParams:{						'userCode':'',						'fullName':'',						'isSearch':true,						'userRole':'${userModel.userRole}',													'areaSeq':$(\"#areaSeq\").combobox('getValue')											}				}";
 		System.out.println(StringUtil.replaceMatchers(EASYUI_GETVALUE, "''", content));
