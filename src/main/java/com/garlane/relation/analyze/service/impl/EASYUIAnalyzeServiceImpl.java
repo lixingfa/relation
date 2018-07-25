@@ -7,8 +7,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,6 +46,7 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 	public EASYUIModel getEasyuiModel(String content) throws SuperServiceException{
 		//去掉+以后要补引号${root}/admin/system/user/loadUserByUnit.do?unitSubCode='+unitCode,
 		content = StringUtil.replaceMatchers(RegularConstant.PLUS_SIGN, "", content);
+		
 		
 		EASYUIModel easyuiModel = new EASYUIModel();
 		//tree、combotree
@@ -364,13 +363,20 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 		return s.substring(s.indexOf("#") + 1,s.indexOf(")")).replace("'", "").replace("\"", "");
 	}
 	
+	/**
+	 * getJsonObject:(grid数据处理)
+	 * @author lixingfa
+	 * @date 2018年7月25日上午11:06:55
+	 * @param grid 字符串
+	 * @return JSONObject
+	 */
 	private JSONObject getJsonObject(String grid){
 		grid = StringUtil.replaceMatchers(RegularConstant.JS_FUNCTION_DEF, "", grid);
-		//JSTL表达式会影响JSON生成，通常是if-else去掉并不影响判断
-		//TODO 去掉以后还要检查是否有逗号缺失、重复之类的
-		grid = StringUtil.replaceMatchers(RegularConstant.JSTL, "", grid);
+		//JSTL表达式会影响JSON生成，通常是if-else去掉并不影响判断，去掉以后还要检查是否有逗号缺失、重复之类的
+		grid = removeJSTL(grid);
 		grid = StringUtil.replaceMatchers(RegularConstant.JQ_VALUE, "''", grid);
 		grid = StringUtil.replaceMatchers(RegularConstant.EASYUI_GETVALUE, "''", grid);
+		grid = StringUtil.replaceMatchers(RegularConstant.EASYUI_PROPERTY_VARIABLE, ":'',", grid);//EASYUI里的变量定义
 		try {			
 			//将参数组装到action里			
 			return JSONObject.parseObject(grid);			
@@ -388,5 +394,34 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 			}
 			return JSONObject.parseObject(grid);
 		}
+	}
+	
+	/**
+	 * removeJSTL:(去除JSTL标签，需要整合if-else移除后，js里的逗号问题)
+	 * @author lixingfa
+	 * @date 2018年7月25日上午11:09:55
+	 * @param content
+	 * @return String
+	 */
+	private String removeJSTL(String content){
+		//关注选择类标签结束的地方
+		List<String> matchers = StringUtil.getMatchers(RegularConstant.JSTL_END_BEGIN, content);
+		StringBuffer sBuffer = new StringBuffer(content);
+		String temp = content;
+		//<c:if> <c:when> <c:otherwise>
+		for (int i = matchers.size() - 1; i >= 0; i--) {
+			String matcher = matchers.get(i);
+			//单边选择没问题，去掉标签后，容易因为逗号缺失报错
+			if (matcher.contains("</c:if>") && matcher.contains("<c:if ") ||
+				matcher.contains("</c:when>") && (matcher.contains("<c:otherwise>") || matcher.contains("<c:when>"))) {
+				int endIndex = temp.lastIndexOf(matcher);
+				temp = temp.substring(0, endIndex);
+				//单分支的上一个没有逗号隔开，去掉标签就报错了
+				if (!temp.trim().endsWith(",")) {
+					sBuffer.insert(temp.length(), ",");
+				}
+			}
+		}
+		return StringUtil.replaceMatchers(RegularConstant.JSTL, "", sBuffer.toString());
 	}
 }

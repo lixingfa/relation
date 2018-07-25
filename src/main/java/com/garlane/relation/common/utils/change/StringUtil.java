@@ -1183,8 +1183,11 @@ public class StringUtil {
 	 */
 	public static String getSubStringForward(char forWardChar,int endIndex,String content){
 		content = content.substring(0,endIndex);
-		content = content.substring(content.lastIndexOf(forWardChar));
-		return content;
+		if (content.contains(String.valueOf(forWardChar))) {
+			return content.substring(content.lastIndexOf(forWardChar)); 
+		}else {
+			return null;
+		}
 	}
 	
 	/**
