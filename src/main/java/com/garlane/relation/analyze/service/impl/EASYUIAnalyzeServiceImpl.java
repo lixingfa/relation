@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +34,7 @@ import com.garlane.relation.common.utils.exception.SuperServiceException;
  */
 @Service("easyuiAnalyzeService")
 public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
+	private static final Logger log = Logger.getLogger(EASYUIAnalyzeServiceImpl.class);
 	
 	@Autowired
 	private ELAnalyzeService elAnalyzeService;
@@ -371,6 +373,7 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 	 * @return JSONObject
 	 */
 	private JSONObject getJsonObject(String grid){
+		JSONObject jsonObject = null;
 		grid = StringUtil.replaceMatchers(RegularConstant.JS_FUNCTION_DEF, "", grid);
 		//JSTL表达式会影响JSON生成，通常是if-else去掉并不影响判断，去掉以后还要检查是否有逗号缺失、重复之类的
 		grid = removeJSTL(grid);
@@ -379,8 +382,9 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 		grid = StringUtil.replaceMatchers(RegularConstant.EASYUI_PROPERTY_VARIABLE, ":'',", grid);//EASYUI里的变量定义
 		try {			
 			//将参数组装到action里			
-			return JSONObject.parseObject(grid);			
+			jsonObject = JSONObject.parseObject(grid);			
 		} catch (Exception e) {
+			log.info("JSON转换出错，将尝试补救。字符串：" + grid);
 			//有问题处理问题，别想着通用化
 			if (grid.contains("url")) {
 				//url字符串未闭合
@@ -392,8 +396,13 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 					grid = grid.replace(url, replace);
 				}
 			}
-			return JSONObject.parseObject(grid);
+			try {
+				jsonObject = JSONObject.parseObject(grid);
+			} catch (Exception e2) {
+				log.error("JSON转换出错。字符串：" + grid,e2);
+			}
 		}
+		return jsonObject;
 	}
 	
 	/**
