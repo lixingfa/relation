@@ -94,7 +94,7 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 						urlVariable = urlVariable.replace(",", "").trim();
 						d = ",";
 					}
-					urlVariable = StringUtil.findTheVariate(urlVariable, index, content);
+					urlVariable = StringUtil.findTheVariate(urlVariable, content.indexOf(url), content);
 					grid = grid.replace(url, "url:" + urlVariable + d);
 				}
 				gridModels.add(analyzeGridStr(grid,id,gridModel));
@@ -396,11 +396,7 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 					grid = grid.replace(url, replace);
 				}
 			}
-			try {
-				jsonObject = JSONObject.parseObject(grid);
-			} catch (Exception e2) {
-				log.error("JSON转换出错。字符串：" + grid,e2);
-			}
+			jsonObject = JSONObject.parseObject(grid);
 		}
 		return jsonObject;
 	}

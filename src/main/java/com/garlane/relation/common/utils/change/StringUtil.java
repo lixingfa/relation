@@ -1113,13 +1113,20 @@ public class StringUtil {
 			}else if (c[i] == '/' && (i + 1) < c.length) {
 				if (c[i + 1] == '/') {//单行注释
 					singleNote = true;
+					i = i + 2;
+					continue;
 				}else if (c[i + 1] == '*') {//多行注释
 					note++;
+					i = i + 2;
+					continue;
 				}
 			}else if(c[i] == '*'  && (i + 1) < c.length && c[i + 1] == '/'){
 				note--;
+				i = i + 2;
+				continue;
 			}else if (singleNote && (c[i] == '\n' || c[i] == '\t')) {//换行后单行注释失效
 				singleNote = false;
+				continue;
 			}
 			//非注释内部，不是空内容
 			if (note == 0 && !singleNote) {
@@ -1142,8 +1149,8 @@ public class StringUtil {
 	 */
 	public static String findTheVariate(String variate,int index,String content){
 		int dist = Integer.MAX_VALUE;
-		String value = null;
-		List<String> matchers = getMatchers("var[ ]+" + variate + "[ ]*=['\"\\w/.?=\\+&${}\\[\\] ]+[;]{1}", content);
+		String value = null;//var url = '${root}/appr/monitor/book/deleteBook.do?books='+books.join(",");
+		List<String> matchers = getMatchers("var[ ]+" + variate + "[ ]*=['\"\\w/.?=+&${}\\[\\](,) ]+[;]{1}", content);
 		for (String s : matchers) {
 			int flag = index - content.indexOf(s);
 			if (flag < dist && flag > 0) {//在变量使用之前
