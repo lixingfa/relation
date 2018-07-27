@@ -38,6 +38,7 @@ import com.garlane.relation.common.constant.ConfigConstant;
 import com.garlane.relation.common.constant.FileConstant;
 import com.garlane.relation.common.constant.PageConstant;
 import com.garlane.relation.common.constant.PageConstant.INPUTTYPE;
+import com.garlane.relation.common.constant.RegularConstant;
 import com.garlane.relation.common.utils.change.StringUtil;
 import com.garlane.relation.common.utils.exception.SuperServiceException;
 import com.garlane.relation.common.utils.file.FileUtils;
@@ -145,7 +146,7 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 		for (String path : htmlContents.keySet()) {
 			String content = htmlContents.get(path);
 			log.info("解析页面：" + path);
-			if (path.endsWith("userList.jsp")) {
+			if (path.endsWith("unitEdit.jsp")) {
 				System.out.println();
 			}
 			htmlModels.add(htmlAnalyze(path,content));
@@ -163,9 +164,13 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 		HTMLModel htmlModel = new HTMLModel(path);
 		try {
 			log.info("处理el表达式");
+			//每一种类型的处理都是相对分开的，避免相互干扰，尽管有重叠的处理动作
 			htmlModel.setElModels(elAnalyzeService.analyze(content));
 			//处理EASYUI
 			htmlModel.setEasyuiModel(easyuiAnalyzeService.getEasyuiModel(content));
+			//清理JSTL，避免对TML解析产生影响
+			content = StringUtil.replaceMatchers(RegularConstant.JSTL, "", content);
+			//HTML解析
 			Document doc = Jsoup.parse(content);
 			log.info("处理表格");
 			Elements tables = doc.select(PageConstant.TABLE);
@@ -376,6 +381,9 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 				Elements options = select.select(PageConstant.OPTION);
 				Map<String, String> map = new HashMap<String, String>();
 				for (Element option : options) {
+					if (option.text().contains("请")) {
+						continue;
+					}
 					map.put(option.text(), option.attr(PageConstant.VALUE));
 				}
 				selectModel.setOption(map);

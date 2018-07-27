@@ -14,7 +14,7 @@ public class HTMLModel implements Serializable{
 	private List<String> jsSrc = null;
 	
 	/**页面的a标签，后面往往会跟随BL，表示该锚点跳转的页面里希望实现的功能*/
-	private List<AModel> aModels = null;
+	private List<AModel> aModels = new ArrayList<AModel>();
 	
 	/**表格，input和select元素的集合，被form包围的table不在此列*/
 	private List<TableModel> tableModels = null;
@@ -71,10 +71,8 @@ public class HTMLModel implements Serializable{
 	}
 	public List<BLModel> getABLs(){
 		List<BLModel> blModels = new ArrayList<BLModel>();
-		if (aModels != null) {			
-			for (AModel aModel : aModels) {
-				blModels.add(new BLModel(null, aModel.getBL()));
-			}
+		for (AModel aModel : aModels) {
+			blModels.add(new BLModel(null, aModel.getBL()));
 		}
 		return blModels;
 	}

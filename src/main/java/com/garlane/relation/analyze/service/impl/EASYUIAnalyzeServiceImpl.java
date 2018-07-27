@@ -400,8 +400,9 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 			//有问题处理问题，别想着通用化
 			if (grid.contains("url")) {
 				//url字符串未闭合
-				String url = StringUtil.getSubStringByLR(grid.indexOf("url"), ':', ',', grid).replace(":", "");
+				String url = StringUtil.getSubStringByLR(grid.indexOf("url"), ':', ',', grid).replace(":", "").trim();
 				char[] c = url.toCharArray();
+				//TODO 这里应该是数左右括号的数量，判断是否最后一个属性（虽然概率很低）				
 				//以，和}结尾的url，未闭合
 				if (c[c.length - 2] != c[0] && (c[c.length - 1] == '}' || c[c.length - 1] == ',')) {
 					String replace = url.replace(c[c.length - 1] + "", "") + c[0] + c[c.length - 1];
