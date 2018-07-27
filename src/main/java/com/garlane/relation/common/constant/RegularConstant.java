@@ -13,6 +13,7 @@ import com.garlane.relation.common.utils.change.StringUtil;
  * 
  */
 public class RegularConstant {
+	public static final String HTML = "</?[^>]+/?>";
 	/**EL*/
 	public static final String EL = "\\$\\{[ a-zA-Z.]+\\}";
 	/**JSTL*/
@@ -29,8 +30,8 @@ public class RegularConstant {
 	public static final String GRID_DEF = EASYUI_JS_DEF + "(tree|data|combo){1}grid\\([ \n\t]*\\{";
 	public static final String TREE_DEF = EASYUI_JS_DEF + "(combo)?tree\\([ \n\t]*\\{";//$(\"#areaSeq\").combobox('getValue')
 	public static final String EASYUI_GETVALUE = EASYUI_JS_DEF + "[\\w]+\\([ \n\t]*['\"]{1}getValue['\"]{1}[ \n\t]*\\)";
-	/**EASYUI变量定义*///变量也能以 $ 和 _ 符号开头，只是不推荐。注意不匹配truefalse的写法
-	public static final String EASYUI_PROPERTY_VARIABLE = "[:]{1}[ ]*[_$]?(?!(true|false))[a-zA-Z]{1}[a-zA-Z0-9]+[ ]*[,]?";
+	/**EASYUI变量定义*///变量也能以 $ 和 _ 符号开头，只是不推荐。注意不匹配truefalse的写法  'dictionarySeq': datagridTable.loadControlSeq("dataGridTable")
+	public static final String EASYUI_PROPERTY_VARIABLE = "[:]{1}[ ]*[_$]?(?!(true|false))[a-zA-Z]{1}[a-zA-Z0-9.()'\"]+[ ]*[,]?";
 	/**js*/
 	public static final String AJAX_DEF = "\\$\\.ajax[\\w]*[ \n\t]*\\([ \n\t]*\\{";
 	public static final String JS_FUNCTION_DEF = "function[ \n\t]*\\([\\w, ]*\\)";
@@ -46,7 +47,7 @@ public class RegularConstant {
 	 */
 	
 	public static void main(String[] args) {
-		String content = "iconCls:'icon16-card-pencil',fit: true,nowrap: false, autoRowHeight: row,";
-		System.out.println(StringUtil.getMatchers(EASYUI_PROPERTY_VARIABLE, content).size());
+		String content = "{field:'bookCode',title:'字典值<span style=\"color:red\"> * </span>',width:120,align: 'center',editor:'text'},";
+		System.out.println(StringUtil.getMatchers(HTML, content).size());
 	}
 }

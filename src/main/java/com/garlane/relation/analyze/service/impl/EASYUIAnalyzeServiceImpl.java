@@ -97,7 +97,7 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 					urlVariable = StringUtil.findTheVariate(urlVariable, content.indexOf(url), content);
 					grid = grid.replace(url, "url:" + urlVariable + d);
 				}
-				gridModels.add(analyzeGridStr(grid,id,gridModel));
+				gridModels.add(analyzeGridStr(grid,id,gridModel));//TODO gridModel != null，就应该是替换 
 				content = content.substring(index + grid.length());
 			}
 			return gridModels;
@@ -302,15 +302,22 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 			String[] paramStr = data.replace("{", "").replace("}", "").trim().split(",");
 			Map<String, String> params = new HashMap<String,String>();
 			for (String string : paramStr) {
-				String[] kv = string.split(":");
-				params.put(kv[0].replace("'", "").replace("\"", "").trim(), kv[1].trim());
+				if (string.contains(":")) {
+					String[] kv = string.split(":");
+					params.put(kv[0].replace("'", "").replace("\"", "").trim(), kv[1].trim());					
+				}else {
+					//没有冒号，说明是,出现了例如'keys': configs.join(",")
+					//貌似也不用处理
+				}
 			}
 		}
 		//success
-		//回调参数
-		String funcParam = StringUtil.getSubStringByLR(ajaxString.indexOf("success:"), '(', ')', ajaxString);
+		//回调参数，不要低估了那些人乱七八糟的写法……
+		List<String> success = StringUtil.getMatchers("success[ \t\n]*:[ \t\n]*", ajaxString);
+		//ajax如果没有success，那就逆天了
+		String funcParam = StringUtil.getSubStringByLR(ajaxString.indexOf(success.get(0)), '(', ')', ajaxString);//success : 
 		funcParam = funcParam.replace("(", "").replace(")", "");
-		String succFunc = StringUtil.getSubStringByLR(ajaxString.indexOf("success:"), '{', '}', ajaxString);
+		String succFunc = StringUtil.getSubStringByLR(ajaxString.indexOf(success.get(0)), '{', '}', ajaxString);
 		//函数里用到回调参数的属性
 		List<String> ks = StringUtil.getMatchers(funcParam + "[.]{1}[\\w]+", succFunc);
 		StringBuffer kv = new StringBuffer();
@@ -377,8 +384,13 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 		grid = StringUtil.replaceMatchers(RegularConstant.JS_FUNCTION_DEF, "", grid);
 		//JSTL表达式会影响JSON生成，通常是if-else去掉并不影响判断，去掉以后还要检查是否有逗号缺失、重复之类的
 		grid = removeJSTL(grid);
+		//替换html，经常出现在title 和format里，用来修饰返回的字符串，里面的引号会对JSON有影响
+		grid = StringUtil.replaceMatchers(RegularConstant.HTML, "", grid);
+		//替换JQ取值
 		grid = StringUtil.replaceMatchers(RegularConstant.JQ_VALUE, "''", grid);
+		//替换EASYUI取值
 		grid = StringUtil.replaceMatchers(RegularConstant.EASYUI_GETVALUE, "''", grid);
+		//替换属性定义里的变量
 		grid = StringUtil.replaceMatchers(RegularConstant.EASYUI_PROPERTY_VARIABLE, ":'',", grid);//EASYUI里的变量定义
 		try {			
 			//将参数组装到action里			
