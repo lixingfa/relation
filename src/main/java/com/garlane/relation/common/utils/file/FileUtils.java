@@ -332,8 +332,10 @@ public class FileUtils {
         FileOutputStream fos = null;
         PrintWriter pw = null;
         try {
+        	filePath = filePath.replace("\\", "/");
             File file = new File(filePath);
             if (!file.exists()) {
+            	FileCreate(filePath);
             	file.createNewFile();
             }
             fis = new FileInputStream(file);

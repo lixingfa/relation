@@ -20,6 +20,8 @@ import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.garlane.relation.analyze.model.page.AModel;
 import com.garlane.relation.analyze.model.page.BLModel;
 import com.garlane.relation.analyze.model.page.FormModel;
@@ -110,17 +112,17 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 					jsBLModels.addAll(jsAnalyze(jsContents.get(key)));
 				}
 				List<HTMLModel> htmlModels = htmlAnalyzes(htmlContents);
-				
+				for (HTMLModel htmlModel : htmlModels) {
+					String modelString = JSONObject.toJSONString(htmlModel);
+					path = htmlModel.getPath();
+					path = path.substring(path.indexOf("\\jsp"));
+					System.out.println(path);
+					//将对象写入文本，对比提前结果
+					FileUtils.writeTxtFile(modelString, "E:/htmlModels/" + path + ".txt");
+				}				
 				//获取完页面所有信息后，开始对信息进行逻辑处理
 				log.info("开始分析业务逻辑");
 				logicAnalyzeService.LogicAnalyze(htmlModels, jsBLModels);
-				
-				//TODO 将htmlModels序列化到文件里，检查数据提取结果
-				ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(
-				new File("E:/htmlModels.txt")));
-				oo.writeObject(htmlModels);
-				System.out.println("Person对象序列化成功！");
-				oo.close();
 				
 			} catch (Exception e) {
 				throw new SuperServiceException("读取文件数据出现错误", e);

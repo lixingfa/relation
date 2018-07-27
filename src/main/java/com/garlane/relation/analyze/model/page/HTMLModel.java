@@ -71,8 +71,10 @@ public class HTMLModel implements Serializable{
 	}
 	public List<BLModel> getABLs(){
 		List<BLModel> blModels = new ArrayList<BLModel>();
-		for (AModel aModel : aModels) {
-			blModels.add(new BLModel(null, aModel.getBL()));
+		if (aModels != null) {			
+			for (AModel aModel : aModels) {
+				blModels.add(new BLModel(null, aModel.getBL()));
+			}
 		}
 		return blModels;
 	}
