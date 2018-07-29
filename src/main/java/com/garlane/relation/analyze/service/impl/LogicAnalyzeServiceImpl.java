@@ -1,6 +1,8 @@
 package com.garlane.relation.analyze.service.impl;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -14,6 +16,8 @@ import com.garlane.relation.analyze.model.easyui.EASYUIModel;
 import com.garlane.relation.analyze.model.easyui.GridModel;
 import com.garlane.relation.analyze.model.easyui.TreeModel;
 import com.garlane.relation.analyze.model.el.ELModel;
+import com.garlane.relation.analyze.model.logic.Class;
+import com.garlane.relation.analyze.model.logic.ClassProperty;
 import com.garlane.relation.analyze.model.logic.PropertyIntimacyModel;
 import com.garlane.relation.analyze.model.logic.PropertyModel;
 import com.garlane.relation.analyze.model.page.BLModel;
@@ -25,7 +29,9 @@ import com.garlane.relation.analyze.model.page.TableModel;
 import com.garlane.relation.analyze.service.BLService;
 import com.garlane.relation.analyze.service.LogicAnalyzeService;
 import com.garlane.relation.common.constant.EASYUIConstant;
+import com.garlane.relation.common.utils.change.StringUtil;
 import com.garlane.relation.common.utils.exception.SuperServiceException;
+import com.garlane.relation.common.utils.file.FileUtils;
 @Service("logicAnalyzeService")
 public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 
@@ -42,20 +48,80 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 	 * @throws SuperServiceException
 	 */
 	public void LogicAnalyze(List<HTMLModel> htmlModels,List<BLModel> jsBLModels)throws SuperServiceException{
+		//一、从EL里获取Class的组合
+		getClasses(htmlModels);
+		//二、从属性的亲密度获取表的组合
 		//获取属性关系
-		List<PropertyModel> propertyModels = getPropertyModels(htmlModels, jsBLModels);
+//		List<PropertyModel> propertyModels = getPropertyModels(htmlModels, jsBLModels);
+//		
+//		//1、先将结果归类
+//		log.info("处理BL语言");//BL语言里有很多属性，先获取它们
+//		
+//		getPropertyModels(htmlModels, jsBLModels);
+//		//2、将这些归类好的结果转成action，确定各action之间的关系
+//		
+//		//3、构建请求逻辑网络
+//		
+//		log.info("处理form");//同一个form表示一起完成一个事务，查询、修改比较多
+//		List<FormModel> formModels = new ArrayList<FormModel>();
 		
-		//1、先将结果归类
-		log.info("处理BL语言");//BL语言里有很多属性，先获取它们
-		
-		getPropertyModels(htmlModels, jsBLModels);
-		//2、将这些归类好的结果转成action，确定各action之间的关系
-		
-		//3、构建请求逻辑网络
-		
-		log.info("处理form");//同一个form表示一起完成一个事务，查询、修改比较多
-		List<FormModel> formModels = new ArrayList<FormModel>();
-		
+	}
+	
+	/**
+	 * 根据属性组装Class
+	 * @param htmlModels
+	 */
+	private void getClasses(List<HTMLModel> htmlModels){
+		//需要将构建的Class序列化存到服务器，用户确认后，重新读取，优化，进行下一步动作
+		List<Class> classes = new ArrayList<Class>();
+		for (HTMLModel htmlModel : htmlModels) {
+			//页面加载时一起返回的属性
+			List<ELModel> elModels = htmlModel.getElModels();
+			//排序，让parentId相同的在一起
+//			Collections.sort(elModels);
+			
+			int index = -1;
+			for (ELModel elModel : elModels) {
+				String elName = elModel.getName();
+				//类
+				if (elModel.getParentId() == null) {
+					//TODO 目前只是写死的，不合理
+					if ("root".equals(elName) || "static".equals(elName) ||"css".equals(elName) ||
+							"images".equals(elName) ||"js".equals(elName) ||"resource".equals(elName)) {
+						continue;						
+					}
+					//查找是否已经了这个类
+					for (int i = 0; i < classes.size();i++) {
+						if (classes.get(i).getClassName().equals(elName)) {
+							index = i;
+							break;
+						}
+					}				
+					//还没有这个类
+					if (index == -1) {
+						classes.add(new Class(elName));
+						index = classes.size() - 1;
+					}
+				}else {
+					//TODO 要确保子项是紧跟父项的
+					ClassProperty property = new ClassProperty("String", elModel.getName());
+					property.setTitle(elModel.getTitle());
+					classes.get(index).getProperties().add(property);					
+				}
+				
+			}
+		}
+		for (Class c : classes) {
+			//格式化，便于阅读
+			String modelString = StringUtil.getJsonFormat(c.toString());
+			//将对象写入文本，对比提前结果
+			try {
+				FileUtils.writeTxtFile(modelString, "E:/htmlModels/class/" + c.getClassName() + ".txt");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	/**

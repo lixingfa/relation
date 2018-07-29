@@ -30,6 +30,7 @@ public class HTMLModel implements Serializable{
 	
 	/**EL表达式进入这个页面时就已经组装好的数据。一个EL就代表一个后台传过来的属性，有子属性的表示一个集合类。EL经常与table和form混在一起*/
 	private List<ELModel> elModels = null;
+	private List<String> elModelsClass;
 	
 	public HTMLModel(String path){
 		this.path = path;
@@ -99,6 +100,14 @@ public class HTMLModel implements Serializable{
 
 	public void setTableModels(List<TableModel> tableModels) {
 		this.tableModels = tableModels;
+	}
+
+	public List<String> getElModelsClass() {
+		return elModelsClass;
+	}
+
+	public void setElModelsClass(List<String> elModelsClass) {
+		this.elModelsClass = elModelsClass;
 	}
 	
 }

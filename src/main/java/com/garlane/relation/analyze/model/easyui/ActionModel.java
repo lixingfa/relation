@@ -31,6 +31,7 @@ public class ActionModel implements Serializable{
 	
 	/**返回结果拆成el表达式之后*/
 	private List<ELModel> elModels = null;
+	private String elModelsClass;
 	
 	public static Integer REQ_TYPE_GET = 0;
 	public static Integer REQ_TYPE_POST = 0;
@@ -77,6 +78,14 @@ public class ActionModel implements Serializable{
 
 	public void setElModels(List<ELModel> elModels) {
 		this.elModels = elModels;
+	}
+
+	public String getElModelsClass() {
+		return elModelsClass;
+	}
+
+	public void setElModelsClass(String elModelsClass) {
+		this.elModelsClass = elModelsClass;
 	}
 	
 }

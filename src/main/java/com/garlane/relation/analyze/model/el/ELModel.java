@@ -2,6 +2,7 @@ package com.garlane.relation.analyze.model.el;
 
 import java.io.Serializable;
 
+import com.garlane.relation.analyze.model.js.JSFunctionModel;
 import com.garlane.relation.common.utils.change.StringUtil;
 
 /**
@@ -9,7 +10,7 @@ import com.garlane.relation.common.utils.change.StringUtil;
  * @author lingxingfa
  *
  */
-public class ELModel implements Serializable{
+public class ELModel implements Serializable,Comparable<ELModel>{
 	private static final long serialVersionUID = 1L;
 
 	private String id;
@@ -42,5 +43,11 @@ public class ELModel implements Serializable{
 	}
 	public void setTitle(String title) {
 		this.title = title;
-	}	
+	}
+	
+	//实现Collections.sort()排序
+	@Override
+	public int compareTo(ELModel elModel) {
+		return parentId.compareTo(elModel.getParentId());//降序，反过来就是升序
+	}
 }

@@ -4,8 +4,6 @@
 package com.garlane.relation.analyze.service.impl;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +18,6 @@ import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.garlane.relation.analyze.model.page.AModel;
 import com.garlane.relation.analyze.model.page.BLModel;
@@ -119,7 +116,7 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 					path = path.substring(path.indexOf("\\jsp"));
 					System.out.println(path);
 					//格式化，便于阅读
-					modelString = getJsonFormat(modelString);
+					modelString = StringUtil.getJsonFormat(modelString);
 					//将对象写入文本，对比提前结果
 					FileUtils.writeTxtFile(modelString, "E:/htmlModels/" + path + ".txt");
 				}				
@@ -420,49 +417,5 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 	}
 	
 	
-	/*****************************************************/
-	private String getJsonFormat(String s){
-		int level = 0;
-        //存放格式化的json字符串
-        StringBuffer jsonForMatStr = new StringBuffer();
-        for(int index=0;index<s.length();index++)//将字符串中的字符逐个按行输出
-        {
-            //获取s中的每个字符
-            char c = s.charAt(index);
-            //level大于0并且jsonForMatStr中的最后一个字符为\n,jsonForMatStr加入\t
-            if (level > 0 && '\n' == jsonForMatStr.charAt(jsonForMatStr.length() - 1)) {
-                jsonForMatStr.append(getLevelStr(level));
-            }
-            //遇到"{"和"["要增加空格和换行，遇到"}"和"]"要减少空格，以对应，遇到","要换行
-            switch (c) {
-            case '{':
-            case '[':
-                jsonForMatStr.append(c + "\n");
-                level++;
-                break;
-            case ',':
-                jsonForMatStr.append(c + "\n");             
-                break;
-            case '}':
-            case ']':
-                jsonForMatStr.append("\n");
-                level--;
-                jsonForMatStr.append(getLevelStr(level));
-                jsonForMatStr.append(c);
-                break;
-            default:
-                jsonForMatStr.append(c);
-                break;
-            }
-        }        
-        return jsonForMatStr.toString();
-	}
 	
-	private static String getLevelStr(int level) {
-        StringBuffer levelStr = new StringBuffer();
-        for (int levelI = 0; levelI < level; levelI++) {
-            levelStr.append("\t");
-        }
-        return levelStr.toString();
-    }
 }
