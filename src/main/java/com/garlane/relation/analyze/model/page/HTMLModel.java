@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.garlane.relation.analyze.model.easyui.EASYUIModel;
 import com.garlane.relation.analyze.model.el.ELModel;
+import com.garlane.relation.analyze.model.logic.Class;
 
 public class HTMLModel implements Serializable{
 	private static final long serialVersionUID = 1L;
@@ -30,7 +31,8 @@ public class HTMLModel implements Serializable{
 	
 	/**EL表达式进入这个页面时就已经组装好的数据。一个EL就代表一个后台传过来的属性，有子属性的表示一个集合类。EL经常与table和form混在一起*/
 	private List<ELModel> elModels = null;
-	private List<String> elModelsClass;
+	/**页面加载时携带的类*/
+	List<Class> classes;
 	
 	public HTMLModel(String path){
 		this.path = path;
@@ -102,12 +104,11 @@ public class HTMLModel implements Serializable{
 		this.tableModels = tableModels;
 	}
 
-	public List<String> getElModelsClass() {
-		return elModelsClass;
+	public List<Class> getClasses() {
+		return classes;
 	}
 
-	public void setElModelsClass(List<String> elModelsClass) {
-		this.elModelsClass = elModelsClass;
+	public void setClasses(List<Class> classes) {
+		this.classes = classes;
 	}
-	
 }

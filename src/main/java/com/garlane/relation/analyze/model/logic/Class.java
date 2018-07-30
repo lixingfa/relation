@@ -29,12 +29,12 @@ public class Class {
 	}
 	
 	public String toString(){
-		StringBuffer s = new StringBuffer("public class" + className + "{");
+		StringBuffer s = new StringBuffer("public class " + className + "{");
 		for (ClassProperty property : properties) {
 			if (property.getTitle() != null) {
 				s.append("/**").append(property.getTitle()).append("*/");
 			}
-			s.append("private ").append(property.getType()).append(" ").append(property.getPropertyName()).append(";");
+			s.append("private ").append(property.getType()).append(" ").append(property.getPropertyName()).append(";\n");
 		}
 		return s.append("}").toString();
 		

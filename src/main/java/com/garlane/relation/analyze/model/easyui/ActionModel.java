@@ -1,11 +1,12 @@
 package com.garlane.relation.analyze.model.easyui;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import com.garlane.relation.analyze.model.el.ELModel;
-
+import com.garlane.relation.analyze.model.logic.Class;
 /**
  * 请求实体
  * @author lingxingfa
@@ -31,7 +32,8 @@ public class ActionModel implements Serializable{
 	
 	/**返回结果拆成el表达式之后*/
 	private List<ELModel> elModels = null;
-	private String elModelsClass;
+	/**请求返回结果的装载类*/
+	private List<Class> elModelsClass;
 	
 	public static Integer REQ_TYPE_GET = 0;
 	public static Integer REQ_TYPE_POST = 0;
@@ -80,11 +82,11 @@ public class ActionModel implements Serializable{
 		this.elModels = elModels;
 	}
 
-	public String getElModelsClass() {
+	public List<Class> getElModelsClass() {
 		return elModelsClass;
 	}
 
-	public void setElModelsClass(String elModelsClass) {
+	public void setElModelsClass(List<Class> elModelsClass) {
 		this.elModelsClass = elModelsClass;
 	}
 	

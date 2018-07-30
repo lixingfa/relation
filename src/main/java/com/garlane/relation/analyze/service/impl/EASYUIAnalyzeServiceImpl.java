@@ -71,8 +71,8 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 	 */
 	private List<GridModel> getGridModels(String content){
 		List<String> grids = StringUtil.getMatchers(RegularConstant.GRID_DEF, content);
+		List<GridModel> gridModels = new ArrayList<GridModel>();
 		if (grids.size() > 0) {
-			List<GridModel> gridModels = new ArrayList<GridModel>();
 			for (String gridStr : grids) {
 				int index = content.indexOf(gridStr) + gridStr.length();
 				String grid = StringUtil.getSubStringByLR(index - 1, '{', '}', content);//确保从第一个花括号开始
@@ -100,10 +100,8 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 				gridModels.add(analyzeGridStr(grid,id,gridModel));//TODO gridModel != null，就应该是替换 
 				content = content.substring(index + grid.length());
 			}
-			return gridModels;
-		}else {
-			return null;			
 		}
+		return gridModels;
 	}
 	
 	/**
@@ -338,8 +336,8 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 	 */
 	private List<TreeModel> getTreeModels(String content){
 		List<String> trees = StringUtil.getMatchers(RegularConstant.TREE_DEF, content);
+		List<TreeModel> treeModels = new ArrayList<TreeModel>();
 		if (trees.size() > 0) {
-			List<TreeModel> treeModels = new ArrayList<TreeModel>();
 			for (String treeStr : trees) {
 				int index = content.indexOf(treeStr);
 				String id = getIdBySubString(treeStr);
@@ -355,10 +353,8 @@ public class EASYUIAnalyzeServiceImpl implements EASYUIAnalyzeService{
 				treeModels.add(analyzeGridStr(tree,id,(GridModel) treeModel));
 				content = content.substring(index + tree.length());
 			}
-			return treeModels;
-		}else {
-			return null;			
 		}
+		return treeModels;
 	}
 	
 	/**

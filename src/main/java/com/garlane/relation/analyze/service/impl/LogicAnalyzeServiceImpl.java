@@ -72,55 +72,72 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 	 * @param htmlModels
 	 */
 	private void getClasses(List<HTMLModel> htmlModels){
-		//需要将构建的Class序列化存到服务器，用户确认后，重新读取，优化，进行下一步动作
-		List<Class> classes = new ArrayList<Class>();
 		for (HTMLModel htmlModel : htmlModels) {
+			//需要将构建的Class序列化存到服务器，用户确认后，重新读取，优化，进行下一步动作
+			List<Class> classes = new ArrayList<Class>();
 			//页面加载时一起返回的属性
-			List<ELModel> elModels = htmlModel.getElModels();
-			//排序，让parentId相同的在一起
-//			Collections.sort(elModels);
+			getClassesFromELModels(htmlModel.getElModels(), classes);
 			
-			int index = -1;
-			for (ELModel elModel : elModels) {
-				String elName = elModel.getName();
-				//类
-				if (elModel.getParentId() == null) {
-					//TODO 目前只是写死的，不合理
-					if ("root".equals(elName) || "static".equals(elName) ||"css".equals(elName) ||
-							"images".equals(elName) ||"js".equals(elName) ||"resource".equals(elName)) {
-						continue;						
-					}
-					//查找是否已经了这个类
-					for (int i = 0; i < classes.size();i++) {
-						if (classes.get(i).getClassName().equals(elName)) {
-							index = i;
-							break;
-						}
-					}				
-					//还没有这个类
-					if (index == -1) {
-						classes.add(new Class(elName));
-						index = classes.size() - 1;
-					}
-				}else {
-					//TODO 要确保子项是紧跟父项的
-					ClassProperty property = new ClassProperty("String", elModel.getName());
-					property.setTitle(elModel.getTitle());
-					classes.get(index).getProperties().add(property);					
+			//Action里的class
+			List<TreeModel> treeModels = new ArrayList<TreeModel>();
+			treeModels.addAll(htmlModel.getEasyuiModel().getTreeModels());
+			treeModels.addAll(htmlModel.getEasyuiModel().getGridModels());
+			List<ActionModel> actionModels = new ArrayList<ActionModel>();
+			for (TreeModel treeModel : treeModels) {
+				actionModels.addAll(treeModel.getActionModels());
+			}
+			List<ELModel> elModels = new ArrayList<ELModel>();
+			for (ActionModel actionModel : actionModels) {
+				elModels.addAll(actionModel.getElModels());
+			}
+			getClassesFromELModels(elModels, classes);
+			//打印，方便对比
+			for (Class c : classes) {
+				//格式化，便于阅读
+				String modelString = StringUtil.getJsonFormat(c.toString());
+				//将对象写入文本，对比提前结果
+				try {
+					FileUtils.writeTxtFile(modelString, "E:/htmlModels/class/" + c.getClassName() + ".txt");
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-				
 			}
+			htmlModel.setClasses(classes);
 		}
-		for (Class c : classes) {
-			//格式化，便于阅读
-			String modelString = StringUtil.getJsonFormat(c.toString());
-			//将对象写入文本，对比提前结果
-			try {
-				FileUtils.writeTxtFile(modelString, "E:/htmlModels/class/" + c.getClassName() + ".txt");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+	}
+	
+	private void getClassesFromELModels(List<ELModel> elModels, List<Class> classes){
+		//排序，让parentId相同的在一起
+//		Collections.sort(elModels);
+		int index = -1;
+		for (ELModel elModel : elModels) {
+			String elName = elModel.getName();
+			//类
+			if (elModel.getParentId() == null) {
+				//TODO 目前只是写死的，不合理
+				if ("root".equals(elName) || "static".equals(elName) ||"css".equals(elName) ||
+						"images".equals(elName) ||"js".equals(elName) ||"resource".equals(elName)) {
+					continue;						
+				}
+				//查找是否已经了这个类
+				for (int i = 0; i < classes.size();i++) {
+					if (classes.get(i).getClassName().equals(elName)) {
+						index = i;
+						break;
+					}
+				}				
+				//还没有这个类
+				if (index == -1) {
+					classes.add(new Class(elName));
+					index = classes.size() - 1;
+				}
+			}else {
+				//TODO 要确保子项是紧跟父项的
+				ClassProperty property = new ClassProperty("String", elModel.getName());
+				property.setTitle(elModel.getTitle());
+				classes.get(index).getProperties().add(property);					
 			}
+			
 		}
 	}
 	
