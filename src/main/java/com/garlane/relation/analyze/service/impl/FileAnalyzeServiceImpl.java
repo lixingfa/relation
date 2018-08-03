@@ -110,6 +110,10 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 					jsBLModels.addAll(jsAnalyze(jsContents.get(key)));
 				}
 				List<HTMLModel> htmlModels = htmlAnalyzes(htmlContents);
+				//获取完页面所有信息后，开始对信息进行逻辑处理
+				log.info("开始分析业务逻辑");
+				logicAnalyzeService.LogicAnalyze(htmlModels, jsBLModels);
+				
 				for (HTMLModel htmlModel : htmlModels) {
 					String modelString = JSONObject.toJSONString(htmlModel);
 					path = htmlModel.getPath();
@@ -120,10 +124,6 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 					//将对象写入文本，对比提前结果
 					FileUtils.writeTxtFile(modelString, "E:/htmlModels/" + path + ".txt");
 				}				
-				//获取完页面所有信息后，开始对信息进行逻辑处理
-				log.info("开始分析业务逻辑");
-				logicAnalyzeService.LogicAnalyze(htmlModels, jsBLModels);
-				
 			} catch (Exception e) {
 				throw new SuperServiceException("读取文件数据出现错误", e);
 			}

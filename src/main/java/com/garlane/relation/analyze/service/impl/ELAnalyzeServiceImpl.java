@@ -102,7 +102,7 @@ public class ELAnalyzeServiceImpl implements ELAnalyzeService{
 		//TODO 需要完善
 		if (el.contains(ELConstant.EQ)) {
 			String[] temp = el.split(ELConstant.EQ);
-			String els = null;
+			String els = "";
 			for (String s : temp) {
 				s = s.trim();
 				if (!Pattern.matches(s, "\\d")) {//非数字，就是字符串或变量

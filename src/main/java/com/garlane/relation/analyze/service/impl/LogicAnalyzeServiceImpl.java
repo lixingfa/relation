@@ -2,7 +2,7 @@ package com.garlane.relation.analyze.service.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -72,11 +72,13 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 	 * @param htmlModels
 	 */
 	private void getClasses(List<HTMLModel> htmlModels){
+		List<Class> allClasses = new ArrayList<Class>();
 		for (HTMLModel htmlModel : htmlModels) {
 			//需要将构建的Class序列化存到服务器，用户确认后，重新读取，优化，进行下一步动作
 			List<Class> classes = new ArrayList<Class>();
 			//页面加载时一起返回的属性
-			getClassesFromELModels(htmlModel.getElModels(), classes);
+			List<ELModel> elModels = new ArrayList<ELModel>();
+			elModels.addAll(htmlModel.getElModels());
 			
 			//Action里的class
 			List<TreeModel> treeModels = new ArrayList<TreeModel>();
@@ -86,26 +88,73 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 			for (TreeModel treeModel : treeModels) {
 				actionModels.addAll(treeModel.getActionModels());
 			}
-			List<ELModel> elModels = new ArrayList<ELModel>();
 			for (ActionModel actionModel : actionModels) {
-				elModels.addAll(actionModel.getElModels());
-			}
-			getClassesFromELModels(elModels, classes);
-			//打印，方便对比
-			for (Class c : classes) {
-				//格式化，便于阅读
-				String modelString = StringUtil.getJsonFormat(c.toString());
-				//将对象写入文本，对比提前结果
-				try {
-					FileUtils.writeTxtFile(modelString, "E:/htmlModels/class/" + c.getClassName() + ".txt");
-				} catch (IOException e) {
-					e.printStackTrace();
+				if (actionModel.getElModels() != null) {
+					elModels.addAll(actionModel.getElModels());					
 				}
 			}
+			getClassesFromELModels(elModels, classes);
 			htmlModel.setClasses(classes);
+			//添加到总列表
+			classesAdd(allClasses, classes);
+		}		
+		//打印，方便对比
+		for (Class c : allClasses) {
+			//格式化，便于阅读
+			String modelString = StringUtil.getJsonFormat(c.toString());
+			//将对象写入文本，对比提前结果
+			try {
+				FileUtils.writeTxtFile(modelString, "E:/htmlModels/class/" + c.getClassName() + ".txt");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		//
+		
+	}
+	
+	/**
+	 * classesAdd:(给列表增加新的Class)
+	 * @author lixingfa
+	 * @date 2018年8月3日下午5:46:13
+	 * @param allClasses
+	 * @param classes
+	 */
+	private void classesAdd(List<Class> allClasses, List<Class> classes){
+		for (Class c : classes) {
+			boolean notHasClass = true;
+			for (int i = 0; i < allClasses.size(); i++) {
+				//类名相同
+				if (c.getClassName().equals(allClasses.get(i).getClassName())) {
+					notHasClass = false;
+					//比较属性
+					for (ClassProperty property : c.getProperties()) {
+						boolean notHas = true;
+						for (ClassProperty p : allClasses.get(i).getProperties()) {
+							if (p.getPropertyName().equals(property.getPropertyName())) {
+								notHas = false;
+								break;
+							}
+						}
+						if (notHas) {
+							allClasses.get(i).getProperties().add(property);
+						}
+					}
+				}
+			}
+			if (notHasClass) {
+				allClasses.add(c);
+			}
 		}
 	}
 	
+	/**
+	 * getClassesFromELModels:(从EL表达式中提取Class)
+	 * @author lixingfa
+	 * @date 2018年8月3日下午5:41:21
+	 * @param elModels
+	 * @param classes
+	 */
 	private void getClassesFromELModels(List<ELModel> elModels, List<Class> classes){
 		//排序，让parentId相同的在一起
 //		Collections.sort(elModels);
@@ -132,10 +181,20 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 					index = classes.size() - 1;
 				}
 			}else {
+				//像data.success这种，一个页面会出现很多次
+				boolean NotHas = true;
 				//TODO 要确保子项是紧跟父项的
-				ClassProperty property = new ClassProperty("String", elModel.getName());
-				property.setTitle(elModel.getTitle());
-				classes.get(index).getProperties().add(property);					
+				for (ClassProperty property : classes.get(index).getProperties()) {
+					if (property.getPropertyName().equals(elName)) {
+						NotHas = false;
+						break;
+					}
+				}
+				if (NotHas) {
+					ClassProperty property = new ClassProperty("String", elName);
+					property.setTitle(elModel.getTitle());
+					classes.get(index).getProperties().add(property);					
+				}
 			}
 			
 		}

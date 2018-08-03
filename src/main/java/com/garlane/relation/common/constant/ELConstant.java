@@ -16,7 +16,7 @@ public class ELConstant {
 	/**美元符号*/
 	public static final String DOLLAR_MARK = "$";
 	/**eq*/
-	public static final String EQ = "eq";
+	public static final String EQ = " eq ";
 	
 	
 	
