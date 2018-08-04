@@ -49,7 +49,7 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 	 */
 	public void LogicAnalyze(List<HTMLModel> htmlModels,List<BLModel> jsBLModels)throws SuperServiceException{
 		//一、从EL里获取Class的组合
-		getClasses(htmlModels);
+		List<Class> allClasses = getClasses(htmlModels);
 		//二、从属性的亲密度获取表的组合
 		//获取属性关系
 //		List<PropertyModel> propertyModels = getPropertyModels(htmlModels, jsBLModels);
@@ -68,10 +68,13 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 	}
 	
 	/**
-	 * 根据属性组装Class
+	 * getClasses:(根据属性组装Class)
+	 * @author lixingfa
+	 * @date 2018年8月4日下午4:00:39
 	 * @param htmlModels
+	 * @return List<Class>
 	 */
-	private void getClasses(List<HTMLModel> htmlModels){
+	private List<Class> getClasses(List<HTMLModel> htmlModels){
 		List<Class> allClasses = new ArrayList<Class>();
 		for (HTMLModel htmlModel : htmlModels) {
 			//需要将构建的Class序列化存到服务器，用户确认后，重新读取，优化，进行下一步动作
@@ -110,7 +113,7 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 			}
 		}
 		//
-		
+		return allClasses;
 	}
 	
 	/**
@@ -197,6 +200,12 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 				}
 			}
 			
+		}
+		//去除空的，倒序
+		for (int i = classes.size() - 1; i >= 0; i--) {
+			if (classes.get(i).getProperties().size() == 0) {
+				classes.remove(i);
+			}
 		}
 	}
 	
