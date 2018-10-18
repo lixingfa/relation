@@ -63,7 +63,7 @@
 		<!-- druid -->
 		<druid.version>1.0.25</druid.version>
 		<!-- spring -->
-		<spring.version>4.0.8.RELEASE</spring.version>
+		<spring.version>4.3.16.RELEASE</spring.version>
 		<!-- poi -->
 		<poi.version>3.9</poi.version>
 		<poiScratchpad.version>3.9</poiScratchpad.version>
