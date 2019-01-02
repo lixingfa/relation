@@ -18,7 +18,6 @@ import com.garlane.relation.analyze.model.el.ELModel;
 import com.garlane.relation.analyze.model.logic.Class;
 import com.garlane.relation.analyze.model.logic.ClassProperty;
 import com.garlane.relation.analyze.model.logic.PropertyIntimacyModel;
-import com.garlane.relation.analyze.model.logic.PropertyModel;
 import com.garlane.relation.analyze.model.page.BLModel;
 import com.garlane.relation.analyze.model.page.FormModel;
 import com.garlane.relation.analyze.model.page.HTMLModel;
@@ -36,6 +35,8 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 
 	private Logger logger = Logger.getLogger(getClass());
 	
+	private PropertyIntimacyModel propertyIntimacyModel = new PropertyIntimacyModel();
+	
 	@Autowired
 	private BLService blService;
 	/**
@@ -49,9 +50,10 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 	public void LogicAnalyze(List<HTMLModel> htmlModels,List<BLModel> jsBLModels)throws SuperServiceException{
 		//一、从EL里获取Class的组合
 		List<Class> allClasses = getClasses(htmlModels);
-		//二、从属性的亲密度获取表的组合
+		//二、从属性的亲密度获取数据库表的组合
 		//获取属性关系
-		List<PropertyModel> propertyModels = getPropertyModels(htmlModels, jsBLModels);//经常一起出现的属性
+		getPropertyModels(htmlModels, jsBLModels);//经常一起出现的属性
+		//TODO 从属性亲密度，推导action逻辑
 //		
 //		//1、先将结果归类
 //		log.info("处理BL语言");//BL语言里有很多属性，先获取它们
@@ -211,23 +213,23 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 	}
 	
 	/**
-	 * getPropertyModels:(把零散的信息组装成有层次的信息)
+	 * getPropertyModels:(获取各属性的亲密度，并跟进亲密度组装数据库表)
 	 * @author lixingfa
 	 * @date 2018年7月9日下午4:32:58
 	 * @param htmlModels
 	 * @param jsBLModels
-	 * @return
+	 * @return 
 	 * @throws SuperServiceException
 	 */
-	private List<PropertyModel> getPropertyModels(List<HTMLModel> htmlModels,List<BLModel> jsBLModels) throws SuperServiceException{
-
+	private void getPropertyModels(List<HTMLModel> htmlModels,List<BLModel> jsBLModels) throws SuperServiceException{
+		//获取亲密度
 		for (HTMLModel htmlModel : htmlModels) {
 			//1、处理EL表达式
 			getPropertyModelsOfEL(htmlModel.getElModels());
 			//2、easyuiModel
 			getPropertyModelsOfEASYUI(htmlModel.getEasyuiModel());
 			//3、BL
-			//blService.getPropertyModelsOfBL(htmlModels, jsBLModels);
+			blService.getPropertyModelsOfBL(htmlModels, jsBLModels);
 			//4、forms
 			if (htmlModel.getFormModels() != null) {
 				for (FormModel formModel : htmlModel.getFormModels()) {
@@ -241,9 +243,15 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 				}				
 			}
 		}
-		
-		List<PropertyModel> propertyModels = new ArrayList<PropertyModel>();
-		return propertyModels;
+		//跟进亲密度组装和划分
+		int[][] intimacy = propertyIntimacyModel.getIntimacy();
+		for (int i = 0; i < intimacy.length; i++) {
+			for (int j = 0; j < intimacy[i].length; j++) {
+				System.out.print(intimacy[i][j] + " ");
+			}
+			System.out.println();
+		}
+//		return propertyIntimacyModel;
 	}
 	
 	/**
@@ -258,7 +266,7 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 			for (ELModel elModel : elModels) {
 				propertyList.add(elModel.getName());
 			}
-			PropertyIntimacyModel.getInstance().addImpeachs(propertyList);
+			propertyIntimacyModel.addImpeachs(propertyList);
 		}
 	}
 	
@@ -324,7 +332,7 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 				if (actionModel.getParams() != null) {
 					propertyList.addAll(actionModel.getParams().keySet());
 				}
-				PropertyIntimacyModel.getInstance().addImpeachs(propertyList);
+				propertyIntimacyModel.addImpeachs(propertyList);
 				//处理action的结果
 				getPropertyModelsOfEL(actionModel.getElModels());
 			}
@@ -350,7 +358,7 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 			}			
 		}
 		if (names.size() > 0) {
-			PropertyIntimacyModel.getInstance().addImpeachs(names);
+			propertyIntimacyModel.addImpeachs(names);
 		}
 	}
 	

@@ -6,6 +6,7 @@ package com.garlane.relation.analyze.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
@@ -66,7 +67,7 @@ public class BLServiceImpl implements BLService{
 			String text = blModel.getText();
 			
 			//TODO 一条语句就添加一次，但中文和英文要联系起来
-			if (text.indexOf("/***") == 0) {
+			if (StringUtils.isNotBlank(text) && text.indexOf("/***") == 0) {
 				
 			}
 		}

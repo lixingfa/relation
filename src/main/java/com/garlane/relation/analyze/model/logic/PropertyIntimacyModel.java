@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * @author lixingfa
  * @date 2018年7月9日下午5:48:30
- * 
+ * 作用在于由亲密度推导表结构
  */
 public class PropertyIntimacyModel {
 
@@ -21,20 +21,20 @@ public class PropertyIntimacyModel {
 	private List<String> impeachs = new ArrayList<String>();
 	
 	/**双重检验的单例模式*/
-	private static volatile PropertyIntimacyModel propertyIntimacyModel;
+//	private static volatile PropertyIntimacyModel propertyIntimacyModel;
 	/**私有化构建函数*/
-    private PropertyIntimacyModel() {}
+//    private PropertyIntimacyModel() {}
     /**双重检查的单例*/
-    public static PropertyIntimacyModel getInstance() {
-        if (propertyIntimacyModel == null) {
-            synchronized (PropertyIntimacyModel.class) {
-                if (propertyIntimacyModel == null) {
-                	propertyIntimacyModel = new PropertyIntimacyModel();
-                }
-            }
-        }
-        return propertyIntimacyModel;
-    }
+//    public static PropertyIntimacyModel getInstance() {
+//        if (propertyIntimacyModel == null) {
+//            synchronized (PropertyIntimacyModel.class) {
+//                if (propertyIntimacyModel == null) {
+//                	propertyIntimacyModel = new PropertyIntimacyModel();
+//                }
+//            }
+//        }
+//        return propertyIntimacyModel;
+//    }
 
 	
 	/**
