@@ -83,20 +83,4 @@ public class PropertyIntimacyModel {
 	public void setIntimacy(int[][] intimacy) {
 		this.intimacy = intimacy;
 	}
-	
-	public static void main(String[] args) {
-		PropertyIntimacyModel propertyIntimacyModel = new PropertyIntimacyModel();
-		List<String> propertys = new ArrayList<String>();
-		propertys.add("a");
-		propertys.add("b");
-		
-		propertyIntimacyModel.setPropertys(propertys);
-		int[][] a = new int[3][3];
-		propertyIntimacyModel.setIntimacy(a);
-		System.out.println(propertyIntimacyModel.getIntimacy()[0][1]);
-		int[][] b = new int[3][3];
-		b[0][1] = 1;
-		propertyIntimacyModel.setIntimacy(b);
-		System.out.println(propertyIntimacyModel.getIntimacy()[0][1]);
-	}
 }

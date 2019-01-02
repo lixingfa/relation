@@ -2,7 +2,6 @@ package com.garlane.relation.analyze.service.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -35,7 +34,7 @@ import com.garlane.relation.common.utils.file.FileUtils;
 @Service("logicAnalyzeService")
 public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 
-	private Logger log = Logger.getLogger(getClass());
+	private Logger logger = Logger.getLogger(getClass());
 	
 	@Autowired
 	private BLService blService;
@@ -52,7 +51,7 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 		List<Class> allClasses = getClasses(htmlModels);
 		//二、从属性的亲密度获取表的组合
 		//获取属性关系
-//		List<PropertyModel> propertyModels = getPropertyModels(htmlModels, jsBLModels);
+		List<PropertyModel> propertyModels = getPropertyModels(htmlModels, jsBLModels);//经常一起出现的属性
 //		
 //		//1、先将结果归类
 //		log.info("处理BL语言");//BL语言里有很多属性，先获取它们
@@ -97,11 +96,13 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 				}
 			}
 			getClassesFromELModels(elModels, classes);
+			//给htmlModel添加class，但页面里的可能是不全的
 			htmlModel.setClasses(classes);
 			//添加到总列表
 			classesAdd(allClasses, classes);
 		}		
 		//打印，方便对比
+		System.out.println("打印class，方便对比。这里是总的class，页面里的可能只是其中一部分。");
 		for (Class c : allClasses) {
 			//格式化，便于阅读
 			String modelString = StringUtil.getJsonFormat(c.toString());
