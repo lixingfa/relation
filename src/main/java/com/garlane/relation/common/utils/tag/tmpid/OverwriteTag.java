@@ -5,7 +5,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
-import org.springframework.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *	自定义标签，用于在jsp模板中重写指定的占位内容
@@ -33,7 +33,7 @@ public class OverwriteTag extends BodyTagSupport{
         ServletRequest request = pageContext.getRequest();
         //标签内容
         BodyContent bodyContent = getBodyContent();
-        request.setAttribute(PREFIX+name,  StringUtils.trimWhitespace(bodyContent!=null?bodyContent.getString():""));        
+        request.setAttribute(PREFIX+name,  StringUtils.deleteWhitespace(bodyContent!=null?bodyContent.getString():""));        
         return super.doEndTag();
     }
 

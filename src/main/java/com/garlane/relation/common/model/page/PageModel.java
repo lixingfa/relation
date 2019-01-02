@@ -3,7 +3,7 @@ package com.garlane.relation.common.model.page;
 import java.io.Serializable;
 import java.util.List;
 
-import org.springframework.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;

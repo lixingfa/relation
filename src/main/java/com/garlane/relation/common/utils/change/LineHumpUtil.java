@@ -3,7 +3,7 @@ package com.garlane.relation.common.utils.change;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.springframework.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *	下划线驼峰法互转

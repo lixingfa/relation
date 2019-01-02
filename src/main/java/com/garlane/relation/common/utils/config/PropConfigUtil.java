@@ -11,9 +11,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
-import org.springframework.util.StringUtils;
-
-
+import org.apache.commons.lang3.StringUtils;
 /**
  * 加载property文件类 原生PropertyPlaceholderConfigurer加载property只能用于xml中占位符替换
  * 修改后将键值对保存在静态map中，供java程序引用
@@ -26,7 +24,7 @@ public class PropConfigUtil extends PropertyPlaceholderConfigurer {
 	private final static Map<String, String> resolvedProps = new HashMap<String, String>();// 将属性保存起来
 	
 	@Override
-	protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, Properties props) throws BeansException {
+	protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, Properties props) {
 
 		Set<Object> keySets = props.keySet();
 		if (keySets != null && keySets.size() != 0) {
