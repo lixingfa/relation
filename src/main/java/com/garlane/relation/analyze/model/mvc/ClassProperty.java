@@ -1,4 +1,4 @@
-package com.garlane.relation.analyze.model.logic;
+package com.garlane.relation.analyze.model.mvc;
 /**
  * 类的属性
  * @author lingxingfa

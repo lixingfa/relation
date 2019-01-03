@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.garlane.relation.analyze.model.el.ELModel;
-import com.garlane.relation.analyze.model.logic.Class;
+import com.garlane.relation.analyze.model.mvc.Class;
 /**
  * 请求实体
  * @author lingxingfa

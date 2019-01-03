@@ -15,9 +15,9 @@ import com.garlane.relation.analyze.model.easyui.EASYUIModel;
 import com.garlane.relation.analyze.model.easyui.GridModel;
 import com.garlane.relation.analyze.model.easyui.TreeModel;
 import com.garlane.relation.analyze.model.el.ELModel;
-import com.garlane.relation.analyze.model.logic.Class;
-import com.garlane.relation.analyze.model.logic.ClassProperty;
 import com.garlane.relation.analyze.model.logic.PropertyIntimacyModel;
+import com.garlane.relation.analyze.model.mvc.Class;
+import com.garlane.relation.analyze.model.mvc.ClassProperty;
 import com.garlane.relation.analyze.model.page.BLModel;
 import com.garlane.relation.analyze.model.page.FormModel;
 import com.garlane.relation.analyze.model.page.HTMLModel;
@@ -48,10 +48,13 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 	public void LogicAnalyze(List<HTMLModel> htmlModels,List<BLModel> jsBLModels)throws SuperServiceException{
 		//一、从EL里获取Class的组合
 		List<Class> allClasses = getClasses(htmlModels);
+		
+		//构建Controller
+		
+		
 		//二、从属性的亲密度获取数据库表的组合
 		//获取属性关系
-		getPropertyModels(htmlModels, jsBLModels);//经常一起出现的属性
-		//TODO 从属性亲密度，推导action逻辑
+//		getPropertyModels(htmlModels, jsBLModels);//经常一起出现的属性
 //		
 //		//1、先将结果归类
 //		log.info("处理BL语言");//BL语言里有很多属性，先获取它们

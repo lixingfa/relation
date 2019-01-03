@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.garlane.relation.analyze.model.easyui.EASYUIModel;
 import com.garlane.relation.analyze.model.el.ELModel;
-import com.garlane.relation.analyze.model.logic.Class;
+import com.garlane.relation.analyze.model.mvc.Class;
 
 public class HTMLModel implements Serializable{
 	private static final long serialVersionUID = 1L;

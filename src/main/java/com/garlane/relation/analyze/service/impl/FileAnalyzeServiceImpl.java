@@ -113,7 +113,7 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 				//获取完页面所有信息后，开始对信息进行逻辑处理
 				log.info("开始分析业务逻辑");
 				logicAnalyzeService.LogicAnalyze(htmlModels, jsBLModels);
-				
+				System.out.println("输出html页面模型");
 				for (HTMLModel htmlModel : htmlModels) {
 					String modelString = JSONObject.toJSONString(htmlModel);
 					path = htmlModel.getPath();

@@ -1,4 +1,4 @@
-package com.garlane.relation.analyze.model.logic;
+package com.garlane.relation.analyze.model.mvc;
 
 import java.util.HashSet;
 import java.util.Set;

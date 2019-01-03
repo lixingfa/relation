@@ -86,5 +86,7 @@ public class PropertyIntimacyModel {
 		propertyIntimacyModel.addImpeachs(name);
 		List<String> name2 = Arrays.asList("iii","yyy","zzz","jjj");
 		propertyIntimacyModel.addImpeachs(name2);
+		List<String> name3 = Arrays.asList("iii","yyy","zzz","kkk");
+		propertyIntimacyModel.addImpeachs(name3);
 	}
 }
