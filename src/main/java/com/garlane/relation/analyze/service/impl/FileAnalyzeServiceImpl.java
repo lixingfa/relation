@@ -27,6 +27,7 @@ import com.garlane.relation.analyze.model.page.InputModel;
 import com.garlane.relation.analyze.model.page.SelectModel;
 import com.garlane.relation.analyze.model.page.TableModel;
 import com.garlane.relation.analyze.model.page.TextareaModel;
+import com.garlane.relation.analyze.service.BuildService;
 import com.garlane.relation.analyze.service.EASYUIAnalyzeService;
 import com.garlane.relation.analyze.service.ELAnalyzeService;
 import com.garlane.relation.analyze.service.FileAnalyzeService;
@@ -54,6 +55,8 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 	private static final String HTMLBL = "<!---[^(-->)]+-->";
 	private static final String JSBL = "/\\*\\*\\*[^(\\*\\*/)]+\\*\\*/";
 	
+	@Autowired
+	private BuildService buildService;
 	@Autowired
 	private LogicAnalyzeService logicAnalyzeService;
 	@Autowired
@@ -113,6 +116,10 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 				//获取完页面所有信息后，开始对信息进行逻辑处理
 				log.info("开始分析业务逻辑");
 				logicAnalyzeService.LogicAnalyze(htmlModels, jsBLModels);
+				log.info("开始构建项目");
+				buildService.build(htmlModels, path);
+				
+				
 				System.out.println("输出html页面模型");
 				for (HTMLModel htmlModel : htmlModels) {
 					String modelString = JSONObject.toJSONString(htmlModel);
@@ -123,7 +130,8 @@ public class FileAnalyzeServiceImpl implements FileAnalyzeService {
 					modelString = StringUtil.getJsonFormat(modelString);
 					//将对象写入文本，对比提前结果
 					FileUtils.writeTxtFile(modelString, "E:/htmlModels/" + path + ".txt");
-				}				
+				}
+				
 			} catch (Exception e) {
 				throw new SuperServiceException("读取文件数据出现错误", e);
 			}
