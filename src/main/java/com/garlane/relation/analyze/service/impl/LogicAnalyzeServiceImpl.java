@@ -35,8 +35,6 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 
 	private Logger logger = Logger.getLogger(getClass());
 	
-	private PropertyIntimacyModel propertyIntimacyModel = new PropertyIntimacyModel();
-	
 	@Autowired
 	private BLService blService;
 	/**
@@ -104,7 +102,7 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 			classesAdd(allClasses, classes);
 		}		
 		//打印，方便对比
-		System.out.println("打印class，方便对比。这里是总的class，页面里的可能只是其中一部分。");
+		System.out.println("打印class，方便对比。这里是总的class，页面htmlModel里的可能只是其中一部分。");
 		for (Class c : allClasses) {
 			//格式化，便于阅读
 			String modelString = StringUtil.getJsonFormat(c.toString());
@@ -222,24 +220,25 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 	 * @throws SuperServiceException
 	 */
 	private void getPropertyModels(List<HTMLModel> htmlModels,List<BLModel> jsBLModels) throws SuperServiceException{
+		PropertyIntimacyModel propertyIntimacyModel = new PropertyIntimacyModel();
 		//获取亲密度
 		for (HTMLModel htmlModel : htmlModels) {
 			//1、处理EL表达式
-			getPropertyModelsOfEL(htmlModel.getElModels());
+			propertyIntimacyModel.addImpeachs(getPropertyModelsOfEL(htmlModel.getElModels()));
 			//2、easyuiModel
-			getPropertyModelsOfEASYUI(htmlModel.getEasyuiModel());
+			getPropertyModelsOfEASYUI(htmlModel.getEasyuiModel(),propertyIntimacyModel);
 			//3、BL
 			blService.getPropertyModelsOfBL(htmlModels, jsBLModels);
 			//4、forms
 			if (htmlModel.getFormModels() != null) {
 				for (FormModel formModel : htmlModel.getFormModels()) {
-					getPropertyModelsOfTable(formModel);
+					propertyIntimacyModel.addImpeachs(getPropertyModelsOfTable(formModel));
 				}				
 			}
 			//5、table
 			if (htmlModel.getTableModels() != null) {
 				for (TableModel tableModel : htmlModel.getTableModels()) {
-					getPropertyModelsOfTable(tableModel);
+					propertyIntimacyModel.addImpeachs(getPropertyModelsOfTable(tableModel));
 				}				
 			}
 		}
@@ -255,19 +254,20 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 	}
 	
 	/**
-	 * getPropertyModelsOfEL:(这里用一句话描述这个方法的作用)
+	 * getPropertyModelsOfEL:(从el表达式中获取属性)
 	 * @author lixingfa
 	 * @date 2018年7月10日上午11:27:20
 	 * @param elModels
+	 * @return List<String> 属性合集
 	 */
-	private void getPropertyModelsOfEL(List<ELModel> elModels){
+	private List<String> getPropertyModelsOfEL(List<ELModel> elModels){
+		List<String> propertyList = new ArrayList<String>();
 		if (elModels != null) {
-			List<String> propertyList = new ArrayList<String>();
 			for (ELModel elModel : elModels) {
 				propertyList.add(elModel.getName());
 			}
-			propertyIntimacyModel.addImpeachs(propertyList);
 		}
+		return propertyList;
 	}
 	
 	/**
@@ -275,19 +275,20 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 	 * @author lixingfa
 	 * @date 2018年7月10日上午11:40:58
 	 * @param easyuiModel
+	 * @param propertyIntimacyModel
 	 */
-	private void getPropertyModelsOfEASYUI(EASYUIModel easyuiModel){
+	private void getPropertyModelsOfEASYUI(EASYUIModel easyuiModel,PropertyIntimacyModel propertyIntimacyModel){
 		List<String> propertyList = new ArrayList<String>();
 		List<TreeModel> treeModels = easyuiModel.getTreeModels();
 		if (treeModels != null) {
 			for (TreeModel treeModel : treeModels) {
-				getPropertyModelsOfTreeModel(treeModel, propertyList);
+				getPropertyModelsOfTreeModel(treeModel, propertyList,propertyIntimacyModel);
 			}
 		}
 		List<GridModel> gridModels = easyuiModel.getGridModels();
 		if (gridModels != null) {
 			for (GridModel gridModel : gridModels) {
-				getPropertyModelsOfTreeModel(gridModel, propertyList);
+				getPropertyModelsOfTreeModel(gridModel, propertyList,propertyIntimacyModel);
 				//处理datagrid特有的dataObject
 				JSONObject dataObject = gridModel.getDataObject();
 				if (dataObject != null) {
@@ -307,15 +308,17 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 	 * @date 2018年7月10日上午11:40:39
 	 * @param treeModel
 	 * @param propertyList
+	 * @param propertyIntimacyModel
 	 */
-	private void getPropertyModelsOfTreeModel(TreeModel treeModel,List<String> propertyList){
+	private void getPropertyModelsOfTreeModel(TreeModel treeModel,List<String> propertyList,PropertyIntimacyModel propertyIntimacyModel){
 		JSONArray dataArray = treeModel.getDataArray();
 		if (dataArray != null) {
 			//每一条数据的格式都是一样的，分析一条即可
 			JSONObject object = dataArray.getJSONObject(0);
 			propertyList.addAll(object.keySet());
 		}
-		getPropertyModelsOfActionModel(treeModel, propertyList);
+		//属性跟参数经常是一起的，所以放在一起统计
+		getPropertyModelsOfActionModel(treeModel, propertyList,propertyIntimacyModel);
 	}
 	
 	/**
@@ -324,17 +327,19 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 	 * @date 2018年7月10日下午12:00:18
 	 * @param treeModel
 	 * @param propertyList
+	 * @param propertyIntimacyModel
 	 */
-	private void getPropertyModelsOfActionModel(TreeModel treeModel,List<String> propertyList){
+	private void getPropertyModelsOfActionModel(TreeModel treeModel,List<String> propertyList,PropertyIntimacyModel propertyIntimacyModel){
 		List<ActionModel> actionModels = treeModel.getActionModels();
 		if (actionModels != null) {
 			for (ActionModel actionModel : actionModels) {
 				if (actionModel.getParams() != null) {
 					propertyList.addAll(actionModel.getParams().keySet());
 				}
+				//属性与参数一起统计
 				propertyIntimacyModel.addImpeachs(propertyList);
-				//处理action的结果
-				getPropertyModelsOfEL(actionModel.getElModels());
+				//处理action的结果，地址里的EL跟
+				propertyIntimacyModel.addImpeachs(getPropertyModelsOfEL(actionModel.getElModels()));
 			}
 		}
 	}
@@ -344,8 +349,9 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 	 * @author lixingfa
 	 * @date 2018年7月11日下午4:10:50
 	 * @param formModels
+	 * @return List<String> 表格里的属性
 	 */
-	private void getPropertyModelsOfTable(TableModel tableModel){
+	private List<String> getPropertyModelsOfTable(TableModel tableModel){
 		List<String> names = new ArrayList<String>();
 		if (tableModel.getInputs() != null) {
 			for (InputModel inputModel : tableModel.getInputs()) {
@@ -357,9 +363,7 @@ public class LogicAnalyzeServiceImpl implements LogicAnalyzeService{
 				names.add(selectModel.getName());
 			}			
 		}
-		if (names.size() > 0) {
-			propertyIntimacyModel.addImpeachs(names);
-		}
+		return names;
 	}
 	
 }

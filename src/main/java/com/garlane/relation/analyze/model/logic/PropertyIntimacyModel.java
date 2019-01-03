@@ -4,6 +4,7 @@
 package com.garlane.relation.analyze.model.logic;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -16,7 +17,7 @@ public class PropertyIntimacyModel {
 	/**属性列表*/
 	private List<String> propertys = new ArrayList<String>();
 	/**亲密度*/
-	private int[][] intimacy = new int[1][1];
+	private int[][] intimacy = new int[0][0];
 	/**存疑的属性*/
 	private List<String> impeachs = new ArrayList<String>();
 	
@@ -38,10 +39,10 @@ public class PropertyIntimacyModel {
 
 	
 	/**
-	 * addImpeachs:(设定一组属性的亲密度)
+	 * addImpeachs:(设定一组属性的亲密度，属性会以不同的组合出现在不同地方，所以只能每次出现就改变一次亲密度)
 	 * @author lixingfa
 	 * @date 2018年7月9日下午6:25:53
-	 * @param sub 属性
+	 * @param sub 本次出现的属性组合
 	 */
 	public void addImpeachs(List<String> sub){
 		//属性在列表中的索引
@@ -58,13 +59,13 @@ public class PropertyIntimacyModel {
 				}
 				intimacy = inti;
 			}
-			index[i] = propertys.indexOf(sub.get(i));
+			index[i] = propertys.indexOf(sub.get(i));//属性的索引
 		}
 		//循环+1
 		for (int i = 0; i < index.length; i++) {
 			for (int j = 0; j < index.length; j++) {
 				if (i != j) {
-					intimacy[index[i]][index[j]]++;
+					intimacy[index[i]][index[j]]++;//一起出现的，相互之间+1
 				}
 			}
 		}
@@ -74,13 +75,16 @@ public class PropertyIntimacyModel {
 	public List<String> getPropertys() {
 		return propertys;
 	}
-	public void setPropertys(List<String> propertys) {
-		this.propertys = propertys;
-	}
 	public int[][] getIntimacy() {
 		return intimacy;
 	}
-	public void setIntimacy(int[][] intimacy) {
-		this.intimacy = intimacy;
+	
+	
+	public static void main(String[] args) {
+		PropertyIntimacyModel propertyIntimacyModel = new PropertyIntimacyModel();
+		List<String> name = Arrays.asList("xxx","yyy","zzz");
+		propertyIntimacyModel.addImpeachs(name);
+		List<String> name2 = Arrays.asList("iii","yyy","zzz","jjj");
+		propertyIntimacyModel.addImpeachs(name2);
 	}
 }
