@@ -85,7 +85,7 @@ public class BuildServiceImpl implements BuildService{
 				controllerModel.addMethodModel(methodModel);
 			}
 			//每个htmlModel都有一个toPage方法
-			
+			controllerModel.addToPageMethod(htmlPath);
 		}
 	}
 	
@@ -124,8 +124,10 @@ public class BuildServiceImpl implements BuildService{
 		if (actionModel.getResultType() == ActionModel.RESULT_TYPE_JSON) {
 			
 		}else if (actionModel.getResultType() == ActionModel.RESULT_TYPE_PAGE) {
-			
+			//TODO 有了toPage方法，应该不需要这段了
 		}
+		
+		
 		
 		return methodModel;
 	}
