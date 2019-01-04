@@ -3,6 +3,7 @@
  */
 package com.garlane.relation.analyze.model.mvc;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -17,7 +18,7 @@ public class BaseModel {
 	/**类名**/
 	private String className;
 	/**方法**/
-	private Set<MethodModel> methodModels;
+	protected Set<MethodModel> methodModels = new HashSet<MethodModel>();
 	
 	public String getPackageValue() {
 		return packageValue;
@@ -37,5 +38,7 @@ public class BaseModel {
 	public void setMethodModels(Set<MethodModel> methodModels) {
 		this.methodModels = methodModels;
 	}
-	
+	public void addMethodModel(MethodModel model){
+		methodModels.add(model);
+	}
 }

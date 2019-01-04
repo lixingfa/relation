@@ -29,4 +29,13 @@ public class ControllerModel extends BaseModel{
 	public void setServiceModels(Set<ServiceModel> serviceModels) {
 		this.serviceModels = serviceModels;
 	}
+	public void addToPageMethod(String pageUrl){
+		MethodModel model = new MethodModel();
+		model.setReturnType("String");//TODO 换成常量
+		pageUrl = pageUrl.substring(pageUrl.indexOf("WEB-INF\\jsp"));
+		model.setRetrunValue(pageUrl);
+		pageUrl = pageUrl.substring(pageUrl.lastIndexOf("\\"), pageUrl.indexOf("."));
+		model.setName(pageUrl);		
+		getMethodModels().add(model);
+	}
 }

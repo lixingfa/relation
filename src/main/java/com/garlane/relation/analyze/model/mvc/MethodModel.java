@@ -18,10 +18,14 @@ public class MethodModel {
 	private Constant.methodType methodType;
 	/**返回类型**/
 	private String returnType;
+	/**返回结果**/
+	private String retrunValue;
 	/**方法名称**/
 	private String name;
 	/**参数**/
 	private Set<ClassProperty> properties;
+	/**类的请求地址**/
+	private String requestMapping;
 	
 	/************************************/
 	public Constant.methodType getMethodType() {
@@ -48,4 +52,17 @@ public class MethodModel {
 	public void setProperties(Set<ClassProperty> properties) {
 		this.properties = properties;
 	}
+	public String getRequestMapping() {
+		return requestMapping;
+	}
+	public void setRequestMapping(String requestMapping) {
+		this.requestMapping = requestMapping;
+	}
+	public String getRetrunValue() {
+		return retrunValue;
+	}
+	public void setRetrunValue(String retrunValue) {
+		this.retrunValue = retrunValue;
+	}
+	
 }

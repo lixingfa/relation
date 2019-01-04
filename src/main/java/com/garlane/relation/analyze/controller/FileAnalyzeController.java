@@ -34,7 +34,7 @@ public class FileAnalyzeController extends BaseController {
 	public ResultModel getFileLogic(String path) {
 		try {
 			logger.info("解析项目的逻辑。");
-			fileAnalyzeService.getFileLogic("E:/WorkSpase/relation/webapp");
+			fileAnalyzeService.getFileLogic("E:/WorkSpase/relation/ApprBase/webapp");
 			return new ResultModel(true, "解析项目逻辑成功，即将进行组合优化……",null);
 		} catch (Exception e) {
 			logger.error("跳转失败", e);
