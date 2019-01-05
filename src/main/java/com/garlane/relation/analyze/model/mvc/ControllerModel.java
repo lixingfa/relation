@@ -5,6 +5,8 @@ package com.garlane.relation.analyze.model.mvc;
 
 import java.util.Set;
 
+import com.garlane.relation.common.utils.change.StringUtil;
+
 /**
  * @author lixingfa
  * @date 2019年1月3日下午4:01:53
@@ -31,11 +33,15 @@ public class ControllerModel extends BaseModel{
 	}
 	public void addToPageMethod(String pageUrl){
 		MethodModel model = new MethodModel();
+		//返回
 		model.setReturnType("String");//TODO 换成常量
 		pageUrl = pageUrl.substring(pageUrl.indexOf("WEB-INF\\jsp"));
 		model.setRetrunValue(pageUrl);
+		//名字
 		pageUrl = pageUrl.substring(pageUrl.lastIndexOf("\\"), pageUrl.indexOf("."));
 		model.setName(pageUrl);		
+		model.setRequestMapping("to" + StringUtil.upFirst(pageUrl));
+		
 		getMethodModels().add(model);
 	}
 }

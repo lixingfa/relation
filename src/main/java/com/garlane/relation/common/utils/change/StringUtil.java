@@ -1273,8 +1273,13 @@ public class StringUtil {
         return levelStr.toString();
     }
 	
-	public static void main(String[] args) {
-		String content = "var url = '${root}/admin/system/user/loadUserByUnit.do?unitSubCode='+unitCode+'&userRole='+'${userModel.userRole}';";
-		System.out.println(replaceMatchers("['\"]?[ ]*[\\+]{1}[ ]*['\"]?", "", content));
+	/**
+	 * 首字母大写
+	 * @param s
+	 * @return
+	 */
+	public static String upFirst(String s){
+		String first = s.substring(0, 1);
+		return first.toUpperCase() + s.substring(1);
 	}
 }

@@ -26,6 +26,8 @@ public class MethodModel {
 	private Set<ClassProperty> properties;
 	/**类的请求地址**/
 	private String requestMapping;
+	/**返回json*/
+	private boolean retrunJson;
 	
 	/************************************/
 	public Constant.methodType getMethodType() {
@@ -63,6 +65,12 @@ public class MethodModel {
 	}
 	public void setRetrunValue(String retrunValue) {
 		this.retrunValue = retrunValue;
+	}
+	public boolean isRetrunJson() {
+		return retrunJson;
+	}
+	public void setRetrunJson(boolean retrunJson) {
+		this.retrunJson = retrunJson;
 	}
 	
 }

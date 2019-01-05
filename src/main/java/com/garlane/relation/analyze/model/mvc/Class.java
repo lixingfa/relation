@@ -3,6 +3,8 @@ package com.garlane.relation.analyze.model.mvc;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.garlane.relation.common.utils.change.StringUtil;
+
 public class Class {
 	/**类名*/
 	private String className;
@@ -38,19 +40,13 @@ public class Class {
 			}
 			s.append("private ").append(property.getType()).append(" ").append(property.getPropertyName()).append(";\n");
 			
-			getSetBuffer.append("\npublic ").append(property.getType()).append(" get").append(upFirst(property.getPropertyName())).append("(){")
+			getSetBuffer.append("\npublic ").append(property.getType()).append(" get").append(StringUtil.upFirst(property.getPropertyName())).append("(){")
 			.append("return ").append(property.getPropertyName()).append(";").append("}");
 			
-			getSetBuffer.append("\npublic void ").append(" set").append(upFirst(property.getPropertyName()))
+			getSetBuffer.append("\npublic void ").append(" set").append(StringUtil.upFirst(property.getPropertyName()))
 			.append("(").append(property.getType()).append(" ").append(property.getPropertyName()).append("){")
 			.append("this.").append(property.getPropertyName()).append(" = ").append(property.getPropertyName()).append(";").append("}");
 		}
 		return s.append("\n").append(getSetBuffer).append("}").toString();		
-	}
-	
-	private String upFirst(String s){
-		String first = s.substring(0, 1);
-		return first.toUpperCase() + s.substring(1);
-	}
-	
+	}	
 }

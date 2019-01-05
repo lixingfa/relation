@@ -122,7 +122,7 @@ public class BuildServiceImpl implements BuildService{
 		}
 		//返回的数据类型
 		if (actionModel.getResultType() == ActionModel.RESULT_TYPE_JSON) {
-			
+			methodModel.setRetrunJson(true);
 		}else if (actionModel.getResultType() == ActionModel.RESULT_TYPE_PAGE) {
 			//TODO 有了toPage方法，应该不需要这段了
 		}
